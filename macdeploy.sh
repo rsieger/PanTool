@@ -4,7 +4,7 @@ echo PanTool
 
 echo - macdeployqt 
 
-cd ~/Development/aforge/pantool
+cd ~/Development/GitHub/PanTool
 
 rm -R '../../Distribution/PanTool/PanTool.app'
 cp -R './PanTool-build-Desktop_Qt_5_3_2_LLDB-Release/PanTool.app' '../../Distribution/PanTool/PanTool.app'
