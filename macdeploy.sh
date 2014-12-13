@@ -7,16 +7,10 @@ echo - macdeployqt
 cd ~/Development/GitHub/PanTool
 
 rm -R '../../Distribution/PanTool/PanTool.app'
-cp -R './PanTool-build-Desktop_Qt_5_3_2_LLDB-Release/PanTool.app' '../../Distribution/PanTool/PanTool.app'
+cp -R './PanTool-build-Desktop_Qt_5_4_0_clang_64bit-Release/PanTool.app' '../../Distribution/PanTool/PanTool.app'
 cp './trunk/Resources/Info.plist' '../../Distribution/PanTool/PanTool.app/Contents/Info.plist'
 
-/Developer/Qt/5.3/clang_64/bin/macdeployqt '../../Distribution/PanTool/PanTool.app'
-
-../patchQtFramework.sh '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtCore.framework'
-../patchQtFramework.sh '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtGui.framework'
-../patchQtFramework.sh '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtNetwork.framework'
-../patchQtFramework.sh '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtPrintSupport.framework'
-../patchQtFramework.sh '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtWidgets.framework'
+/Developer/Qt/5.4/clang_64/bin/macdeployqt '../../Distribution/PanTool/PanTool.app'
 
 echo - code signing
 
@@ -26,7 +20,6 @@ codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Insti
 codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Institut fur Polar- und Meeresforschung (AWI)' '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtPrintSupport.framework'
 codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Institut fur Polar- und Meeresforschung (AWI)' '../../Distribution/PanTool/PanTool.app/Contents/Frameworks/QtWidgets.framework'
 
-codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Institut fur Polar- und Meeresforschung (AWI)' '../../Distribution/PanTool/PanTool.app/Contents/PlugIns/accessible/libqtaccessiblewidgets.dylib'
 codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Institut fur Polar- und Meeresforschung (AWI)' '../../Distribution/PanTool/PanTool.app/Contents/PlugIns/bearer/libqcorewlanbearer.dylib'
 codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Institut fur Polar- und Meeresforschung (AWI)' '../../Distribution/PanTool/PanTool.app/Contents/PlugIns/bearer/libqgenericbearer.dylib'
 codesign --force --verify --sign 'Developer ID Application: Alfred-Wegener-Institut fur Polar- und Meeresforschung (AWI)' '../../Distribution/PanTool/PanTool.app/Contents/PlugIns/imageformats/libqdds.dylib'
@@ -61,7 +54,7 @@ cd ~/Development/Distribution
 
 echo - verify package
 
-codesign -dvv '/Volumes/PanTool/PanTool.app'
+codesign -d '/Volumes/PanTool/PanTool.app'
 
 echo
 hdiutil detach '/Volumes/PanTool'
