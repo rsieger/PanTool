@@ -231,7 +231,7 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
     QString	s_Data							= "";
     QString s_Domain                        = "";
     QString s_ExportFilename				= "";
-    QString s_URL							= "";
+    QString s_Url							= "";
     QString s_Size							= "";
     QString s_EOL                           = setEOLChar( i_EOL );
 
@@ -365,12 +365,12 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
 
     while ( ( i < i_totalNumOfDownloads ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
     {
-        s_URL = "";
+        s_Url = "";
 
         if ( b_isURL == true )
         {
             if ( sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ).isEmpty() == false )
-                s_URL = "/" + sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ); // eg. /janusweb/chemistry/chemcarb.cgi?leg=197&site=1203&hole=A
+                s_Url = "/" + sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ); // eg. /janusweb/chemistry/chemcarb.cgi?leg=197&site=1203&hole=A
         }
         else
         {
@@ -383,7 +383,7 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             s_DatasetID.replace( tr( ", DOI registration in progress" ), tr( "" ) );
         }
 
-        if ( ( s_URL.isEmpty() == false ) || ( s_DatasetID.toInt() >= 50000 ) )
+        if ( ( s_Url.isEmpty() == false ) || ( s_DatasetID.toInt() >= 50000 ) )
         {
             if ( b_ExportFilenameExists == true )
             {
@@ -422,24 +422,24 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             {
                 if ( b_DownloadXML == true )
                 {
-                    s_URL = "http://www.pangaea.de/PHP/getxml.php/" + s_DatasetID;
+                    s_Url = "http://www.pangaea.de/PHP/getxml.php/" + s_DatasetID;
                 }
                 else
                 {
-                    s_URL = s_Domain + "/10.1594/PANGAEA." + s_DatasetID + "?format=textfile";
+                    s_Url = s_Domain + "/10.1594/PANGAEA." + s_DatasetID + "?format=textfile";
 
                     switch ( i_CodecDownload )
                     {
                     case _LATIN1_:
-                        s_URL.append( "&charset=ISO-8859-1" );
+                        s_Url.append( "&charset=ISO-8859-1" );
                         break;
 
                     case _APPLEROMAN_:
-                        s_URL.append( "&charset=x-MacRoman" );
+                        s_Url.append( "&charset=x-MacRoman" );
                         break;
 
                     default:
-                        s_URL.append( "&charset=UTF-8" );
+                        s_Url.append( "&charset=UTF-8" );
                         break;
                     }
                 }
@@ -447,87 +447,68 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
 
             s_ExportFilename = s_DownloadDirectory + "/" + s_ExportFilename;
 
+            downloadFile( s_Url, s_ExportFilename );
+
+            wait( 100 );
+
             QFile fileExport( s_ExportFilename );
+            QFileInfo fd( s_ExportFilename );
 
-            if ( fileExport.open( QIODevice::WriteOnly | QIODevice::Text ) == true )
+            if ( fd.size() == 0 )
             {
-                webfile m_webfile;
+                fileExport.remove();
 
-                m_webfile.setUrl( QUrl( s_URL ) );
+                i_removedDatasets++;
 
-                if ( m_webfile.open() == true )
+                switch ( i_Extension )
                 {
-                    char    buffer[1024];
-                    qint64  nSize = 0;
-
-                    while ( ( nSize = m_webfile.read( buffer, sizeof( buffer ) ) ) > 0 )
-                        fileExport.write( buffer, nSize );
-
-                    m_webfile.close();
+                case _CSV_:
+                    tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
+                    break;
+                default:
+                    tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
+                    break;
                 }
-
-                fileExport.close();
-
-                wait( 100 );
-
-                QFileInfo fd( fileExport );
-
-                if ( fd.size() == 0 )
+            }
+            else
+            {
+                if ( b_DownloadXML == false )
                 {
-                    fileExport.remove();
-
-                    i_removedDatasets++;
-
-                    switch ( i_Extension )
+                    if ( ( ( s_ExportFilename.toLower().endsWith( ".txt" ) == true ) || ( s_ExportFilename.toLower().endsWith( ".csv" ) == true ) ) && ( readFile( s_ExportFilename, sl_Input, _SYSTEM_, 8000 ) > 0 ) )
                     {
-                    case _CSV_:
-                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "login required" << s_EOL;
-                        break;
-                    default:
-                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "login required" << s_EOL;
-                        break;
-                    }
-                }
-                else
-                {
-                    if ( b_DownloadXML == false )
-                    {
-                        if ( ( ( s_ExportFilename.toLower().endsWith( ".txt" ) == true ) || ( s_ExportFilename.toLower().endsWith( ".csv" ) == true ) ) && ( readFile( s_ExportFilename, sl_Input, _SYSTEM_, 8000 ) > 0 ) )
+                        if ( sl_Input.at( 0 ).startsWith( "/* DATA DESCRIPTION:" ) == false  )
                         {
-                            if ( sl_Input.at( 0 ).startsWith( "/* DATA DESCRIPTION:" ) == false  )
+                            fileExport.remove();
+
+                            i_removedDatasets++;
+
+                            sl_Result = sl_Input.filter( "was substituted by an other version at" );
+
+                            if ( sl_Result.count() > 0 )
+                                tout << "\t\t" << "Dataset " <<  s_DatasetID << " was substituted by an other version." << s_EOL;
+
+                            sl_Result = sl_Input.filter( "No data available!" );
+
+                            if ( sl_Result.count() > 0 )
+                                tout << "\t\t" << "Something wrong, no data available for dataset " << s_DatasetID << ". Please ask Rainer Sieger (rsieger@pangaea.de)" << s_EOL;
+
+                            sl_Result = sl_Input.filter( "A data set identified by" );
+
+                            if ( sl_Result.count() > 0 )
+                                tout << "\t\t" << "Dataset " <<  s_DatasetID << " not exist!" << s_EOL;
+
+                            sl_Result = sl_Input.filter( "The dataset is currently not available for download. Try again later!" );
+
+                            if ( sl_Result.count() > 0 )
                             {
-                                fileExport.remove();
-
-                                i_removedDatasets++;
-
-                                sl_Result = sl_Input.filter( "was substituted by an other version at" );
-
-                                if ( sl_Result.count() > 0 )
-                                    tout << "\t\t" << "Dataset " <<  s_DatasetID << " was substituted by an other version." << s_EOL;
-
-                                sl_Result = sl_Input.filter( "No data available!" );
-
-                                if ( sl_Result.count() > 0 )
-                                    tout << "\t\t" << "Something wrong, no data available for dataset " << s_DatasetID << ". Please ask Rainer Sieger (rsieger@pangaea.de)" << s_EOL;
-
-                                sl_Result = sl_Input.filter( "A data set identified by" );
-
-                                if ( sl_Result.count() > 0 )
-                                    tout << "\t\t" << "Dataset " <<  s_DatasetID << " not exist!" << s_EOL;
-
-                                sl_Result = sl_Input.filter( "The dataset is currently not available for download. Try again later!" );
-
-                                if ( sl_Result.count() > 0 )
+                                switch ( i_Extension )
                                 {
-                                    switch ( i_Extension )
-                                    {
-                                    case _CSV_:
-                                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
-                                        break;
-                                    default:
-                                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
-                                        break;
-                                    }
+                                case _CSV_:
+                                    tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
+                                    break;
+                                default:
+                                    tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
+                                    break;
                                 }
                             }
                         }
