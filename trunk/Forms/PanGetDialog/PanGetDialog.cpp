@@ -215,7 +215,7 @@ void PanGetDialog::dropEvent( QDropEvent *event )
 // **********************************************************************************************
 // **********************************************************************************************
 
-void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s_DownloadDirectory, const bool b_DownloadXML, const int i_CodecDownload, const int i_EOL, const int i_Extension )
+void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s_DownloadDirectory, const bool b_DownloadData, const bool b_DownloadCitation, const bool b_DownloadMetadata, const int i_CodecDownload, const int i_EOL, const int i_Extension )
 {
     int i       							= 0;
     int n                                   = 0;
@@ -352,28 +352,23 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
 // **********************************************************************************************
 // Download
 
-    if ( b_isURL == true )
-        s_Domain = sl_Data.at( 0 ).section( "/", 0, 2 ); // eg. http://iodp.tamu.edu/
-    else
-        s_Domain = "http://doi.pangaea.de"; // PANGAEA datasets
-
-// **********************************************************************************************
-
     initFileProgress( i_totalNumOfDownloads, "", tr( "Downloading files..." ) );
 
     i = 0;
 
     while ( ( i < i_totalNumOfDownloads ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
     {
-        s_Url = "";
-
         if ( b_isURL == true )
         {
+            s_Domain = sl_Data.at( i ).section( "/", 0, 2 ); // eg. http://iodp.tamu.edu/
+
             if ( sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ).isEmpty() == false )
                 s_Url = "/" + sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ); // eg. /janusweb/chemistry/chemcarb.cgi?leg=197&site=1203&hole=A
         }
         else
         {
+            s_Domain    = "http://doi.pangaea.de"; // PANGAEA datasets
+
             s_DatasetID = sl_Data.at( i ).section( "\t", 0, 0 );
 
             s_DatasetID.replace( tr( "http://doi.pangaea.de/10.1594/PANGAEA." ), tr( "" ) );
@@ -383,96 +378,99 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             s_DatasetID.replace( tr( ", DOI registration in progress" ), tr( "" ) );
         }
 
-        if ( ( s_Url.isEmpty() == false ) || ( s_DatasetID.toInt() >= 50000 ) )
+        if ( b_ExportFilenameExists == true )
         {
-            if ( b_ExportFilenameExists == true )
-            {
-                s_ExportFilename = sl_Data.at( i ).section( "\t", 1, 1 );
-                s_ExportFilename.replace( " ", "_" );
+            s_ExportFilename = sl_Data.at( i ).section( "\t", 1, 1 );
+            s_ExportFilename.replace( " ", "_" );
 
-                if ( s_ExportFilename.isEmpty() == true )
-                {
-                    if ( b_isURL == true )
-                        s_ExportFilename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
-                    else
-                        s_ExportFilename = tr( "not_given" );
-                }
-
-                if ( b_isURL == false )
-                {
-                    s_ExportFilename.append( tr( "~" ) );
-                    s_ExportFilename.append( s_DatasetID );
-                    s_ExportFilename.append( setExtension( i_Extension ) );
-                }
-            }
-            else
+            if ( s_ExportFilename.isEmpty() == true )
             {
                 if ( b_isURL == true )
-                {
                     s_ExportFilename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
-                }
                 else
-                {
-                    s_ExportFilename.sprintf( "%06d", s_DatasetID.toInt() );
-                    s_ExportFilename.append( setExtension( i_Extension ) );
-                }
+                    s_ExportFilename = tr( "not_given" );
             }
 
             if ( b_isURL == false )
             {
-                if ( b_DownloadXML == true )
-                {
-                    s_Url = "http://www.pangaea.de/PHP/getxml.php/" + s_DatasetID;
-                }
-                else
-                {
+                s_ExportFilename.append( tr( "~" ) );
+                s_ExportFilename.append( s_DatasetID );
+            }
+        }
+        else
+        {
+            if ( b_isURL == true )
+                s_ExportFilename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
+            else
+                s_ExportFilename.sprintf( "%06d", s_DatasetID.toInt() );
+        }
+
+        if ( ( b_DownloadCitation == true ) && ( b_isURL == false ) )
+        {
+            s_Url = "http://doi.pangaea.de/10.1594/PANGAEA."+ s_DatasetID + "?format=citation_text";
+
+            downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_citation" + setExtension( i_Extension ) );
+
+            wait( 100 );
+        }
+
+        if ( ( b_DownloadMetadata == true ) && ( b_isURL == false ) )
+        {
+            s_Url = "http://doi.pangaea.de/10.1594/PANGAEA."+ s_DatasetID + "?format=metainfo_xml";
+
+            downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_metadata.xml" );
+
+            wait( 100 );
+        }
+
+        if ( b_DownloadData == true )
+        {
+            if ( ( s_Url.isEmpty() == false ) || ( s_DatasetID.toInt() >= 50000 ) )
+            {
+                s_ExportFilename = s_DownloadDirectory + "/" + s_ExportFilename + setExtension( i_Extension );
+
+                if ( b_isURL == false )
                     s_Url = s_Domain + "/10.1594/PANGAEA." + s_DatasetID + "?format=textfile";
 
-                    switch ( i_CodecDownload )
+                switch ( i_CodecDownload )
+                {
+                case _LATIN1_:
+                    s_Url.append( "&charset=ISO-8859-1" );
+                    break;
+
+                case _APPLEROMAN_:
+                    s_Url.append( "&charset=x-MacRoman" );
+                    break;
+
+                default:
+                    s_Url.append( "&charset=UTF-8" );
+                    break;
+                }
+
+                downloadFile( s_Url, s_ExportFilename );
+
+                wait( 100 );
+
+                QFile fileExport( s_ExportFilename );
+                QFileInfo fd( s_ExportFilename );
+
+                if ( fd.size() == 0 )
+                {
+                    fileExport.remove();
+
+                    i_removedDatasets++;
+
+                    switch ( i_Extension )
                     {
-                    case _LATIN1_:
-                        s_Url.append( "&charset=ISO-8859-1" );
+                    case _CSV_:
+                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
                         break;
-
-                    case _APPLEROMAN_:
-                        s_Url.append( "&charset=x-MacRoman" );
-                        break;
-
                     default:
-                        s_Url.append( "&charset=UTF-8" );
+                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
                         break;
                     }
                 }
-            }
-
-            s_ExportFilename = s_DownloadDirectory + "/" + s_ExportFilename;
-
-            downloadFile( s_Url, s_ExportFilename );
-
-            wait( 100 );
-
-            QFile fileExport( s_ExportFilename );
-            QFileInfo fd( s_ExportFilename );
-
-            if ( fd.size() == 0 )
-            {
-                fileExport.remove();
-
-                i_removedDatasets++;
-
-                switch ( i_Extension )
-                {
-                case _CSV_:
-                    tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
-                    break;
-                default:
-                    tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
-                    break;
-                }
-            }
-            else
-            {
-                if ( b_DownloadXML == false )
+                else
                 {
                     if ( ( ( s_ExportFilename.toLower().endsWith( ".txt" ) == true ) || ( s_ExportFilename.toLower().endsWith( ".csv" ) == true ) ) && ( readFile( s_ExportFilename, sl_Input, _SYSTEM_, 8000 ) > 0 ) )
                     {
@@ -515,10 +513,10 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
                     }
                 }
             }
-        }
-        else
-        {
-            err = _ERROR_;
+            else
+            {
+                err = _ERROR_;
+            }
         }
 
         stopProgress = incFileProgress( i_totalNumOfDownloads, i++ );
@@ -618,7 +616,9 @@ void MainWindow::doGetDatasets()
         break;
     }
 
-    dialog.DownloadXML_checkBox->setChecked( gb_DownloadXML );
+    dialog.DownloadData_checkBox->setChecked( gb_DownloadData );
+    dialog.DownloadCitation_checkBox->setChecked( gb_DownloadCitation );
+    dialog.DownloadMetadata_checkBox->setChecked( gb_DownloadMetadata );
 
 // **********************************************************************************************
 
@@ -666,7 +666,9 @@ void MainWindow::doGetDatasets()
         if ( dialog.CSV_radioButton->isChecked() )
             gi_Extension = _CSV_;
 
-        gb_DownloadXML = dialog.DownloadXML_checkBox->isChecked();
+        gb_DownloadData     = dialog.DownloadData_checkBox->isChecked();
+        gb_DownloadCitation = dialog.DownloadCitation_checkBox->isChecked();
+        gb_DownloadMetadata = dialog.DownloadMetadata_checkBox->isChecked();
 
         err = _NOERROR_;
         break;
@@ -684,7 +686,7 @@ void MainWindow::doGetDatasets()
 
     if ( err == _NOERROR_ )
     {
-        downloadDatasets( gs_IDListFile, gs_DownloadDirectory, gb_DownloadXML, gi_CodecDownload, gi_EOL, gi_Extension );
+        downloadDatasets( gs_IDListFile, gs_DownloadDirectory, gb_DownloadData, gb_DownloadCitation, gb_DownloadMetadata, gi_CodecDownload, gi_EOL, gi_Extension );
 
         if ( ( gs_DownloadDirectory.isEmpty() == false ) && ( err == _NOERROR_ ) )
             chooseFolder( gs_DownloadDirectory );

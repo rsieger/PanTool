@@ -66,7 +66,9 @@ void MainWindow::savePreferences()
     settings.beginGroup( "PanGet" );
     settings.setValue( "IDListFile", gs_IDListFile );
     settings.setValue( "DownloadDirectory", gs_DownloadDirectory );
-    settings.setValue( "DownloadXML", gb_DownloadXML );
+    settings.setValue( "DownloadData", gb_DownloadData );
+    settings.setValue( "DownloadCitation", gb_DownloadCitation );
+    settings.setValue( "DownloadMetadata", gb_DownloadMetadata );
     settings.endGroup();
 
     // extract columns
@@ -453,7 +455,9 @@ void MainWindow::loadPreferences()
     settings.beginGroup( "PanGet" );
     gs_IDListFile        = settings.value( "IDListFile", "" ).toString();
     gs_DownloadDirectory = settings.value( "DownloadDirectory", "" ).toString();
-    gb_DownloadXML       = settings.value( "DownloadXML", false ).toBool();
+    gb_DownloadData      = settings.value( "DownloadData", true ).toBool();
+    gb_DownloadCitation  = settings.value( "DownloadCitation", false ).toBool();
+    gb_DownloadMetadata  = settings.value( "DownloadMetadata", false ).toBool();
     settings.endGroup();
 
     // extract columns

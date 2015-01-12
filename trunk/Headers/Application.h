@@ -307,7 +307,9 @@ public:
     // PanGet
     QString     gs_IDListFile;                       //!< PanGet, Name der Datei, die die ID-Liste enthaelt
     QString     gs_DownloadDirectory;                //!< PanGet, Download-Verzeichnis
-    bool        gb_DownloadXML;                      //!< PanGet, hole nur die Metadaten als XML
+    bool        gb_DownloadData;                     //!< PanGet, hole Dataset als Text
+    bool        gb_DownloadCitation;                 //!< PanGet, hole Citation als Text
+    bool        gb_DownloadMetadata;                 //!< PanGet, hole nur die Metadaten als XML
 
     // ODP Sample Label
     int         gi_odp_LegColumn;                    //!< Spalte fuer Leg number
@@ -345,7 +347,7 @@ public:
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
 
     void compressFile( const QString &FilenameIn );
-    void downloadDatasets( const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadXML, const int CodecDownload, const int EOL, const int Extension );
+    void downloadDatasets( const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
 
     int extractColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnList = "", const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int extractMatchedColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &SearchString = "", const bool SaveNoMatch = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const bool DeleteEmptyOutputFile = false, const int NumOfFiles = 0 );

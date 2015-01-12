@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>613</width>
-    <height>345</height>
+    <width>626</width>
+    <height>343</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -157,9 +157,23 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="0" column="0">
-       <widget class="QCheckBox" name="DownloadXML_checkBox">
+       <widget class="QCheckBox" name="DownloadData_checkBox">
         <property name="text">
-         <string>download metadata XML file only</string>
+         <string>download data file</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QCheckBox" name="DownloadCitation_checkBox">
+        <property name="text">
+         <string>download citation</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QCheckBox" name="DownloadMetadata_checkBox">
+        <property name="text">
+         <string>download metadata</string>
         </property>
        </widget>
       </item>
@@ -223,7 +237,9 @@
   <tabstop>CodecDownload_ComboBox</tabstop>
   <tabstop>TXT_radioButton</tabstop>
   <tabstop>CSV_radioButton</tabstop>
-  <tabstop>DownloadXML_checkBox</tabstop>
+  <tabstop>DownloadData_checkBox</tabstop>
+  <tabstop>DownloadCitation_checkBox</tabstop>
+  <tabstop>DownloadMetadata_checkBox</tabstop>
   <tabstop>HelpButton</tabstop>
   <tabstop>BuildScript_pushButton</tabstop>
   <tabstop>Cancel_pushButton</tabstop>
