@@ -51,9 +51,9 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
         CreationDateTime.setTime( fi.created().time() );
 
         tout << QDir::toNativeSeparators( fi.absoluteFilePath() ) << "\t";
-        tout << QDir::toNativeSeparators( fi.absolutePath() ) << "\t";
-        tout << fi.fileName() << "\t" << fi.baseName() << "\t";
-        tout << fi.completeSuffix() << "\t" << fi.size() << "\t" << CreationDateTime.toString( "yyyy-MM-ddThh:mm:ss" ) << s_EOL;
+        tout << QDir::toNativeSeparators( fi.absolutePath() + "/" ) << "\t";
+        tout << fi.fileName() << "\t" << fi.completeBaseName() << "\t";
+        tout << fi.suffix() << "\t" << fi.size() << "\t" << CreationDateTime.toString( "yyyy-MM-ddThh:mm:ss" ) << s_EOL;
     }
 
     fout.close();
