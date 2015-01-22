@@ -12,9 +12,6 @@
 
 void MainWindow::onError( const int err )
 {
-    qDebug() << err;
-
-
     switch ( err )
     {
     case _APPBREAK_:  // Progress aborted

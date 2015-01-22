@@ -295,6 +295,7 @@ public:
     int         gi_dt_DateTimeColumn;                //!< Spalte fuer Datum/Uhrzeit
     int         gi_dt_DayOfYearColumn;               //!< Spalte fuer Tag im Jahr
     int         gi_dt_JulianDayColumn;               //!< Spalte fuer den Julianischen Tag
+    int         gi_dt_MatLabDateColumn;              //!< Spalte fuer das MatLab Date
     bool        gb_dt_WriteDateTimeOnly;             //!< schreibe nur die Spalte Date/Time
 
     // Pressure to depth
@@ -398,7 +399,7 @@ public:
     int polyCentroid( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const bool DeleteInputFile, const int NumOfFiles );
 
     int findDateTimeColumn( const QString s_InputStr );
-    int createDateTime( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int DateColumn, const int YearColumn, const int MonthColumn, const int DayColumn, const int TimeColumn, const int HourColumn, const int MinuteColumn, const int SecondColumn, const int DateTimeColumn, const int DayOfYearColumn, const int JulianDayColumn, const bool WriteDateTimeOnly, const int NumOfFiles );
+    int createDateTime( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int DateColumn, const int YearColumn, const int MonthColumn, const int DayColumn, const int TimeColumn, const int HourColumn, const int MinuteColumn, const int SecondColumn, const int DateTimeColumn, const int DayOfYearColumn, const int JulianDayColumn,  const int MatLabDateColumn, const bool WriteDateTimeOnly, const int NumOfFiles );
     int calcJulianDay( const long JulianDay, int& Year, int& Month, int& Day );
 
     int checkTimeSeries( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );
@@ -418,7 +419,7 @@ public:
     int doColumnListDialog( const int mode, QString &ColumnList, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doConcatenateFilesOptionsDialog( const int mode, int &SkipNStartLines, bool &IncludeFilename, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doCharactersAtPositionDialog( const int mode, QString &PositionList, QString &Text, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
-    int doDateTimeDialog( int &DateColumn, int &YearColumn, int &MonthColumn, int &DayColumn, int &TimeColumn, int &HourColumn, int &MinuteColumn, int &SecondColumn, int &DateTimeColumn,  int &DayOfYearColumn, int &JulianDayColumn, bool &WriteDateTimeOnly );
+    int doDateTimeDialog( int &DateColumn, int &YearColumn, int &MonthColumn, int &DayColumn, int &TimeColumn, int &HourColumn, int &MinuteColumn, int &SecondColumn, int &DateTimeColumn,  int &DayOfYearColumn, int &JulianDayColumn, int &MatLabDateColumn, bool &WriteDateTimeOnly );
     int doDeleteLinesDialog( int &StartLine, int &NumberOfLines, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doExtractLinesDialog( int &StartLine, int &Increment, int &NumberOfLines, bool &ExtractFristLineLastLine, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doFindAreaDialog( QString &AreaDatabaseFilename, bool &DeleteInputFile );

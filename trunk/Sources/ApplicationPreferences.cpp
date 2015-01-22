@@ -328,6 +328,7 @@ void MainWindow::savePreferences()
     settings.setValue( "DateTimeColumn", gi_dt_DateTimeColumn );
     settings.setValue( "DayOfYearColumn", gi_dt_DayOfYearColumn );
     settings.setValue( "JulianDayColumn", gi_dt_JulianDayColumn );
+    settings.setValue( "MatLabDateColumn", gi_dt_MatLabDateColumn );
     settings.setValue( "WriteDateTimeOnly", gb_dt_WriteDateTimeOnly );
     settings.endGroup();
 
@@ -717,6 +718,7 @@ void MainWindow::loadPreferences()
     gi_dt_DateTimeColumn    = settings.value( "DateTimeColumn", 0 ).toInt();
     gi_dt_DayOfYearColumn   = settings.value( "DayOfYearColumn", 0 ).toInt();
     gi_dt_JulianDayColumn   = settings.value( "JulianDayColumn", 0 ).toInt();
+    gi_dt_MatLabDateColumn  = settings.value( "MatLabDateColumn", 0 ).toInt();
     gb_dt_WriteDateTimeOnly = settings.value( "WriteDateTimeOnly", true ).toBool();
     settings.endGroup();
 

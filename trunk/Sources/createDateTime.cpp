@@ -12,7 +12,7 @@
 int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL,
                                 const int i_DateColumn, const int i_YearColumn, const int i_MonthColumn, const int i_DayColumn,
                                 const int i_TimeColumn, const int i_HourColumn, const int i_MinuteColumn, const int i_SecondColumn,
-                                const int i_DateTimeColumn, const int i_DayOfYearColumn, const int i_JulianDayColumn,
+                                const int i_DateTimeColumn, const int i_DayOfYearColumn, const int i_JulianDayColumn, const int i_MatLabDateColumn,
                                 const bool b_writeDateTimeOnly, const int i_NumOfFiles )
 {
     int             i                               = 1;
@@ -43,7 +43,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
     int				i_Hour					= 0;
     int				i_Minute				= 0;
-    float			f_Second				= 0;
+
+    float			f_Second				= 0.;
 
     int				i_DayOfYear				= 0;
     int             i_TimeClass3h           = 0;
@@ -51,9 +52,11 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     int				i_offsetHour			= 0;
 
     long			l_JulianDay 			= 0;
-    long			l_msecs					= 0.;
+    long			l_msecs					= 0;
+    long            l_secs                  = 0;
 
     double			d_Time					= 0.;
+    double          d_MatLabDate            = 0.;
 
     QString         s_EOL                   = setEOLChar( i_EOL );
 
@@ -111,7 +114,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         tout << tr( "Date/Time\tDate/Time\tDate/Time\t" );
         tout << tr( "Date\tTime\tTime\tTime\tDay of year\tTime (dec)\tTime (msec)\t" );
         tout << tr( "Year\tMonth\tDay\tHour\tMinute\tSeconds\tTime class 3h\t" );
-        tout << tr( "Number of milliseconds since 1970-01-01" ) << s_EOL;
+        tout << tr( "Unix timestamp in msecs\tMatLab date" ) << s_EOL;
     }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -197,7 +200,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             f_Second = InputStr.section( "\t", i_SecondColumn-1, i_SecondColumn-1 ).toFloat();
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Julian Day
+// Date/Time calculated from Julian Day
 
         if ( i_JulianDayColumn > 0 )
         {
@@ -219,6 +222,15 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                 s_DateISO	= secondDate.toString( "yyyy-MM-dd" );
             }
         }
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Date/Time calculated from MatLab date
+
+        if ( i_MatLabDateColumn > 0 )
+        {
+            d_MatLabDate = InputStr.section( "\t", i_MatLabDateColumn-1, i_MatLabDateColumn-1 ).toDouble();
+            l_secs = (long) ( ( qFloor( d_MatLabDate ) - 719529. )*86400. + ( ( d_MatLabDate - qFloor( d_MatLabDate ) )*3600.*24. ) );
+         }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Date calculated from day, month and year
@@ -644,11 +656,18 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 //-----------------------------------------------------------------------------------------------------------------------
 // Output
 
-        dt.setDate( QDate::fromString( s_DateISO, Qt::ISODate ) );
-        dt.setTime( QTime( 0, 0, 0, 0 ) );
-        dt.toUTC(); dt.setUtcOffset( 0 );
-
-        dt = dt.addMSecs( l_msecs );
+        if ( s_DateISO.isEmpty() == false )
+        {
+            dt.setDate( QDate::fromString( s_DateISO, Qt::ISODate ) );
+            dt.setTime( QTime( 0, 0, 0, 0 ) );
+            dt.toUTC(); dt.setUtcOffset( 0 );
+            dt = dt.addMSecs( l_msecs );
+        }
+        else
+        {
+            dt.setDate( QDate( 1970, 1, 1 ) );
+            dt = dt.addMSecs( l_secs*1000 );
+        }
 
         if ( b_writeDateTimeOnly == true )
         {
@@ -682,7 +701,9 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
             tout << QString( "%1" ).arg( i_TimeClass3h ) << "\t";
 
-            tout << QString( "%1" ).arg( dt.toMSecsSinceEpoch() ) << s_EOL;
+            tout << QString( "%1" ).arg( dt.toMSecsSinceEpoch() ) << "\t";
+
+            tout << QString( "%1" ).arg( (double) dt.toMSecsSinceEpoch()/86400000. + 719529., 0, 'f', 6 ) << s_EOL;
         }
 
         stopProgress = incProgress( i_NumOfFiles, ++i );
@@ -757,7 +778,7 @@ void MainWindow::doCreateDateTime()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-          if ( doDateTimeDialog( gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gb_dt_WriteDateTimeOnly ) == QDialog::Accepted )
+          if ( doDateTimeDialog( gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly ) == QDialog::Accepted )
           {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Creating date/time..." ) );
 
@@ -769,7 +790,7 @@ void MainWindow::doCreateDateTime()
 
                     s_FilenameOut = fi.absolutePath() + "/" + fi.completeBaseName() + "_DateTime" + setExtension( gi_Extension );
 
-                    err = createDateTime( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gb_dt_WriteDateTimeOnly, gsl_FilenameList.count() );
+                    err = createDateTime( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
