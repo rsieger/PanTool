@@ -666,7 +666,10 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         else
         {
             dt.setDate( QDate( 1970, 1, 1 ) );
-            dt = dt.addMSecs( l_secs*1000 );
+            dt.setTime( QTime( 0, 0, 0, 0 ) );
+            dt.toUTC(); dt.setUtcOffset( 0 );
+
+            dt = dt.addSecs( (qint64) l_secs );
         }
 
         if ( b_writeDateTimeOnly == true )
