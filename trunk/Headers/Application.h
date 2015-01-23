@@ -400,7 +400,6 @@ public:
 
     int findDateTimeColumn( const QString s_InputStr );
     int createDateTime( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int DateColumn, const int YearColumn, const int MonthColumn, const int DayColumn, const int TimeColumn, const int HourColumn, const int MinuteColumn, const int SecondColumn, const int DateTimeColumn, const int DayOfYearColumn, const int JulianDayColumn,  const int MatLabDateColumn, const bool WriteDateTimeOnly, const int NumOfFiles );
-    int calcJulianDay( const long JulianDay, int& Year, int& Month, int& Day );
 
     int checkTimeSeries( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );
     int calcSalinityFromCondTempPress( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );

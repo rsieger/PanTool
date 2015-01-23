@@ -35,8 +35,6 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     QString			s_Time_long				= "";
     QString			s_fTime					= "";
 
-    QString			s_DayOfYear				= "";
-
     int				i_Day					= 0;
     int				i_Month					= 0;
     int				i_Year					= 0;
@@ -55,7 +53,6 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     long			l_msecs					= 0;
     long            l_secs                  = 0;
 
-    double			d_Time					= 0.;
     double          d_MatLabDate            = 0.;
 
     QString         s_EOL                   = setEOLChar( i_EOL );
@@ -112,9 +109,9 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     else
     {
         tout << tr( "Date/Time\tDate/Time\tDate/Time\t" );
-        tout << tr( "Date\tTime\tTime\tTime\tDay of year\tTime (dec)\tTime (msec)\t" );
+        tout << tr( "Date\tTime\tTime\tTime\tTime (dec)\tTime (msec)\t" );
         tout << tr( "Year\tMonth\tDay\tHour\tMinute\tSeconds\tTime class 3h\t" );
-        tout << tr( "Unix timestamp in msecs\tMatLab date" ) << s_EOL;
+        tout << tr( "Day of year\tJulian day\tUnix timestamp\tMATLAB date" ) << s_EOL;
     }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -206,21 +203,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         {
             l_JulianDay = InputStr.section( "\t", i_JulianDayColumn-1, i_JulianDayColumn-1 ).toLong();
 
-            calcJulianDay( l_JulianDay, i_Year, i_Month, i_Day );
-
-            if ( i_Year < 0 )
-            {
-                secondDate.setDate( i_Year, i_Month, i_Day );
-                s_DateISO = secondDate.toString( "yyyy-MM-dd (BC)" );
-            }
-            else
-            {
-                firstDate.setDate( i_Year, 1, 1 );
-                secondDate.setDate( i_Year, i_Month, i_Day );
-
-                s_DayOfYear = QString( "%1" ).arg( firstDate.daysTo( secondDate ) + 1 );
-                s_DateISO	= secondDate.toString( "yyyy-MM-dd" );
-            }
+            dt.setDate( QDate::fromJulianDay( (qint64) l_JulianDay ) );
+            dt.setTime( QTime( 0, 0, 0, 0 ) );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -239,101 +223,39 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         {
             firstDate.setDate( i_Year, 1, 1 );
             secondDate.setDate( i_Year, i_Month, i_Day );
-
-            s_DayOfYear	= QString( "%1" ).arg( firstDate.daysTo( secondDate ) + 1 );
-            s_DateISO	= secondDate.toString( "yyyy-MM-dd" );
+            s_DateISO = secondDate.toString( "yyyy-MM-dd" );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Time calculated from hour
 
         if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn == 0 ) && ( i_SecondColumn == 0 ) )
-        {
-            s_Time.sprintf( "%02d:00", i_Hour );
-            s_Time_long.sprintf( "%02d:00", i_Hour );
-            s_fTime.sprintf( "%f", (float) i_Hour );
-
             l_msecs = i_Hour*3600000;
-        }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Time calculated from hour and minute
 
         if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn == 0 ) )
-        {
-            s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-            s_Time_long.sprintf( "%02d:%02d", i_Hour, i_Minute );
-            s_fTime.sprintf( "%f", (float) i_Hour + (float) i_Minute/60. );
-
             l_msecs = i_Hour*3600000 + i_Minute*60000;
-        }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Time calculated from hour, minute and second
 
         if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn > 0 ) )
-        {
-            s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-            s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
-            s_fTime.sprintf( "%f", (float) i_Hour + ( (float) i_Minute + f_Second/60. )/60. );
-
-            l_msecs = i_Hour*3600000 + i_Minute*60000 + (int) (f_Second*1000.);
-        }
+            l_msecs = i_Hour*3600000 + i_Minute*60000 + (long) (f_Second*1000.);
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Date and time calculated from year and day of the year
 
         if ( ( i_DayOfYearColumn > 0 ) && ( i_YearColumn > 0 ) )
         {
-            i_Year	= InputStr.section( "\t", i_YearColumn-1, i_YearColumn-1 ).toInt();
-            d_Time	= InputStr.section( "\t", i_DayOfYearColumn-1, i_DayOfYearColumn-1 ).toDouble();
+            i_Year	    = InputStr.section( "\t", i_YearColumn-1, i_YearColumn-1 ).toInt();
+            i_DayOfYear	= InputStr.section( "\t", i_DayOfYearColumn-1, i_DayOfYearColumn-1 ).toInt();
 
-            if ( ( 50 < i_Year ) && ( i_Year < 100 ) )
-                i_Year += 1900;
-            if ( i_Year <= 50 )
-                i_Year += 2000;
+            dt.setDate( QDate( i_Year, 1, 1 ) );
+            dt = dt.addDays( (qint64) i_DayOfYear );
 
-            i_DayOfYear	 = (int) d_Time;
-            d_Time		-= (double) i_DayOfYear;
-
-            firstDate.setDate( i_Year, 1, 1 );
-
-            while ( i_DayOfYear > firstDate.daysInYear() )
-            {
-                i_DayOfYear -= firstDate.daysInYear();
-                firstDate.setDate( ++i_Year, 1, 1 );
-            }
-
-            if ( ( i_Year > 0 ) && ( i_Year < 2100 ) && ( i_DayOfYear > 0 ) )
-            {
-                firstDate.setDate( i_Year, 1, 1 );
-                secondDate = firstDate.addDays( i_DayOfYear - 1 );
-
-                i_Month		= secondDate.month();
-                i_Day		= secondDate.day();
-
-                d_Time		= d_Time*24.;
-
-                if ( i_HourColumn == 0 )
-                    i_Hour	= (int) d_Time;
-                else
-                    d_Time	= (double) i_Hour;
-
-                if ( i_MinuteColumn == 0 )
-                    i_Minute = (int) ( ( d_Time - (double) i_Hour )*60. );
-
-                if ( i_SecondColumn == 0 )
-                    f_Second = ( d_Time - (double) i_Hour - (double) i_Minute/60. ) * 3600.;
-
-                s_DayOfYear	= QString( "%1" ).arg( i_DayOfYear );
-                s_DateISO	= secondDate.toString( "yyyy-MM-dd" );
-
-                s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute);
-                s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
-                s_fTime.sprintf( "%f", (float) i_Hour + (float) i_Minute/60.);
-            }
-
-            l_msecs = i_Hour*3600000 + i_Minute*60000 + (int) (f_Second*1000.);
+            s_DateISO = dt.toString( "yyyy-MM-dd" );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -448,7 +370,6 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             firstDate.setDate( i_Year, 1, 1 );
             secondDate.setDate( i_Year, i_Month, i_Day );
 
-            s_DayOfYear	 = QString( "%1" ).arg( firstDate.daysTo( secondDate ) + 1 );
             s_DateISO	 = secondDate.toString( "yyyy-MM-dd" );
         }
 
@@ -546,13 +467,11 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                 if ( s_Time.count( ":" ) > 1 )
                 {
                     f_Second = s_Time.section( ":", 2, 2 ).toFloat();
-                    s_fTime.sprintf( "%f", i_Hour + ((float) i_Minute + f_Second/60.)/60. );
                     s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
                     s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
                 }
                 else
                 {
-                    s_fTime.sprintf( "%f", i_Hour + (float) i_Minute/60. );
                     s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
                     s_Time_long.sprintf( "%02d:%02d", i_Hour, i_Minute );
                 }
@@ -560,7 +479,6 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
             if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 1 ) )  // 8.5 = 08:30
             {
-                s_fTime		= s_Time;
                 i_Hour		= (int) s_Time.toFloat() + i_offsetHour;
                 i_Minute	= (int) ( ( s_Time.toFloat() - (float) i_Hour ) * 60. );
                 f_Second	= ( s_Time.toFloat() - (float) i_Hour - (float) i_Minute/60. ) * 3600.;
@@ -585,13 +503,11 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                 if ( s_Time.length() > 4 )
                 {
                     f_Second = s_Time.right( 2 ).toFloat();
-                    s_fTime.sprintf( "%f", i_Hour + ( (float) i_Minute + f_Second/60. )/60. );
                     s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
                     s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
                 }
                 else
                 {
-                    s_fTime.sprintf( "%f", i_Hour + (float) i_Minute/60. );
                     s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
                     s_Time_long.sprintf( "%02d:%02d", i_Hour, i_Minute );
                 }
@@ -661,14 +577,13 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             dt.setDate( QDate::fromString( s_DateISO, Qt::ISODate ) );
             dt.setTime( QTime( 0, 0, 0, 0 ) );
             dt.toUTC(); dt.setUtcOffset( 0 );
-            dt = dt.addMSecs( l_msecs );
+            dt = dt.addMSecs( (qint64) l_msecs );
         }
         else
         {
             dt.setDate( QDate( 1970, 1, 1 ) );
             dt.setTime( QTime( 0, 0, 0, 0 ) );
             dt.toUTC(); dt.setUtcOffset( 0 );
-
             dt = dt.addSecs( (qint64) l_secs );
         }
 
@@ -689,23 +604,35 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             tout << dt.toString( "hh:mm:ss" ) << "\t";
             tout << dt.toString( "hh:mm:ss.zzz" ) << "\t";
 
-            tout << s_DayOfYear << "\t";
-            tout << s_fTime << "\t";
+            // Time decimal
+            tout << QString( "%1" ).arg( -dt.time().secsTo( QTime( 0, 0, 0, 0) )/86400., 0, 'f', 5 ) << "\t";
 
-            tout << QString( "%1" ).arg( l_msecs ) << "\t";
+            // Time in milliseconds
+            tout << QString( "%1" ).arg( dt.time().msecsSinceStartOfDay() ) << "\t";
 
+            // Date
             tout << dt.toString( "yyyy" ) << "\t";
             tout << dt.toString( "M" ) << "\t";
             tout << dt.toString( "d" ) << "\t";
 
+            // Time
             tout << dt.toString( "h" ) << "\t";
             tout << dt.toString( "m" ) << "\t";
             tout << dt.toString( "s" ) << "\t";
 
+            // 3 time class
             tout << QString( "%1" ).arg( i_TimeClass3h ) << "\t";
 
-            tout << QString( "%1" ).arg( dt.toMSecsSinceEpoch() ) << "\t";
+            // Day of Year
+            tout << dt.date().dayOfYear() << "\t";
 
+            // Julian day
+            tout << QString( "%1" ).arg( dt.date().toJulianDay() ) << "\t";
+
+            // Unix timestamp
+            tout << QString( "%1" ).arg( dt.toTime_t() ) << "\t";
+
+            // MatLab date
             tout << QString( "%1" ).arg( (double) dt.toMSecsSinceEpoch()/86400000. + 719529., 0, 'f', 6 ) << s_EOL;
         }
 
@@ -728,54 +655,16 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // **********************************************************************************************
 // **********************************************************************************************
 
-int MainWindow::calcJulianDay(const long Julian, int& IYYY, int& MM, int& ID)
-{
-    long  IGREG  = 2299161L;
-    long  JALPHA;
-    long  JA, JB, JC,JD, JE;
-
-    if (Julian >= IGREG)
-    {
-        JALPHA = (long) (((float) (Julian-1867216)-0.25)/36524.25);
-        JA     = Julian + 1 + JALPHA - (long)(0.25*JALPHA);
-    }
-    else
-        JA = Julian;
-
-    JB = JA + 1524;
-    JC = (long) (6680.0+((float) (JB-2439870)-122.1)/365.25);
-    JD = (long) (365*JC + (0.25*JC) );
-    JE = (long) ((JB-JD)/30.6001);
-
-    ID = JB - JD - (long) (30.6001*JE);
-    MM = JE - 1;
-
-    if (MM > 12)
-        MM = MM - 12;
-
-    IYYY = JC - 4715;
-
-    if (MM > 2)
-        --(IYYY);
-
-    if (IYYY <= 0)
-        --(IYYY);
-
-    return( _NOERROR_ );
-}
-
-// **********************************************************************************************
-// **********************************************************************************************
-// **********************************************************************************************
-
 void MainWindow::doCreateDateTime()
 {
-    int         i               = 0;
-    int         err             = 0;
-    int         stopProgress    = 0;
+    int         i                   = 0;
+    int         err                 = 0;
+    int         stopProgress        = 0;
 
-    QString     s_FilenameIn    = "";
-    QString     s_FilenameOut   = "";
+    QString     s_FilenameIn        = "";
+    QString     s_FilenameOut       = "";
+
+    bool        b_incActionNumber   = true;
 
 // **********************************************************************************************
 
@@ -791,7 +680,11 @@ void MainWindow::doCreateDateTime()
                 {
                     QFileInfo fi( s_FilenameIn );
 
-                    s_FilenameOut = fi.absolutePath() + "/" + fi.completeBaseName() + "_DateTime" + setExtension( gi_Extension );
+                    if ( gb_dt_WriteDateTimeOnly == false )
+                    {
+                        s_FilenameOut     = fi.absolutePath() + "/" + fi.completeBaseName() + "_DateTime" + setExtension( gi_Extension );
+                        b_incActionNumber = false;
+                    }
 
                     err = createDateTime( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly, gsl_FilenameList.count() );
 
@@ -817,7 +710,7 @@ void MainWindow::doCreateDateTime()
 
 // **********************************************************************************************
 
-    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Creating date/time was canceled" ), false, false );
+    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Creating date/time was canceled" ), false, b_incActionNumber );
 
     onError( err );
 }
