@@ -21,9 +21,6 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
     int             stopProgress                    = 0;
 
-    QDate           firstDate( 2000, 1, 1 ) ;
-    QDate           secondDate( 2000, 1, 1 ) ;
-
     QDateTime       dt( QDate( 1970, 1, 1 ), QTime( 0, 0 ) );
 
     QString			InputStr				= "";
@@ -143,26 +140,31 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
         if ( i_MonthColumn > 0 )
         {
-            QString s_Month = InputStr.section( "\t", i_MonthColumn-1, i_MonthColumn-1 );
+            i_Month = InputStr.section( "\t", i_MonthColumn-1, i_MonthColumn-1 ).toInt();
 
-            s_Month.replace( "Jan", "1" );
-            s_Month.replace( "Feb", "2" );
-            s_Month.replace( "Mrz", "3" );
-            s_Month.replace( "Mar", "3" );
-            s_Month.replace( "Apr", "4" );
-            s_Month.replace( "Mai", "5" );
-            s_Month.replace( "May", "5" );
-            s_Month.replace( "Jun", "6" );
-            s_Month.replace( "Jul", "7" );
-            s_Month.replace( "Aug", "8" );
-            s_Month.replace( "Sep", "9" );
-            s_Month.replace( "Okt", "10" );
-            s_Month.replace( "Oct", "10" );
-            s_Month.replace( "Nov", "11" );
-            s_Month.replace( "Dez", "12" );
-            s_Month.replace( "Dec", "12" );
+            if ( i_Month == 0 )
+            {
+                QString s_Month = InputStr.section( "\t", i_MonthColumn-1, i_MonthColumn-1 );
 
-            i_Month = s_Month.toInt();
+                s_Month.replace( "Jan", "1" );
+                s_Month.replace( "Feb", "2" );
+                s_Month.replace( "Mrz", "3" );
+                s_Month.replace( "Mar", "3" );
+                s_Month.replace( "Apr", "4" );
+                s_Month.replace( "Mai", "5" );
+                s_Month.replace( "May", "5" );
+                s_Month.replace( "Jun", "6" );
+                s_Month.replace( "Jul", "7" );
+                s_Month.replace( "Aug", "8" );
+                s_Month.replace( "Sep", "9" );
+                s_Month.replace( "Okt", "10" );
+                s_Month.replace( "Oct", "10" );
+                s_Month.replace( "Nov", "11" );
+                s_Month.replace( "Dez", "12" );
+                s_Month.replace( "Dec", "12" );
+
+                i_Month = s_Month.toInt();
+            }
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -172,9 +174,10 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         {
             i_Year = InputStr.section( "\t", i_YearColumn-1, i_YearColumn-1 ).toInt();
 
-            if ( ( 50 < i_Year ) && ( i_Year < 100 ) )
+            if ( ( i_Year > 50 ) && ( i_Year < 100 ) ) // 51 ... 99 => 1950 ... 1999
                 i_Year += 1900;
-            if ( i_Year <= 50 )
+
+            if ( ( i_Year >= 0 ) && ( i_Year <= 50 ) ) // 0 ... 50 => 2000 ... 2050
                 i_Year += 2000;
         }
 
@@ -220,11 +223,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // Date calculated from day, month and year
 
         if ( ( i_DayColumn > 0 ) && ( i_MonthColumn > 0 ) && ( i_YearColumn > 0 ) )
-        {
-            firstDate.setDate( i_Year, 1, 1 );
-            secondDate.setDate( i_Year, i_Month, i_Day );
-            s_DateISO = secondDate.toString( "yyyy-MM-dd" );
-        }
+            s_DateISO = QDate( i_Year, i_Month, i_Day ).toString( "yyyy-MM-dd" );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Time calculated from hour
@@ -242,7 +241,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // Time calculated from hour, minute and second
 
         if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn > 0 ) )
-            l_msecs = i_Hour*3600000 + i_Minute*60000 + (long) (f_Second*1000.);
+            l_msecs = i_Hour*3600000 + i_Minute*60000 + (long) ( f_Second*1000. );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Date and time calculated from year and day of the year
@@ -253,13 +252,13 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             i_DayOfYear	= InputStr.section( "\t", i_DayOfYearColumn-1, i_DayOfYearColumn-1 ).toInt();
 
             dt.setDate( QDate( i_Year, 1, 1 ) );
-            dt = dt.addDays( (qint64) i_DayOfYear );
+            dt = dt.addDays( (qint64) ( i_DayOfYear - 1 ) );
 
             s_DateISO = dt.toString( "yyyy-MM-dd" );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Date
+// Date calculated from date or date/time string
 
         if ( ( i_DateColumn > 0 ) || ( i_DateTimeColumn > 0 ) )
         {
@@ -362,19 +361,17 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                 i_Day   = s_Date.right( 2 ).toInt();
             }
 
-            if ( ( 50 < i_Year ) && ( i_Year < 100 ) )
+            if ( ( i_Year > 50 ) && ( i_Year < 100 ) ) // 51 ... 99 => 1950 ... 1999
                 i_Year += 1900;
-            if ( i_Year <= 50 )
+
+            if ( ( i_Year >= 0 ) && ( i_Year <= 50 ) ) // 0 ... 50 => 2000 ... 2050
                 i_Year += 2000;
 
-            firstDate.setDate( i_Year, 1, 1 );
-            secondDate.setDate( i_Year, i_Month, i_Day );
-
-            s_DateISO	 = secondDate.toString( "yyyy-MM-dd" );
+            s_DateISO = QDate( i_Year, i_Month, i_Day ).toString( "yyyy-MM-dd" );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Time
+// Time calculated from time or date/time string
 
         if ( ( i_TimeColumn > 0 ) || ( i_DateTimeColumn > 0 ) )
         {
@@ -405,10 +402,10 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                 if ( s_DateTime.count( " " ) == 1 )	// 27.11.2004 18:00
                     s_Time = s_DateTime.section( " ", 1, 1 );
 
-                if ( s_DateTime.count( "T" ) == 1 ) 	// 2004-11-27T18:00
+                if ( s_DateTime.count( "T" ) == 1 ) // 2004-11-27T18:00
                     s_Time = s_DateTime.section( "T", 1, 1 );
 
-                if ( s_DateTime.count( " " ) > 1 ) 	// 27 Nov 2004 18:00
+                if ( s_DateTime.count( " " ) == 3 ) // 27 Nov 2004 18:00
                     s_Time = s_DateTime.section( " ", 3, 3 );
             }
 
@@ -513,7 +510,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                 }
             }
 
-            l_msecs = i_Hour*3600000 + i_Minute*60000 + (int) (f_Second*1000.);
+            l_msecs = i_Hour*3600000 + i_Minute*60000 + (int) ( f_Second*1000. );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
@@ -618,7 +615,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             // Time
             tout << dt.toString( "h" ) << "\t";
             tout << dt.toString( "m" ) << "\t";
-            tout << dt.toString( "s" ) << "\t";
+            tout << dt.toString( "s.z" ) << "\t";
 
             // 3 time class
             tout << QString( "%1" ).arg( i_TimeClass3h ) << "\t";
