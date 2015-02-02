@@ -398,8 +398,15 @@ public:
     int PtInPolygon( double d_Latitude, double d_Longitude, int StartPosition, int NumOfPoints, QVector<PositionItem> &v_Position );
     int polyCentroid( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const bool DeleteInputFile, const int NumOfFiles );
 
-    int findDateTimeColumn( const QString s_InputStr );
+    int findDateTimeColumn( const QString InputStr );
     int createDateTime( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int DateColumn, const int YearColumn, const int MonthColumn, const int DayColumn, const int TimeColumn, const int HourColumn, const int MinuteColumn, const int SecondColumn, const int DateTimeColumn, const int DayOfYearColumn, const int JulianDayColumn,  const int MatLabDateColumn, const bool WriteDateTimeOnly, const int NumOfFiles );
+
+    int getYear( const QString YearIn );
+    int getMonth( const QString MonthIn );
+    int getTimeClass3h( const int Hour );
+
+    QDate getDate( const QString DateIn );
+    QTime getTime( const QString TimeIn );
 
     int checkTimeSeries( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );
     int calcSalinityFromCondTempPress( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );

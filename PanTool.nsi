@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "PanTool"
-!define PRODUCT_VERSION "3.11"
+!define PRODUCT_VERSION "3.12"
 !define PRODUCT_PUBLISHER "PANGAEA"
 !define PRODUCT_WEB_SITE "http://www.pangaea.de"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\PanTool.exe"

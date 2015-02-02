@@ -22,15 +22,12 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     int             stopProgress                    = 0;
 
     QDateTime       dt( QDate( 1970, 1, 1 ), QTime( 0, 0 ) );
+    QDate           d( 1970, 1, 1 );
+    QTime           t( 0, 0, 0, 0 );
 
     QString			InputStr				= "";
 
-    QString			s_Date  				= "";
-    QString			s_DateISO				= "";
-
     QString			s_Time					= "";
-    QString			s_Time_long				= "";
-    QString			s_fTime					= "";
 
     int				i_Day					= 0;
     int				i_Month					= 0;
@@ -42,13 +39,6 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     float			f_Second				= 0.;
 
     int				i_DayOfYear				= 0;
-    int             i_TimeClass3h           = 0;
-
-    int				i_offsetHour			= 0;
-
-    long			l_JulianDay 			= 0;
-    long			l_msecs					= 0;
-    long            l_secs                  = 0;
 
     double          d_MatLabDate            = 0.;
 
@@ -127,7 +117,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
         i_DayOfYear = 0;
 
-        l_JulianDay = 0;
+        d.setDate( 1970, 1, 1 );
+        t.setHMS( 0, 0, 0, 0 );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Day
@@ -139,47 +130,13 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // Month
 
         if ( i_MonthColumn > 0 )
-        {
-            i_Month = InputStr.section( "\t", i_MonthColumn-1, i_MonthColumn-1 ).toInt();
-
-            if ( i_Month == 0 )
-            {
-                QString s_Month = InputStr.section( "\t", i_MonthColumn-1, i_MonthColumn-1 );
-
-                s_Month.replace( "Jan", "1" );
-                s_Month.replace( "Feb", "2" );
-                s_Month.replace( "Mrz", "3" );
-                s_Month.replace( "Mar", "3" );
-                s_Month.replace( "Apr", "4" );
-                s_Month.replace( "Mai", "5" );
-                s_Month.replace( "May", "5" );
-                s_Month.replace( "Jun", "6" );
-                s_Month.replace( "Jul", "7" );
-                s_Month.replace( "Aug", "8" );
-                s_Month.replace( "Sep", "9" );
-                s_Month.replace( "Okt", "10" );
-                s_Month.replace( "Oct", "10" );
-                s_Month.replace( "Nov", "11" );
-                s_Month.replace( "Dez", "12" );
-                s_Month.replace( "Dec", "12" );
-
-                i_Month = s_Month.toInt();
-            }
-        }
+            i_Month = getMonth( InputStr.section( "\t", i_MonthColumn-1, i_MonthColumn-1 ) );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Year
 
         if ( i_YearColumn > 0 )
-        {
-            i_Year = InputStr.section( "\t", i_YearColumn-1, i_YearColumn-1 ).toInt();
-
-            if ( ( i_Year > 50 ) && ( i_Year < 100 ) ) // 51 ... 99 => 1950 ... 1999
-                i_Year += 1900;
-
-            if ( ( i_Year >= 0 ) && ( i_Year <= 50 ) ) // 0 ... 50 => 2000 ... 2050
-                i_Year += 2000;
-        }
+            i_Year = getYear( InputStr.section( "\t", i_YearColumn-1, i_YearColumn-1 ) );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Hour
@@ -203,12 +160,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // Date/Time calculated from Julian Day
 
         if ( i_JulianDayColumn > 0 )
-        {
-            l_JulianDay = InputStr.section( "\t", i_JulianDayColumn-1, i_JulianDayColumn-1 ).toLong();
-
-            dt.setDate( QDate::fromJulianDay( (qint64) l_JulianDay ) );
-            dt.setTime( QTime( 0, 0, 0, 0 ) );
-        }
+            d = QDate::fromJulianDay( (qint64) InputStr.section( "\t", i_JulianDayColumn-1, i_JulianDayColumn-1 ).toLong() );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Date/Time calculated from MatLab date
@@ -216,32 +168,16 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         if ( i_MatLabDateColumn > 0 )
         {
             d_MatLabDate = InputStr.section( "\t", i_MatLabDateColumn-1, i_MatLabDateColumn-1 ).toDouble();
-            l_secs = (long) ( ( qFloor( d_MatLabDate ) - 719529. )*86400. + ( ( d_MatLabDate - qFloor( d_MatLabDate ) )*3600.*24. ) );
+
+            d = d.addDays( (qint64) ( qFloor( d_MatLabDate ) - 719529. ) );
+            t = t.addSecs( (qint64) ( ( d_MatLabDate - qFloor( d_MatLabDate ) )*3600.*24. ) );
          }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Date calculated from day, month and year
 
         if ( ( i_DayColumn > 0 ) && ( i_MonthColumn > 0 ) && ( i_YearColumn > 0 ) )
-            s_DateISO = QDate( i_Year, i_Month, i_Day ).toString( "yyyy-MM-dd" );
-
-//-----------------------------------------------------------------------------------------------------------------------
-// Time calculated from hour
-
-        if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn == 0 ) && ( i_SecondColumn == 0 ) )
-            l_msecs = i_Hour*3600000;
-
-//-----------------------------------------------------------------------------------------------------------------------
-// Time calculated from hour and minute
-
-        if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn == 0 ) )
-            l_msecs = i_Hour*3600000 + i_Minute*60000;
-
-//-----------------------------------------------------------------------------------------------------------------------
-// Time calculated from hour, minute and second
-
-        if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn > 0 ) )
-            l_msecs = i_Hour*3600000 + i_Minute*60000 + (long) ( f_Second*1000. );
+            d.setDate( i_Year, i_Month, i_Day );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Date and time calculated from year and day of the year
@@ -251,355 +187,82 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
             i_Year	    = InputStr.section( "\t", i_YearColumn-1, i_YearColumn-1 ).toInt();
             i_DayOfYear	= InputStr.section( "\t", i_DayOfYearColumn-1, i_DayOfYearColumn-1 ).toInt();
 
-            dt.setDate( QDate( i_Year, 1, 1 ) );
-            dt = dt.addDays( (qint64) ( i_DayOfYear - 1 ) );
+            d.setDate( i_Year, 1, 1 );
 
-            s_DateISO = dt.toString( "yyyy-MM-dd" );
+            d = d.addDays( (qint64) ( i_DayOfYear - 1 ) );
         }
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Date calculated from date or date/time string
+// Time calculated from hour
 
-        if ( ( i_DateColumn > 0 ) || ( i_DateTimeColumn > 0 ) )
-        {
-            i_Day	= 0;
-            i_Month	= 0;
-            i_Year	= 0;
-
-            if ( i_DateColumn > 0 )
-                s_Date = InputStr.section( "\t", i_DateColumn-1, i_DateColumn-1 );
-
-            if ( i_DateTimeColumn > 0 )
-            {
-                QString s_DateTime = InputStr.section( "\t", i_DateTimeColumn-1, i_DateTimeColumn-1 );
-
-                s_DateTime.replace( "  ", " " );
-
-                s_Date = s_DateTime;
-
-                if ( s_DateTime.count( " " ) == 1 )	// 27.11.2004 18:00
-                    s_Date = s_DateTime.section( " ", 0, 0 );
-
-                if ( s_DateTime.count( "T" ) == 1 ) 	// 2004-11-27T18:00
-                    s_Date = s_DateTime.section( "T", 0, 0 );
-
-                if ( s_DateTime.count( " " ) > 1 ) 	// 27 Nov 2004 18:00
-                    s_Date = s_DateTime.section( " ", 0, 2 );
-            }
-
-            if ( s_Date.count( "." ) > 1 ) // German
-            {
-                i_Day	= s_Date.section( ".", 0, 0 ).toInt();
-                i_Month	= s_Date.section( ".", 1, 1 ).toInt();
-                i_Year	= s_Date.section( ".", 2, 2 ).toInt();
-            }
-
-            if ( s_Date.count( "/" ) > 1 ) // US
-            {
-                i_Day	= s_Date.section( "/", 1, 1 ).toInt();
-                i_Month	= s_Date.section( "/", 0, 0 ).toInt();
-                i_Year	= s_Date.section( "/", 2, 2 ).toInt();
-            }
-
-            if ( s_Date.count( "-" ) > 1 ) // ISO
-            {
-                i_Day	= s_Date.section( "-", 2, 2 ).toInt();
-                i_Month	= s_Date.section( "-", 1, 1 ).toInt();
-                i_Year	= s_Date.section( "-", 0, 0 ).toInt();
-            }
-
-            if ( s_Date.count( " " ) > 1 )
-            {
-                QString s_Month = "";
-
-                s_Date.replace( ".", "" );
-
-                if ( s_Date.section( " ", 0, 0 ).length() > 2 )
-                {	// Apr 21 2005
-                    s_Month	= s_Date.section( " ", 0, 0 );
-                    i_Day	= s_Date.section( " ", 1, 1 ).toInt();
-                    i_Year	= s_Date.section( " ", 2, 2 ).toInt();
-                }
-                else
-                {	// 21 Apr 2005
-                    i_Day	= s_Date.section( " ", 0, 0 ).toInt();
-                    s_Month	= s_Date.section( " ", 1, 1 );
-                    i_Year	= s_Date.section( " ", 2, 2 ).toInt();
-                }
-
-                s_Month.replace( "Jan", "1" );
-                s_Month.replace( "Feb", "2" );
-                s_Month.replace( "Mrz", "3" );
-                s_Month.replace( "Mar", "3" );
-                s_Month.replace( "Apr", "4" );
-                s_Month.replace( "Mai", "5" );
-                s_Month.replace( "May", "5" );
-                s_Month.replace( "Jun", "6" );
-                s_Month.replace( "Jul", "7" );
-                s_Month.replace( "Aug", "8" );
-                s_Month.replace( "Sep", "9" );
-                s_Month.replace( "Okt", "10" );
-                s_Month.replace( "Oct", "10" );
-                s_Month.replace( "Nov", "11" );
-                s_Month.replace( "Dez", "12" );
-                s_Month.replace( "Dec", "12" );
-
-                i_Month = s_Month.toInt();
-            }
-
-            if ( ( s_Date.length() == 6 ) && ( i_Day+i_Month+i_Year == 0 ) ) // 082791  = mmddyy
-            {
-                i_Month	= s_Date.left( 2 ).toInt();
-                i_Day	= s_Date.mid( 2, 2 ).toInt();
-                i_Year	= s_Date.right( 2 ).toInt();
-            }
-
-            if ( ( s_Date.length() == 8 ) && ( i_Day+i_Month+i_Year == 0 ) ) // 20040827 = yyyymmdd
-            {
-                i_Year  = s_Date.left( 4 ).toInt();
-                i_Month = s_Date.mid( 4, 2 ).toInt();
-                i_Day   = s_Date.right( 2 ).toInt();
-            }
-
-            if ( ( i_Year > 50 ) && ( i_Year < 100 ) ) // 51 ... 99 => 1950 ... 1999
-                i_Year += 1900;
-
-            if ( ( i_Year >= 0 ) && ( i_Year <= 50 ) ) // 0 ... 50 => 2000 ... 2050
-                i_Year += 2000;
-
-            s_DateISO = QDate( i_Year, i_Month, i_Day ).toString( "yyyy-MM-dd" );
-        }
+        if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn == 0 ) && ( i_SecondColumn == 0 ) )
+            t.setHMS( i_Hour, 0, 0, 0 );
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Time calculated from time or date/time string
+// Time calculated from hour and minute
 
-        if ( ( i_TimeColumn > 0 ) || ( i_DateTimeColumn > 0 ) )
-        {
-            i_offsetHour	= 0;
-            i_Hour			= 0;
-            i_Minute		= 0;
-            f_Second		= 0.0;
-
-            if ( i_TimeColumn > 0 )
-            {
-                s_Time	= InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 );
-
-                if ( s_Time.count( ":" ) == 0 )
-                {
-                    while ( s_Time.length() < 4 )
-                        s_Time = "0" + s_Time;
-                }
-            }
-
-            if ( i_DateTimeColumn > 0 )
-            {
-                QString s_DateTime = InputStr.section( "\t", i_DateTimeColumn-1, i_DateTimeColumn-1 );
-
-                s_DateTime.replace( "  ", " " );
-
-                s_Time = s_DateTime;
-
-                if ( s_DateTime.count( " " ) == 1 )	// 27.11.2004 18:00
-                    s_Time = s_DateTime.section( " ", 1, 1 );
-
-                if ( s_DateTime.count( "T" ) == 1 ) // 2004-11-27T18:00
-                    s_Time = s_DateTime.section( "T", 1, 1 );
-
-                if ( s_DateTime.count( " " ) == 3 ) // 27 Nov 2004 18:00
-                    s_Time = s_DateTime.section( " ", 3, 3 );
-            }
-
-            // 00:00	12:00 AM	-12
-            // 00:30	12:30 AM	-12
-            // 01:00	01:00 AM	+0
-            // 02:00	02:00 AM	+0
-            // 03:00	03:00 AM	+0
-            // 04:00	04:00 AM	+0
-            // 05:00	05:00 AM	+0
-            // 06:00	06:00 AM	+0
-            // 07:00	07:00 AM	+0
-            // 08:00	08:00 AM	+0
-            // 09:00	09:00 AM	+0
-            // 10:00	10:00 AM	+0
-            // 11:00	11:00 AM	+0
-            // 12:00	12:00 PM	+0
-            // 12:30	12:30 PM	+0
-            // 13:00	01:00 PM	+12
-            // 14:00	02:00 PM	+12
-            // 15:00	03:00 PM	+12
-            // 16:00	04:00 PM	+12
-            // 17:00	05:00 PM	+12
-            // 18:00	06:00 PM	+12
-            // 19:00	07:00 PM	+12
-            // 20:00	08:00 PM	+12
-            // 21:00	09:00 PM	+12
-            // 22:00	10:00 PM	+12
-            // 23:00	11:00 PM	+12
-
-            if ( s_Time.endsWith( "AM" ) == true )
-            {
-                if ( s_Time.startsWith( "12" ) == false )
-                    i_offsetHour = 0;
-                else
-                    i_offsetHour = -12;
-
-                s_Time.replace( "AM", "" );
-            }
-
-            if ( s_Time.endsWith( "PM" ) == true )
-            {
-                if ( s_Time.startsWith( "12" ) == false )
-                    i_offsetHour = 12;
-                else
-                    i_offsetHour = 0;
-
-                s_Time.replace( "PM", "" );
-            }
-
-            if ( s_Time.count( ":" ) > 0 )
-            {
-                i_Hour		= s_Time.section( ":", 0, 0 ).toInt() + i_offsetHour;
-                i_Minute	= s_Time.section( ":", 1, 1 ).toInt();
-
-                if ( s_Time.count( ":" ) > 1 )
-                {
-                    f_Second = s_Time.section( ":", 2, 2 ).toFloat();
-                    s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                    s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
-                }
-                else
-                {
-                    s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                    s_Time_long.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                }
-            }
-
-            if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 1 ) )  // 8.5 = 08:30
-            {
-                i_Hour		= (int) s_Time.toFloat() + i_offsetHour;
-                i_Minute	= (int) ( ( s_Time.toFloat() - (float) i_Hour ) * 60. );
-                f_Second	= ( s_Time.toFloat() - (float) i_Hour - (float) i_Minute/60. ) * 3600.;
-
-                if ( f_Second > 0 )
-                {
-                    s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                    s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
-                }
-                else
-                {
-                    s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                    s_Time_long.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                }
-            }
-
-            if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) )  // 085834 = 08:58:34
-            {
-                i_Hour		= s_Time.left( 2 ).toInt() + i_offsetHour;
-                i_Minute	= s_Time.mid( 2, 2 ).toInt();
-
-                if ( s_Time.length() > 4 )
-                {
-                    f_Second = s_Time.right( 2 ).toFloat();
-                    s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                    s_Time_long.sprintf( "%02d:%02d:%06.3f", i_Hour, i_Minute, f_Second );
-                }
-                else
-                {
-                    s_Time.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                    s_Time_long.sprintf( "%02d:%02d", i_Hour, i_Minute );
-                }
-            }
-
-            l_msecs = i_Hour*3600000 + i_Minute*60000 + (int) ( f_Second*1000. );
-        }
+        if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn == 0 ) )
+            t.setHMS( i_Hour, i_Minute, 0, 0 );
 
 //-----------------------------------------------------------------------------------------------------------------------
-// Time class
+// Time calculated from hour, minute and second
 
-        switch ( i_Hour )
-        {
-        case 0:
-        case 1:
-        case 2:
-            i_TimeClass3h = 1;
-            break;
-        case 3:
-        case 4:
-        case 5:
-            i_TimeClass3h = 2;
-            break;
-        case 6:
-        case 7:
-        case 8:
-            i_TimeClass3h = 3;
-            break;
-        case 9:
-        case 10:
-        case 11:
-            i_TimeClass3h = 4;
-            break;
-        case 12:
-        case 13:
-        case 14:
-            i_TimeClass3h = 5;
-            break;
-        case 15:
-        case 16:
-        case 17:
-            i_TimeClass3h = 6;
-            break;
-        case 18:
-        case 19:
-        case 20:
-            i_TimeClass3h = 7;
-            break;
-        case 21:
-        case 22:
-        case 23:
-            i_TimeClass3h = 8;
-            break;
-        case 24:
-            i_TimeClass3h = 1;
-            break;
-        default:
-            i_TimeClass3h = -9;
-            break;
-        }
+        if ( ( i_HourColumn > 0 ) && ( i_MinuteColumn > 0 ) && ( i_SecondColumn > 0 ) )
+            t.setHMS( i_Hour, i_Minute, qFloor( f_Second ), ( f_Second - qFloor( f_Second ) )*1000. );
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Date calculated from date string
+
+        if ( i_DateColumn > 0 )
+            d = getDate( InputStr.section( "\t", i_DateColumn-1, i_DateColumn-1 ) );
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Date calculated from date/time string
+
+        if ( i_DateTimeColumn > 0 )
+            d = getDate( InputStr.section( "\t", i_DateTimeColumn-1, i_DateTimeColumn-1 ) );
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Time calculated from time string
+
+        if ( i_TimeColumn > 0 )
+            t = getTime( InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 ) );
+
+//-----------------------------------------------------------------------------------------------------------------------
+// Time calculated from date/time string
+
+        if ( i_DateTimeColumn > 0 )
+            t = getTime( InputStr.section( "\t", i_DateTimeColumn-1, i_DateTimeColumn-1 ) );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Output
 
-        if ( s_DateISO.isEmpty() == false )
-        {
-            dt.setDate( QDate::fromString( s_DateISO, Qt::ISODate ) );
-            dt.setTime( QTime( 0, 0, 0, 0 ) );
-            dt.toUTC(); dt.setUtcOffset( 0 );
-            dt = dt.addMSecs( (qint64) l_msecs );
-        }
-        else
-        {
-            dt.setDate( QDate( 1970, 1, 1 ) );
-            dt.setTime( QTime( 0, 0, 0, 0 ) );
-            dt.toUTC(); dt.setUtcOffset( 0 );
-            dt = dt.addSecs( (qint64) l_secs );
-        }
+        dt.setDate( d );
+        dt.setTime( t );
+        dt.setOffsetFromUtc( 0 );
+
+        dt = dt.toUTC();
 
         if ( b_writeDateTimeOnly == true )
         {
-//          tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t" << QString( "%1" ).arg( i_TimeClass3h ) << s_EOL;
-//          tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t" << sl_Input.at( i ) << s_EOL;
-//          tout << dt.toString( "yyyy-MM-ddThh:mm" ) << "\t" << sl_Input.at( i ) << s_EOL;
-            tout << dt.toString( "yyyy-MM-ddThh:mm:ss" ) << "\t" << sl_Input.at( i ) << s_EOL;
+            // Date and Time
+//          tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t" << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) << sl_Input.at( i ) << s_EOL;
+//          tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+//          tout << dt.toString( "yyyy-MM-ddThh:mm" )        << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+            tout << dt.toString( "yyyy-MM-ddThh:mm:ss" )     << "\t"                                                            << sl_Input.at( i ) << s_EOL;
         }
         else
         {
-            tout << dt.toString( "yyyy-MM-ddThh:mm" ) << "\t";
-            tout << dt.toString( "yyyy-MM-ddThh:mm:ss" ) << "\t";
+            // Date
+            tout << dt.toString( "yyyy-MM-ddThh:mm" )        << "\t";
+            tout << dt.toString( "yyyy-MM-ddThh:mm:ss" )     << "\t";
             tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t";
-            tout << dt.toString( "yyyy-MM-dd" ) << "\t";
-            tout << dt.toString( "hh:mm" ) << "\t";
-            tout << dt.toString( "hh:mm:ss" ) << "\t";
-            tout << dt.toString( "hh:mm:ss.zzz" ) << "\t";
+            tout << dt.toString( "yyyy-MM-dd" )              << "\t";
+
+            // Time
+            tout << dt.toString( "hh:mm" )                   << "\t";
+            tout << dt.toString( "hh:mm:ss" )                << "\t";
+            tout << dt.toString( "hh:mm:ss.zzz" )            << "\t";
 
             // Time decimal
             tout << QString( "%1" ).arg( -dt.time().secsTo( QTime( 0, 0, 0, 0) )/86400., 0, 'f', 5 ) << "\t";
@@ -609,16 +272,16 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
             // Date
             tout << dt.toString( "yyyy" ) << "\t";
-            tout << dt.toString( "M" ) << "\t";
-            tout << dt.toString( "d" ) << "\t";
+            tout << dt.toString( "M" )    << "\t";
+            tout << dt.toString( "d" )    << "\t";
 
             // Time
-            tout << dt.toString( "h" ) << "\t";
-            tout << dt.toString( "m" ) << "\t";
-            tout << dt.toString( "s.z" ) << "\t";
+            tout << dt.toString( "h" )    << "\t";
+            tout << dt.toString( "m" )    << "\t";
+            tout << dt.toString( "s.z" )  << "\t";
 
             // 3 time class
-            tout << QString( "%1" ).arg( i_TimeClass3h ) << "\t";
+            tout << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) ) << "\t";
 
             // Day of Year
             tout << dt.date().dayOfYear() << "\t";
@@ -646,6 +309,328 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         return( _APPBREAK_ );
 
     return( _NOERROR_ );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+int MainWindow::getTimeClass3h( const int i_Hour )
+{
+    switch ( i_Hour )
+    {
+    case 0:
+    case 1:
+    case 2:
+        return( 1 );
+        break;
+    case 3:
+    case 4:
+    case 5:
+        return( 2 );
+        break;
+    case 6:
+    case 7:
+    case 8:
+        return( 3 );
+        break;
+    case 9:
+    case 10:
+    case 11:
+        return( 4 );
+        break;
+    case 12:
+    case 13:
+    case 14:
+        return( 5 );
+        break;
+    case 15:
+    case 16:
+    case 17:
+        return( 6 );
+        break;
+    case 18:
+    case 19:
+    case 20:
+        return( 7 );
+        break;
+    case 21:
+    case 22:
+    case 23:
+        return( 8 );
+        break;
+    case 24:
+        return( 1 );
+        break;
+    default:
+        ;
+        break;
+    }
+
+    return( -9 );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+int MainWindow::getYear( const QString s_YearIn )
+{
+    int i_Year = s_YearIn.toInt();
+
+    if ( ( i_Year > 50 ) && ( i_Year < 100 ) ) // 51 ... 99 => 1950 ... 1999
+        i_Year += 1900;
+
+    if ( ( i_Year >= 0 ) && ( i_Year <= 50 ) ) // 0 ... 50 => 2000 ... 2050
+        i_Year += 2000;
+
+    return( i_Year );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+int MainWindow::getMonth( const QString s_MonthIn )
+{
+    QString s_Month = s_MonthIn.toLower();
+
+    int     i_Month = s_Month.toInt();
+
+// **********************************************************************************************
+
+    if ( ( i_Month > 0 ) && ( i_Month < 13 ) )
+        return( i_Month);
+
+    s_Month.replace( ".", "" );
+    s_Month.replace( "january", "1" );
+    s_Month.replace( "januar", "1" );
+    s_Month.replace( "jan", "1" );
+    s_Month.replace( "february", "2" );
+    s_Month.replace( "februar", "2" );
+    s_Month.replace( "feb", "2" );
+    s_Month.replace( "march", "3" );
+    s_Month.replace( "märz", "3" );
+    s_Month.replace( "mrz", "3" );
+    s_Month.replace( "mar", "3" );
+    s_Month.replace( "april", "4" );
+    s_Month.replace( "apr", "4" );
+    s_Month.replace( "mai", "5" );
+    s_Month.replace( "may", "5" );
+    s_Month.replace( "june", "6" );
+    s_Month.replace( "juni", "6" );
+    s_Month.replace( "jun", "6" );
+    s_Month.replace( "july", "7" );
+    s_Month.replace( "juli", "7" );
+    s_Month.replace( "jul", "7" );
+    s_Month.replace( "august", "8" );
+    s_Month.replace( "aug", "8" );
+    s_Month.replace( "september", "9" );
+    s_Month.replace( "sep", "9" );
+    s_Month.replace( "october", "10" );
+    s_Month.replace( "oktober", "10" );
+    s_Month.replace( "okt", "10" );
+    s_Month.replace( "oct", "10" );
+    s_Month.replace( "november", "11" );
+    s_Month.replace( "nov", "11" );
+    s_Month.replace( "december", "12" );
+    s_Month.replace( "dezember", "11" );
+    s_Month.replace( "dez", "12" );
+    s_Month.replace( "dec", "12" );
+
+    return( s_Month.toInt() );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+QTime MainWindow::getTime( const QString s_TimeIn )
+{
+    QString s_Time = s_TimeIn;
+
+    QTime   t( 0, 0, 0, 0 );
+
+    int     i_offsetHour	= 0;
+    int     i_Hour			= 0;
+    int     i_Minute		= 0;
+
+    float   f_Second		= 0.0;
+
+// **********************************************************************************************
+
+    s_Time = s_Time.toLower();
+
+    s_Time.replace( "  ", " " );
+    s_Time.replace( " pm", "pm" );
+    s_Time.replace( " am", "am" );
+
+    if ( s_Time.count( " " ) == 1 )	// 27.11.2004 18:58:34.345
+        s_Time = s_Time.section( " ", 1, 1 );
+
+    if ( s_Time.count( "T" ) == 1 ) // 2004-11-27T18:58:34.345
+        s_Time = s_Time.section( "T", 1, 1 );
+
+    if ( s_Time.count( " " ) == 3 ) // 27 Nov 2004 18:58:34.345
+        s_Time = s_Time.section( " ", 3, 3 );
+
+    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) ) // 1800
+    {
+        while ( s_Time.length() < 4 )
+            s_Time.prepend( "0" );
+    }
+
+// **********************************************************************************************
+
+    // 00:00	12:00 AM	-12
+    // 00:30	12:30 AM	-12
+    // 01:00	01:00 AM	+0
+    // 02:00	02:00 AM	+0
+    // 03:00	03:00 AM	+0
+    // 04:00	04:00 AM	+0
+    // 05:00	05:00 AM	+0
+    // 06:00	06:00 AM	+0
+    // 07:00	07:00 AM	+0
+    // 08:00	08:00 AM	+0
+    // 09:00	09:00 AM	+0
+    // 10:00	10:00 AM	+0
+    // 11:00	11:00 AM	+0
+    // 12:00	12:00 PM	+0
+    // 12:30	12:30 PM	+0
+    // 13:00	01:00 PM	+12
+    // 14:00	02:00 PM	+12
+    // 15:00	03:00 PM	+12
+    // 16:00	04:00 PM	+12
+    // 17:00	05:00 PM	+12
+    // 18:00	06:00 PM	+12
+    // 19:00	07:00 PM	+12
+    // 20:00	08:00 PM	+12
+    // 21:00	09:00 PM	+12
+    // 22:00	10:00 PM	+12
+    // 23:00	11:00 PM	+12
+
+    if ( s_Time.endsWith( "am" ) == true )
+    {
+        if ( s_Time.startsWith( "12" ) == false )
+            i_offsetHour = 0;
+        else
+            i_offsetHour = -12;
+
+        s_Time.replace( "am", "" );
+    }
+
+    if ( s_Time.endsWith( "pm" ) == true )
+    {
+        if ( s_Time.startsWith( "12" ) == false )
+            i_offsetHour = 12;
+        else
+            i_offsetHour = 0;
+
+        s_Time.replace( "pm", "" );
+    }
+
+    s_Time.replace( " ", "" );
+
+// **********************************************************************************************
+
+    if ( s_Time.count( ":" ) > 0 )
+    {
+        i_Hour	 = s_Time.section( ":", 0, 0 ).toInt() + i_offsetHour;
+        i_Minute = s_Time.section( ":", 1, 1 ).toInt();
+//      f_Second = 0.0;
+    }
+
+    if ( s_Time.count( ":" ) > 1 )
+        f_Second = s_Time.section( ":", 2, 2 ).toFloat();
+
+    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 1 ) )  // 8.5 = 08:30
+        f_Second = s_Time.toFloat()*3600.;
+
+    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) )  // 0858 = 08:58
+    {
+        i_Hour	 = s_Time.left( 2 ).toInt();
+        i_Minute = s_Time.mid( 2, 2 ).toInt();
+//      f_Second = 0.0;
+    }
+
+    t.setHMS( i_Hour, i_Minute, 0, 0 );
+    t = t.addSecs( qFloor( f_Second ) );
+    t = t.addMSecs( ( f_Second - qFloor( f_Second ) )*1000. );
+
+    return( t );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+QDate MainWindow::getDate( const QString s_DateIn )
+{
+    QString s_Date = s_DateIn;
+
+    QDate   d( 1970, 1, 1 );
+
+// **********************************************************************************************
+
+    s_Date.replace( "  ", " " );
+
+    if ( s_Date.count( " " ) == 1 )	// 27.11.2004 18:00
+        s_Date = s_Date.section( " ", 0, 0 );
+
+    if ( s_Date.count( "T" ) == 1 ) // 2004-11-27T18:00
+        s_Date = s_Date.section( "T", 0, 0 );
+
+    if ( s_Date.count( " " ) > 1 ) 	// 27 Nov 2004 18:00
+        s_Date = s_Date.section( " ", 0, 2 );
+
+// **********************************************************************************************
+
+    if ( s_Date.count( "." ) > 1 ) // German
+    {
+        d.setDate( getYear( s_Date.section( ".", 2, 2 ) ), s_Date.section( ".", 1, 1 ).toInt(), s_Date.section( ".", 0, 0 ).toInt() );
+
+        return( d );
+    }
+
+    if ( s_Date.count( "/" ) > 1 ) // US
+    {
+        d.setDate( getYear( s_Date.section( "/", 2, 2 ) ), s_Date.section( "/", 0, 0 ).toInt(), s_Date.section( "/", 1, 1 ).toInt() );
+
+        return( d );
+    }
+
+    if ( s_Date.count( "-" ) > 1 ) // ISO
+    {
+        d.setDate( getYear( s_Date.section( "-", 0, 0 ) ), s_Date.section( "-", 1, 1 ).toInt(), s_Date.section( "-", 2, 2 ).toInt() );
+
+        return( d );
+    }
+
+    if ( s_Date.count( " " ) > 1 )
+    {
+        if ( s_Date.section( " ", 0, 0 ).length() > 2 )
+            d.setDate( s_Date.section( " ", 2, 2 ).toInt(), getMonth( s_Date.section( " ", 0, 0 ) ), s_Date.section( " ", 1, 1 ).toInt() ); // Apr 21 2005
+        else
+            d.setDate( s_Date.section( " ", 2, 2 ).toInt(), getMonth( s_Date.section( " ", 1, 1 ) ), s_Date.section( " ", 0, 0 ).toInt() ); // 21 Apr 2005
+
+        return( d );
+    }
+
+    if ( ( s_Date.length() == 6 ) && ( d.year()+d.month()-d.day() == 1970 ) ) // 082791  = mmddyy
+    {
+        d.setDate( getYear( s_Date.right( 2 ) ), s_Date.left( 2 ).toInt(), s_Date.mid( 2, 2 ).toInt() );
+
+        return( d );
+    }
+
+    if ( ( s_Date.length() == 8 ) && ( d.year()+d.month()-d.day() == 1970 ) ) // 20040827 = yyyymmdd
+    {
+        d.setDate( s_Date.left( 4 ).toInt(), s_Date.mid( 4, 2 ).toInt(), s_Date.right( 2 ).toInt() );
+
+        return( d );
+    }
+
+    return( d );
 }
 
 // **********************************************************************************************
