@@ -69,10 +69,6 @@ int MainWindow::createScript( const QString &s_FilenameIn, const int i_CodecInpu
             ; // Shebang not needed
         #endif
     }
-    else
-    {
-        i++;
-    }
 
 // **********************************************************************************************
 
