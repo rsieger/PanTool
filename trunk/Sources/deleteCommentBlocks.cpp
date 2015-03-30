@@ -98,9 +98,7 @@ int MainWindow::deleteCommentBlocks( const QString &s_FilenameIn, const QString 
                     i++;
 
                 if ( LineCanBeWritten( sl_Input.at( i ).section( "*/", 1, 1 ), b_SkipEmptyLines, b_SkipCommentLines ) == true )
-                    tout << sl_Input.at( i ).section( "*/", 1, 1 );
-
-                tout << s_EOL;
+                    tout << sl_Input.at( i ).section( "*/", 1, 1 ) << s_EOL;
             }
 
             i++;
