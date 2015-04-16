@@ -304,6 +304,9 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
                 if ( s_Size.toLower().contains( "unknown</td>" ) == true )
                     sl_Data.append( s_Data );
 
+                if ( ( s_Size.toLower().contains( "datasets</td>" ) == true ) && ( ( b_DownloadCitation == true ) || ( b_DownloadMetadata == true ) ) )
+                    sl_Data.append( s_Data + "\t" + "parent" );
+
                 if ( s_Size.toLower().contains( "datasets</td>" ) == true )
                 {
                     tout << "\t\t" << "Dataset " << s_Data << " is a parent" << s_EOL;
@@ -323,8 +326,10 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
 
         if ( sl_Input.at( 0 ).section( "\t", 1, 1 ).toLower() == "export filename" )
             b_ExportFilenameExists = true;
+
         if ( sl_Input.at( 0 ).section( "\t", 1, 1 ).toLower() == "filename" )
             b_ExportFilenameExists = true;
+
         if ( sl_Input.at( 0 ).section( "\t", 1, 1 ).toLower() == "file" )
             b_ExportFilenameExists = true;
 
@@ -360,7 +365,7 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
     {
         if ( b_isURL == true )
         {
-            s_Domain = sl_Data.at( i ).section( "/", 0, 2 ); // eg. http://iodp.tamu.edu/
+            s_Domain = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 0, 2 ); // eg. http://iodp.tamu.edu/
 
             if ( sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ).isEmpty() == false )
                 s_Url = "/" + sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ); // eg. /janusweb/chemistry/chemcarb.cgi?leg=197&site=1203&hole=A
@@ -409,7 +414,10 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
         {
             s_Url = "http://doi.pangaea.de/10.1594/PANGAEA."+ s_DatasetID + "?format=citation_text";
 
-            downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_citation" + setExtension( i_Extension ) );
+            if ( sl_Data.at( i ).section( "\t", 1, 1 ) == "parent" )
+                downloadFile( s_Url, s_DownloadDirectory + "/" + "is_parent_" + s_ExportFilename + "_citation" + setExtension( i_Extension ) );
+            else
+                downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_citation" + setExtension( i_Extension ) );
 
             wait( 100 );
         }
@@ -418,7 +426,10 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
         {
             s_Url = "http://doi.pangaea.de/10.1594/PANGAEA."+ s_DatasetID + "?format=metainfo_xml";
 
-            downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_metadata.xml" );
+            if ( sl_Data.at( i ).section( "\t", 1, 1 ) == "parent" )
+                downloadFile( s_Url, s_DownloadDirectory + "/" + "is_parent_" + s_ExportFilename + "_metadata.xml" );
+            else
+                downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_metadata.xml" );
 
             wait( 100 );
         }
@@ -548,8 +559,11 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             {
                 if ( i_NumOfParents > 0 )
                 {
-                    s_Message = QString( "%1" ).arg( i ) + tr( " datasets downloaded to\n" ) + QDir::toNativeSeparators( s_DownloadDirectory ) + "\n\n" + QString( "%1" ).arg( i_NumOfParents ) + tr( " parents removed from download list. See\n" ) + QDir::toNativeSeparators( fout.fileName() ) + tr( "\nfor details." );;
-                    QMessageBox::information( this, getApplicationName( true ), s_Message );
+                    if ( b_DownloadData == true )
+                    {
+                        s_Message = QString( "%1" ).arg( i ) + tr( " datasets downloaded to\n" ) + QDir::toNativeSeparators( s_DownloadDirectory ) + "\n\n" + QString( "%1" ).arg( i_NumOfParents ) + tr( " parents removed from download list. See\n" ) + QDir::toNativeSeparators( fout.fileName() ) + tr( "\nfor details." );;
+                        QMessageBox::information( this, getApplicationName( true ), s_Message );
+                    }
                 }
                 else
                 {
