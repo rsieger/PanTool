@@ -40,8 +40,8 @@ void MainWindow::createActions()
     hideWindowAction->setShortcut(tr("Ctrl+W"));
     connect(hideWindowAction, SIGNAL(triggered()), this, SLOT(hideWindow()));
 
-    setOptionsAction = new QAction(trUtf8("General o&ptions"), this);
-    setOptionsAction->setShortcut(trUtf8("Ctrl+P"));
+    setOptionsAction = new QAction(trUtf8("General options..."), this);
+    setOptionsAction->setShortcut(trUtf8("Ctrl+,"));
     connect(setOptionsAction, SIGNAL(triggered()), this, SLOT(doGeneralOptionsDialog()));
 
     exitAction = new QAction(trUtf8("&Quit"), this);
