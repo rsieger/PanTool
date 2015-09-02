@@ -293,6 +293,7 @@ void MainWindow::savePreferences()
     settings.setValue( "MulX", gf_rec_MulX );
     settings.setValue( "AddX", gf_rec_AddX );
     settings.setValue( "NumberOfDigits", gi_rec_NumOfDigits );
+    settings.setValue( "OnlyIfEmpty", gb_rec_OnlyIfEmpty );
     settings.setValue( "DeleteInputFile", gb_rec_DeleteInputFile );
     settings.endGroup();
 
@@ -683,6 +684,7 @@ void MainWindow::loadPreferences()
     gf_rec_MulX              = settings.value( "MulX", 1. ).toFloat();
     gf_rec_AddX              = settings.value( "AddX", 0. ).toFloat();
     gi_rec_NumOfDigits       = settings.value( "NumberOfDigits", 5 ).toInt();
+    gb_rec_OnlyIfEmpty       = settings.value( "OnlyIfEmpty", false ).toBool();
     gb_rec_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 

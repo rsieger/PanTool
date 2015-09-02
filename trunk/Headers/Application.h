@@ -268,6 +268,7 @@ public:
     float       gf_rec_MulX;                         //!< Column x X
     float       gf_rec_AddX;                         //!< Column + X
     int         gi_rec_NumOfDigits;                  //!< Ausgabegenauigkeit
+    bool        gb_rec_OnlyIfEmpty;                  //!< Addition nur machen, wenn Zelle leer ist
     bool        gb_rec_DeleteInputFile;              //!< loesche Inputdatei.
 
     // find area
@@ -383,7 +384,7 @@ public:
     int addColumn( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &HeaderText, const QString &ColumnText, const bool AddFilename = false, const bool AddFullPath = false, const bool AddOrdinalNumber = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int addLine( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QStringList &Text, const int LineNo = 1, const bool AddFilename = false, const bool AddFullPath = false, const bool AddOrdinalNumber = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
 
-    int recalcColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnsList = "", const float MulX = 1., const float AddX = 0., const int NumOfDigits = 5, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
+    int recalcColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnsList = "", const float MulX = 1., const float AddX = 0., const int NumOfDigits = 5, const bool OnlyIfEmpty = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int transposeTable( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int createScript(const QString &FilenameIn, const int CodecInput , const int NumOfFiles);
     int saveFilelist( const QString &FilenameOut, const QStringList FilenameList, const int CodecOutput, const int EOL );
@@ -431,7 +432,7 @@ public:
     int doFindAreaDialog( QString &AreaDatabaseFilename, bool &DeleteInputFile );
     int doFourColumnsDialog( const int mode, int &NumOfGeocodes, int &FieldDelimiter, QString &MissingValue, bool &DeleteInputFile );
     int doLatLongOptionsDialog( int &ColumnLat, int &ColumnLong, int &ColumnPressure, int &NumOfDigits, bool &DeleteInputFile );
-    int doRecalcDialog( QString &ColumnsList, float &MulX, float &AddX, int &NumOfDigits, bool &DeleteInputFile );
+    int doRecalcDialog( QString &ColumnsList, float &MulX, float &AddX, int &NumOfDigits, bool &OnlyIfEmpty, bool &DeleteInputFile );
     int doRenameFilesDialog( QString &SearchString, QString &ReplaceString );
     int doSearchDialog( const int mode, QString &SearchString, QString &ReplaceString, QString &s_DatabaseName, int &StartLine, int &BreakAfterNLines, int &SearchAndReplaceMode, bool &SaveFirstLine, bool &SaveNoMatch, bool &SkipEmptyLines, bool &SkipCommentLines,  bool &NoEmptyOutputFile, bool &DeleteInputFile );
     int doSkipLinesDialog( const int mode, bool &SaveHeader, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );

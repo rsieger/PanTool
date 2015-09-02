@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
-    <height>268</height>
+    <width>493</width>
+    <height>326</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,7 @@
       <item row="0" column="1" colspan="2">
        <widget class="QLineEdit" name="MulX_lineEdit"/>
       </item>
-      <item row="0" column="3">
+      <item row="0" column="3" colspan="2">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -89,7 +89,14 @@
       <item row="1" column="1" colspan="2">
        <widget class="QLineEdit" name="AddX_lineEdit"/>
       </item>
-      <item row="1" column="3" rowspan="2">
+      <item row="1" column="3">
+       <widget class="QCheckBox" name="OnlyIfEmpty_checkBox">
+        <property name="text">
+         <string>if cell is empty only</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
        <spacer name="horizontalSpacer_3">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -102,21 +109,21 @@
         </property>
        </spacer>
       </item>
-      <item row="2" column="0" rowspan="2" colspan="2">
+      <item row="2" column="0" colspan="2">
        <widget class="QLabel" name="label_5">
         <property name="text">
          <string>Number of digits:</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="2" rowspan="2">
+      <item row="2" column="2">
        <widget class="QSpinBox" name="NumOfDigits_spinBox">
         <property name="maximum">
          <number>10</number>
         </property>
        </widget>
       </item>
-      <item row="3" column="3">
+      <item row="2" column="3" colspan="2">
        <spacer name="horizontalSpacer_4">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -201,6 +208,7 @@
   <tabstop>ColumnList_lineEdit</tabstop>
   <tabstop>MulX_lineEdit</tabstop>
   <tabstop>AddX_lineEdit</tabstop>
+  <tabstop>OnlyIfEmpty_checkBox</tabstop>
   <tabstop>NumOfDigits_spinBox</tabstop>
   <tabstop>DeleteInputFile_checkBox</tabstop>
   <tabstop>ClearAll_pushButton</tabstop>

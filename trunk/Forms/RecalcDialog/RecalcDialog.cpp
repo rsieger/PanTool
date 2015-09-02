@@ -66,7 +66,7 @@ void RecalcDialog::enableOKButton()
 // ***********************************************************************************************************************
 // ***********************************************************************************************************************
 
-int MainWindow::doRecalcDialog( QString &s_ColumnList, float &f_MulX, float &f_AddX, int &i_NumOfDigits, bool &b_DeleteInputFile )
+int MainWindow::doRecalcDialog( QString &s_ColumnList, float &f_MulX, float &f_AddX, int &i_NumOfDigits, bool &b_OnlyIfEmpty, bool &b_DeleteInputFile )
 {
     int i_DialogResult = QDialog::Rejected;
 
@@ -77,6 +77,7 @@ int MainWindow::doRecalcDialog( QString &s_ColumnList, float &f_MulX, float &f_A
     dialog.ColumnList_lineEdit->setText( s_ColumnList );
     dialog.MulX_lineEdit->setText( QString( "%1" ).arg( f_MulX ) );
     dialog.AddX_lineEdit->setText( QString( "%1" ).arg( f_AddX ) );
+    dialog.OnlyIfEmpty_checkBox->setChecked( b_OnlyIfEmpty );
     dialog.DeleteInputFile_checkBox->setChecked( b_DeleteInputFile );
     dialog.NumOfDigits_spinBox->setValue( i_NumOfDigits );
     dialog.NumOfDigits_spinBox->setRange( 0, 10 );
@@ -104,6 +105,7 @@ int MainWindow::doRecalcDialog( QString &s_ColumnList, float &f_MulX, float &f_A
         f_MulX             = dialog.MulX_lineEdit->text().toFloat();
         f_AddX             = dialog.AddX_lineEdit->text().toFloat();
         i_NumOfDigits      = dialog.NumOfDigits_spinBox->value();
+        b_OnlyIfEmpty      = dialog.OnlyIfEmpty_checkBox->isChecked();
         b_DeleteInputFile  = dialog.DeleteInputFile_checkBox->isChecked();
 
         i_DialogResult     = QDialog::Accepted;

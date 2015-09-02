@@ -8,16 +8,13 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::recalcColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &s_ColumnsList, const float f_MulX, const float f_AddX, const int i_NumOfDigits, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::recalcColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &s_ColumnsList, const float f_MulX, const float f_AddX, const int i_NumOfDigits, const bool b_OnlyIfEmpty, const bool b_DeleteInputFile, const int i_NumOfFiles )
 {
     int         i               = 0;
     int         n               = 0;
     int         m               = 0;
     int         stopProgress    = 0;
 
-    double       d_Value         = 0.;
-
-    QString     s_Output        = "";
     QString     s_EOL           = setEOLChar( i_EOL );
 
     QStringList sl_Input;
@@ -75,17 +72,27 @@ int MainWindow::recalcColumns( const QString &s_FilenameIn, const QString &s_Fil
 
     while ( ( i < n )  && ( stopProgress != _APPBREAK_ ) )
     {
-        m        = NumOfSections( sl_Input.at( i ) );
-        s_Output = "";
+        QString s_Output = "";
+
+        m = NumOfSections( sl_Input.at( i ) );
 
         for ( int j=0; j < m; j++ )
         {
             if ( isInColumnList( il_ColumnList, j ) == true )
             {
+                QString s_Value = "";
+                double  d_Value = 0.;
+
                 d_Value = sl_Input.at( i ).section( "\t", j, j ).toDouble( &b_OK );
 
-                if ( b_OK == true )
-                    s_Output += "\t" + QString( "%1" ).arg( d_Value*(double) f_MulX + (double) f_AddX, 0, 'f', i_NumOfDigits );
+                if ( ( b_OK == true ) && ( b_OnlyIfEmpty == false ) ) // b_OK == true -> cell contains a number
+                    s_Value += QString( "%1" ).arg( d_Value*(double) f_MulX + (double) f_AddX, 0, 'f', i_NumOfDigits );
+
+                if ( ( b_OK == false ) && ( sl_Input.at( i ).section( "\t", j, j ).isEmpty() == true ) && ( b_OnlyIfEmpty == true ) )
+                    s_Value += QString( "%1" ).arg( (double) f_AddX, 0, 'f', i_NumOfDigits );
+
+                if ( s_Value.isEmpty() == false )
+                    s_Output += "\t" + s_Value;
                 else
                     s_Output += "\t" + sl_Input.at( i ).section( "\t", j, j );
             }
@@ -133,7 +140,7 @@ void MainWindow::doRecalcColumns()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-        if ( doRecalcDialog( gs_rec_RecalcColumnsList, gf_rec_MulX, gf_rec_AddX, gi_rec_NumOfDigits, gb_rec_DeleteInputFile ) == QDialog::Accepted )
+        if ( doRecalcDialog( gs_rec_RecalcColumnsList, gf_rec_MulX, gf_rec_AddX, gi_rec_NumOfDigits, gb_rec_OnlyIfEmpty, gb_rec_DeleteInputFile ) == QDialog::Accepted )
         {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Recalculation of columns..." ) );
 
@@ -141,7 +148,7 @@ void MainWindow::doRecalcColumns()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = recalcColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_rec_RecalcColumnsList, gf_rec_MulX, gf_rec_AddX, gi_rec_NumOfDigits, gb_rec_DeleteInputFile, gsl_FilenameList.count() );
+                    err = recalcColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_rec_RecalcColumnsList, gf_rec_MulX, gf_rec_AddX, gi_rec_NumOfDigits, gb_rec_OnlyIfEmpty, gb_rec_DeleteInputFile, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -169,4 +176,3 @@ void MainWindow::doRecalcColumns()
 
     onError( err );
 }
-
