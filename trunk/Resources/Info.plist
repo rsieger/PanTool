@@ -10,6 +10,14 @@
     <string>PanTool</string>
     <key>CFBundleIconFile</key>
     <string>Application.icns</string>
+    <key>CFBundleTypeRole</key>
+    <string>Tool</string>
+    <key>CFBundleTypeExtensions</key>
+    <array>
+       <string>tab</string>
+       <string>txt</string>
+       <string>csv</string>
+    </array>
     <key>CFBundleIdentifier</key>
     <string>de.pangaea.PanTool</string>
     <key>CFBundleInfoDictionaryVersion</key>

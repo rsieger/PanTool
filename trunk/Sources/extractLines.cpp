@@ -83,6 +83,8 @@ int MainWindow::extractLines( const QString &s_FilenameIn, const QString &s_File
     }
     else
     {
+        setStatusBarFileInProgress( s_FilenameIn );
+
         tout << sl_Input.at( i_StartLine - 1 ) << s_EOL;
         tout << sl_Input.last() << s_EOL;
     }
