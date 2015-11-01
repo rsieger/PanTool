@@ -54,30 +54,6 @@ int MainWindow::deleteCommentBlocks( const QString &s_FilenameIn, const QString 
 
     initProgress( i_NumOfFiles, s_FilenameIn, tr( "Deleting comment blocks..." ), sl_Input.count() );
 
-    if ( ( sl_Input.at( 0 ) == "<html>" ) && ( sl_Input.at( 3 ).contains( "janusweb" ) == true ) )
-        i = 19;
-
-/* avspentordat - AVS
-    if ( ( sl_Input.at( 0 ) == "<html>" ) && ( sl_Input.at( 18 ) == "<p><strong>AVS</strong></p>" == true ) )
-        i = 20;
-    else
-        i = 999999;
-*/
-
-/* avspentordat - PEN
-    if ( ( sl_Input.at( 0 ) == "<html>" ) && ( sl_Input.at( 23 ) == "<p><strong>PEN</strong></p>" == true ) )
-        i = 25;
-    else
-        i = 999999;
-*/
-
-/* avspentordat - TOR
-    if ( ( sl_Input.at( 0 ) == "<html>" ) && ( sl_Input.at( 28 ) == "<p><strong>TOR</strong></p>" == true ) )
-        i = 30;
-    else
-        i = 999999;
-*/
-
     while ( ( i < n ) && ( stopProgress != _APPBREAK_ ) )
     {
         if ( sl_Input.at( i ).contains( "/*" ) == true )
@@ -98,14 +74,12 @@ int MainWindow::deleteCommentBlocks( const QString &s_FilenameIn, const QString 
                     i++;
 
                 if ( LineCanBeWritten( sl_Input.at( i ).section( "*/", 1, 1 ), b_SkipEmptyLines, b_SkipCommentLines ) == true )
-                    tout << sl_Input.at( i ).section( "*/", 1, 1 ) << s_EOL;
+                    if ( sl_Input.at( i ).section( "*/", 1, 1 ).isEmpty() == false )
+                        tout << sl_Input.at( i ).section( "*/", 1, 1 ) << s_EOL;
             }
 
             i++;
         }
-
-        if ( sl_Input.at( i ) == "</pre>" )
-            i = 999999;
 
         if ( ( i < n ) && ( LineCanBeWritten( sl_Input.at( i ), b_SkipEmptyLines, b_SkipCommentLines ) == true ) )
             tout << sl_Input.at( i ) << s_EOL;
