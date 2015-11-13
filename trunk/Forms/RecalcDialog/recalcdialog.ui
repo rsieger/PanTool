@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Set column list</string>
+   <string>Recalculation options</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>
