@@ -1313,7 +1313,7 @@ void MainWindow::createStatusBar()
 #endif
 
 #if defined(Q_OS_MAC)
-    ProgressBar->setTextVisible( true );
+    ProgressBar->setTextVisible( true ); // if false, the ProgressBar will not be shown (maybe a Qt bug?)
 #endif
 
 #if defined(Q_OS_WIN)
