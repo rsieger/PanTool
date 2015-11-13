@@ -1308,8 +1308,16 @@ void MainWindow::createStatusBar()
 
     ProgressBar = new QProgressBar();
 
+#if defined(Q_OS_LINUX)
+    ProgressBar->setTextVisible( false );
+#endif
+
 #if defined(Q_OS_MAC)
     ProgressBar->setTextVisible( true );
+#endif
+
+#if defined(Q_OS_WIN)
+    ProgressBar->setTextVisible( false );
 #endif
 
     statusBar()->addWidget( StatusMessage, 2 );
