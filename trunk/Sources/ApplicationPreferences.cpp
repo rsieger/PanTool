@@ -377,6 +377,9 @@ void MainWindow::savePreferences()
     settings.setValue( "DeleteInputFile", gb_tt_DeleteInputFile );
     settings.endGroup();
 
+    // File list Options
+    settings.beginGroup( "FileListOptions" );
+    settings.setValue( "ExternalWebPath", gs_ExternalWebPath );
     settings.endGroup();
 }
 
@@ -757,7 +760,7 @@ void MainWindow::loadPreferences()
     // Rename files
     settings.beginGroup( "RenameFile" );
     gs_rf_SearchString      = settings.value( "SearchString", "zz1_" ).toString();
-    gs_rf_ReplaceString     = settings.value( "ReplaceString;", "" ).toString();
+    gs_rf_ReplaceString     = settings.value( "ReplaceString", "" ).toString();
     settings.endGroup();
 
     // Transpose table
@@ -766,6 +769,11 @@ void MainWindow::loadPreferences()
     gi_tt_CodecOutput       = settings.value( "CodecOutput", gi_CodecOutput ).toInt();
     gi_tt_EOL               = settings.value( "EOL", gi_EOL ).toInt();
     gb_tt_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
+    settings.endGroup();
+
+    // File list options
+    settings.beginGroup( "FileListOptions" );
+    gs_ExternalWebPath = settings.value( "ExternalWebPath", "" ).toString();
     settings.endGroup();
 
     settings.endGroup();

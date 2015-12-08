@@ -55,6 +55,7 @@ HEADERS = ./Headers/Application.h \
     ./Forms/ConcatenateFilesOptionsDialog/ConcatenateFilesOptionsDialog.h \
     ./Forms/ColumnListDialog/ColumnListDialog.h \
     ./Forms/FindAreaDialog/FindAreaDialog.h \
+    ./Forms/FileListOptionsDialog/FileListOptionsDialog.h \
     ./Forms/FilenameFolderDialog/FilenameFolderDialog.h \
     ./Forms/FourColumnsDialog/FourColumnsDialog.h \
     ./Forms/ExtractLinesDialog/ExtractLinesDialog.h \
@@ -125,6 +126,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Forms/DeleteLinesDialog/DeleteLinesDialog.cpp \
     ./Forms/ExtractLinesDialog/ExtractLinesDialog.cpp \
     ./Forms/FindAreaDialog/FindAreaDialog.cpp \
+    ./Forms/FileListOptionsDialog/FileListOptionsDialog.cpp \
     ./Forms/FilenameFolderDialog/FilenameFolderDialog.cpp \
     ./Forms/FourColumnsDialog/FourColumnsDialog.cpp \
     ./Forms/GeneralOptionsDialog/GeneralOptionsDialog.cpp \
@@ -148,6 +150,7 @@ FORMS = ./Forms/AboutDialog/aboutdialog.ui \
     ./Forms/DeleteLinesDialog/deletelinesdialog.ui \
     ./Forms/ExtractLinesDialog/extractlinesdialog.ui \
     ./Forms/FindAreaDialog/findareadialog.ui \
+    ./Forms/FileListOptionsDialog/filelistoptionsdialog.ui \
     ./Forms/FilenameFolderDialog/filenamefolderdialog.ui \
     ./Forms/FourColumnsDialog/fourcolumnsdialog.ui \
     ./Forms/GeneralOptionsDialog/generaloptionsdialog.ui \

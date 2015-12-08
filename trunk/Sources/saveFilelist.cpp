@@ -8,7 +8,7 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl_FilenameList, const int i_CodecOutput, const int i_EOL )
+int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl_FilenameList, const int i_CodecOutput, const QString &s_ExternalWebPath, const int i_EOL )
 {
     QString     s_EOL = setEOLChar( i_EOL );
 
@@ -43,17 +43,42 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
 
 // **********************************************************************************************
 
-    for ( int i=0; i<sl_FilenameList.count(); i++ )
+    if ( s_ExternalWebPath.isEmpty() == true )
     {
-        fi.setFile( sl_FilenameList.at( i ) );
+        for ( int i=0; i<sl_FilenameList.count(); i++ )
+        {
+            fi.setFile( sl_FilenameList.at( i ) );
 
-        CreationDateTime.setDate( fi.created().date() );
-        CreationDateTime.setTime( fi.created().time() );
+            CreationDateTime.setDate( fi.created().date() );
+            CreationDateTime.setTime( fi.created().time() );
 
-        tout << QDir::toNativeSeparators( fi.absoluteFilePath() ) << "\t";
-        tout << QDir::toNativeSeparators( fi.absolutePath() + "/" ) << "\t";
-        tout << fi.fileName() << "\t" << fi.completeBaseName() << "\t";
-        tout << fi.suffix() << "\t" << fi.size() << "\t" << CreationDateTime.toString( "yyyy-MM-ddThh:mm:ss" ) << s_EOL;
+            tout << QDir::toNativeSeparators( fi.absoluteFilePath() ) << "\t";
+            tout << QDir::toNativeSeparators( fi.absolutePath() + "/" ) << "\t";
+            tout << fi.fileName() << "\t";
+            tout << fi.completeBaseName() << "\t";
+            tout << fi.suffix() << "\t";
+            tout << fi.size() << "\t";
+            tout << CreationDateTime.toString( "yyyy-MM-ddThh:mm:ss" );
+            tout << s_EOL;
+        }
+    }
+    else
+    {
+        tout << "Event label\tFile content []\tFile name []\tFile name []\tFile format []\tFile size [kByte]\tURL file []" << s_EOL;
+
+        for ( int i=0; i<sl_FilenameList.count(); i++ )
+        {
+            fi.setFile( sl_FilenameList.at( i ) );
+
+            tout << "???" << "\t";                      // Event label
+            tout << "\t";                               // File content
+            tout << fi.fileName() << "\t";              // File name
+            tout << fi.completeBaseName() << "\t";      // File name
+            tout << fi.suffix().toUpper() << "\t";      // File format
+            tout << QString( "%1").arg( (float) fi.size()/1024., 0,'f', 3 ) << "\t";    // File size in KByte
+            tout << s_ExternalWebPath << fi.fileName(); // External web path plus file name
+            tout << s_EOL;
+        }
     }
 
     fout.close();
@@ -89,8 +114,8 @@ void MainWindow::doSaveFilelist()
             break;
         }
 
-        if ( s_FilenameOut.isEmpty() == false )
-            err = saveFilelist( s_FilenameOut, gsl_FilenameList, gi_CodecOutput, gi_EOL );
+        if ( ( s_FilenameOut.isEmpty() == false ) && ( doFileListOptionsDialog( gs_ExternalWebPath ) == QDialog::Accepted ) )
+            err = saveFilelist( s_FilenameOut, gsl_FilenameList, gi_CodecOutput, gs_ExternalWebPath, gi_EOL );
         else
             err = _CHOOSEABORTED_;
     }
