@@ -15,7 +15,7 @@ FileListOptionsDialog::FileListOptionsDialog( QWidget *parent ) : QDialog( paren
 {
     setupUi( this );
 
-    connect( ClearAll_pushButton, SIGNAL(clicked()), this, SLOT(clearAll() ) );
+    connect( ClearAll_pushButton, SIGNAL( clicked() ), this, SLOT( clearAll() ) );
     connect( OK_pushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
     connect( Cancel_pushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
 }
@@ -57,8 +57,8 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
     switch ( dialog.exec() )
     {
     case QDialog::Accepted:
-        gs_ExternalWebPath = dialog.ExternalWebPath_lineEdit->text();
-        i_DialogResult     = QDialog::Accepted;
+        s_ExternalWebPath = dialog.ExternalWebPath_lineEdit->text();
+        i_DialogResult    = QDialog::Accepted;
         break;
 
     case QDialog::Rejected:
@@ -68,8 +68,8 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
         break;
     }
 
-    if ( ( gs_ExternalWebPath.startsWith( "http://" ) == true ) && ( gs_ExternalWebPath.endsWith( "/" ) == false ) )
-        gs_ExternalWebPath.append( "/" );
+    if ( ( s_ExternalWebPath.startsWith( "http://" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
+        s_ExternalWebPath.append( "/" );
 
     posDialog = dialog.pos();
 

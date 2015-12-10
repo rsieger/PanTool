@@ -7,7 +7,7 @@
 
 class FileListOptionsDialog : public QDialog, public Ui::FileListOptionsDialog
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     FileListOptionsDialog( QWidget *parent = 0 );
