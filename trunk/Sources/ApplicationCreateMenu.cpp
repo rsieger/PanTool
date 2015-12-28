@@ -313,3 +313,46 @@ void MainWindow::createMenus()
     helpMenu->addSeparator();
     helpMenu->addAction( showHelpAction );
 }
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+void MainWindow::enableMenuItems( const QStringList sl_FilenameList )
+{
+    bool b_containsBinaryFile = containsBinaryFile( sl_FilenameList );
+
+// **********************************************************************************************
+
+    QList<QAction*> basicToolsMenuActions = basicToolsMenu->actions();
+
+    if ( b_containsBinaryFile == false )
+    {
+        for ( int i=0; i<basicToolsMenuActions.count(); ++i )
+            basicToolsMenuActions.at( i )->setEnabled( true );
+    }
+    else
+    {
+        for ( int i=0; i<basicToolsMenuActions.count(); ++i )
+            basicToolsMenuActions.at( i )->setEnabled( false );
+
+        renameFilesAction->setEnabled( true );
+        saveFilelistAction->setEnabled( true );
+        getFilesAction->setEnabled( true );
+    }
+
+// **********************************************************************************************
+
+    QList<QAction*> specialToolsMenuActions = specialToolsMenu->actions();
+
+    if ( b_containsBinaryFile == false )
+    {
+        for ( int i=0; i<specialToolsMenuActions.count(); ++i )
+            specialToolsMenuActions.at( i )->setEnabled( true );
+    }
+    else
+    {
+        for ( int i=0; i<specialToolsMenuActions.count(); ++i )
+            specialToolsMenuActions.at( i )->setEnabled( false );
+    }
+}

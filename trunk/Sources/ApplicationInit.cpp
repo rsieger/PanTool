@@ -73,6 +73,7 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 
     createActions();
     createMenus();
+
     createStatusBar( gb_showProgressBar );
 
 // **********************************************************************************************
@@ -88,6 +89,9 @@ MainWindow::MainWindow( QWidget *parent ) : QMainWindow( parent )
 // **********************************************************************************************
 
     setWTitle( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+
+    enableMenuItems( gsl_FilenameList );
+
     setStatusBar( tr( "Ready" ), 2 );
     setNormalCursor();
 }

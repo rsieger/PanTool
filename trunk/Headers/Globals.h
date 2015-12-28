@@ -3,10 +3,11 @@
     #define _GLOBALS
 
 // Application constants
+
     const QString _PROGRAMDOI_                       = "doi:10.1594/PANGAEA.787549";
     const QString _PROGRAMREADME_                    = "http://wiki.pangaea.de/wiki/PanTool";
 
-    const QString _VERSION_                          = "3.16";	// Version number, 2015-12-08
+    const QString _VERSION_                          = "3.17";	// Version number, 2015-12-28
     const QChar   _PSEPARATOR_                       = '|';
 
     const int   _NOERROR_                            = 0;
