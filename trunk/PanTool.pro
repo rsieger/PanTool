@@ -89,6 +89,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/createDateTime.cpp \
     ./Sources/createODPSampleLabel.cpp \
     ./Sources/createScript.cpp \
+    ./Sources/decompressFiles.cpp \
     ./Sources/extractColumns.cpp \
     ./Sources/extractMatchedColumns.cpp \
     ./Sources/extractLines.cpp \

@@ -140,6 +140,9 @@ void MainWindow::createActions()
     compressFilesAction = new QAction(trUtf8("Compress files"), this);
     connect(compressFilesAction, SIGNAL(triggered()), this, SLOT(doCompressFiles()));
 
+    decompressFilesAction = new QAction(trUtf8("Decompress files"), this);
+    connect(decompressFilesAction, SIGNAL(triggered()), this, SLOT(doDecompressFiles()));
+
     renameFilesAction = new QAction(trUtf8("Rename files..."), this);
     renameFilesAction->setShortcut(tr("Ctrl+R"));
     connect(renameFilesAction, SIGNAL(triggered()), this, SLOT(doRenameFiles()));
@@ -277,10 +280,12 @@ void MainWindow::createMenus()
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( translateCharacterEncodingAction );
     basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( compressFilesAction );
-    basicToolsMenu->addAction( createScriptAction );
-    basicToolsMenu->addAction( renameFilesAction );
     basicToolsMenu->addAction( saveFilelistAction );
+    basicToolsMenu->addAction( createScriptAction );
+    basicToolsMenu->addSeparator();
+    basicToolsMenu->addAction( compressFilesAction );
+    basicToolsMenu->addAction( decompressFilesAction );
+    basicToolsMenu->addAction( renameFilesAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( getFilesAction );
 
@@ -335,6 +340,9 @@ void MainWindow::enableMenuItems( const QStringList sl_FilenameList )
     {
         for ( int i=0; i<basicToolsMenuActions.count(); ++i )
             basicToolsMenuActions.at( i )->setEnabled( false );
+
+        compressFilesAction->setEnabled( true );
+        decompressFilesAction->setEnabled( true );
 
         renameFilesAction->setEnabled( true );
         saveFilelistAction->setEnabled( true );

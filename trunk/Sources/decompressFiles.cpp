@@ -1,4 +1,4 @@
-/* 2007-11-07                 */
+/* 2016-11-03                 */
 /* Dr. Rainer Sieger          */
 
 #include "Application.h"
@@ -6,13 +6,13 @@
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2008-09-27
+// 2016-01-03
 
-/*! @brief Komprimieren von Dateien mit zip. zip
+/*! @brief Dekomprimieren von Dateien mit unzip. unzip
 *   muss sich im gleichen Verzeichnis befinden wie das Programm "PanTool".
 */
 
-void MainWindow::compressFile( const QString &s_FilenameIn )
+void MainWindow::decompressFile( const QString &s_FilenameIn )
 {
     QFileInfo fi( s_FilenameIn );
 
@@ -21,17 +21,17 @@ void MainWindow::compressFile( const QString &s_FilenameIn )
 // **********************************************************************************************
 
     #if defined(Q_OS_LINUX)
-        process.start( "zip -j \"" + QDir::toNativeSeparators( fi.absolutePath() + "/" + fi.completeBaseName() + ".zip" ) + "\"" + " \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
+        process.start( "unzip \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
         process.waitForFinished();
     #endif
 
     #if defined(Q_OS_MAC)
-        process.start( "zip -j \"" + QDir::toNativeSeparators( fi.absolutePath() + "/" + fi.completeBaseName() + ".zip" ) + "\"" + " \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
+        process.start( "/usr/bin/unzip \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
         process.waitForFinished();
     #endif
 
     #if defined(Q_OS_WIN)
-        process.start( "7z a \"" + QDir::toNativeSeparators( fi.absolutePath() + "/" + fi.completeBaseName() + ".zip" ) + "\"" + " \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
+        process.start( "7z e \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
         process.waitForFinished();
     #endif
 
@@ -44,23 +44,32 @@ void MainWindow::compressFile( const QString &s_FilenameIn )
 // **********************************************************************************************
 // **********************************************************************************************
 
-void MainWindow::doCompressFiles()
+void MainWindow::doDecompressFiles()
 {
-    int		i                   = 0;
-    int		err                 = 0;
-    int		stopProgress        = 0;
+    int		  i              = 0;
+    int		  err            = 0;
+    int       stopProgress   = 0;
+
+    QFileInfo fi;
+    QString   s_Extension    = "";
 
 // **********************************************************************************************
 
-    if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
+    existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+
+    if (  err == _NOERROR_ )
     {
-        initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Compressing files ..." ) );
+        initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Decompressing files ..." ) );
 
         while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
         {
-            setStatusBar( tr( "Compress " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
+            setStatusBar( tr( "Decompress " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
 
-            compressFile( gsl_FilenameList.at( i ) );
+            fi.setFile( gsl_FilenameList.at( i ) );
+            s_Extension = fi.suffix().toLower();
+
+            if ( s_Extension == "zip" )
+                decompressFile( gsl_FilenameList.at( i ) );
 
             stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
         }
@@ -74,7 +83,7 @@ void MainWindow::doCompressFiles()
 
 // **********************************************************************************************
 
-    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Compress files was canceled" ), true );
+    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Decompress files was canceled" ), true );
 
     onError( err );
 }

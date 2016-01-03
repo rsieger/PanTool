@@ -354,6 +354,7 @@ public:
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
 
     void compressFile( const QString &FilenameIn );
+    void decompressFile( const QString &FilenameIn );
     void downloadDatasets( const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
 
     int extractColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnList = "", const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
@@ -475,6 +476,7 @@ private slots:
     void doExtractLines();
     void doExtractMatchedLines();
     void doExtract10minLines();
+    void doDecompressFiles();
     void doDeleteColumns();
     void doDeleteMatchedColumns();
     void doDeleteLines();
@@ -604,6 +606,7 @@ private:
     QAction *insertCharactersAtPositionAction;
     QAction *replaceCharactersAtPositionAction;
     QAction *compressFilesAction;
+    QAction *decompressFilesAction;
     QAction *createScriptAction;
     QAction *concatenateFilesByLinesAction;
     QAction *concatenateFilesByColumnsAction;
