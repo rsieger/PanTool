@@ -137,6 +137,9 @@ void MainWindow::createActions()
     createScriptAction = new QAction(trUtf8("Create script files"), this);
     connect(createScriptAction, SIGNAL(triggered()), this, SLOT(doCreateScript()));
 
+    compressFolderAction = new QAction(trUtf8("Compress folder"), this);
+    connect(compressFolderAction, SIGNAL(triggered()), this, SLOT(doCompressFolder()));
+
     compressFilesAction = new QAction(trUtf8("Compress files"), this);
     connect(compressFilesAction, SIGNAL(triggered()), this, SLOT(doCompressFiles()));
 
@@ -279,13 +282,14 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( transposeTableAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( translateCharacterEncodingAction );
+    basicToolsMenu->addAction( renameFilesAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( saveFilelistAction );
     basicToolsMenu->addAction( createScriptAction );
     basicToolsMenu->addSeparator();
+    basicToolsMenu->addAction( compressFolderAction );
     basicToolsMenu->addAction( compressFilesAction );
     basicToolsMenu->addAction( decompressFilesAction );
-    basicToolsMenu->addAction( renameFilesAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( getFilesAction );
 

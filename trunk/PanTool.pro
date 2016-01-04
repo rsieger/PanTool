@@ -85,6 +85,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/calcSalinityFromCondTempPress.cpp \
     ./Sources/checkTimeSeries.cpp \
     ./Sources/compressFiles.cpp \
+    ./Sources/compressFolder.cpp \
     ./Sources/concatenateFiles.cpp \
     ./Sources/createDateTime.cpp \
     ./Sources/createODPSampleLabel.cpp \

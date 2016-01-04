@@ -354,7 +354,8 @@ public:
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
 
     void compressFile( const QString &FilenameIn );
-    void decompressFile( const QString &FilenameIn );
+    int compressFolder( const QString &Folder );
+
     void downloadDatasets( const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
 
     int extractColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnList = "", const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
@@ -489,6 +490,7 @@ private slots:
     void doSearchAndReplaceManyStringsAtOnce();
     void doBuildSearchAndReplaceDatabase();
     void doCompressFiles();
+    void doCompressFolder();
     void doConcatenateFilesByColumns();
     void doConcatenateFilesByLines();
     void doRecalcColumns();
@@ -527,11 +529,11 @@ private:
     bool existsFirstFile( const int ActionNumber, const QString &FilenameFormat, const int Extension, QStringList &FilenameList );
     bool isEmptyLine( const QString &String );
     int NumOfSections( const QString &String );
-    int addToFilenameList( QStringList &FilenameList, const QString &Filename, const bool showAllFiles = true, const bool extractZipFiles = false );
+    int addToFilenameList( QStringList &FilenameList, const QString &Filename, const bool showAllFiles = true, const bool decompressFile = false );
     int calcFileSizeClass( const QString &FilenameIn, const int NumOfFiles, const int lowerLimit = 100, const int upperLimit = 1000 );
     int copyStringList( const QStringList InStringList, QStringList &OutStringList, const QString &s_Pattern = "*" );
     int emptyDir( const QString &Dir );
-    int extractZipFiles( const QString &Filename, const bool createNewDir = false, const bool delZipFile = false );
+    int decompressFile( const QString &Filename, const bool createNewDir = false, const bool delZipFile = false );
     int incFileProgress( const int NumOfFiles, const int FileNumber );
     int incProgress( const int NumOfFiles, const int Step );
     int readFile( const QString &FilenameIn, QStringList &Input, const int Codec = -1, const int NumOfFiles = 0, const qint64 Bytes = 0 );
@@ -550,7 +552,7 @@ private:
     void initFileProgress( const int NumOfFiles, const QString &FilenameIn, const QString &MessageText );
     void initProgress( const int NumOfFiles, const QString &Filename, const QString &MessageText, const int totalNumberOfSteps );
     void initProgress( const int totalNumberOfSteps );
-    void listDir( QStringList &Filename, const QString &Directory, const bool showAllFiles = true, const bool extractZipFiles = false );
+    void listDir( QStringList &Filename, const QString &Directory, const bool showAllFiles = true, const bool decompressFile = false );
     void loadPreferences();
     void resetFileProgress( const int NumOfFiles );
     void resetProgress( const int NumOfFiles = 0 );
@@ -606,6 +608,7 @@ private:
     QAction *insertCharactersAtPositionAction;
     QAction *replaceCharactersAtPositionAction;
     QAction *compressFilesAction;
+    QAction *compressFolderAction;
     QAction *decompressFilesAction;
     QAction *createScriptAction;
     QAction *concatenateFilesByLinesAction;
