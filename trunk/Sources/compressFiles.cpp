@@ -52,7 +52,9 @@ void MainWindow::doCompressFiles()
 
 // **********************************************************************************************
 
-    if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
+    existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+
+    if ( gsl_FilenameList.count() > 0 )
     {
         initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Compressing files ..." ) );
 

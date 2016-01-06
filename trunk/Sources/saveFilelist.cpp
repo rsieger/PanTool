@@ -100,7 +100,9 @@ void MainWindow::doSaveFilelist()
 
 // **********************************************************************************************
 
-    if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
+    existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+
+    if ( gsl_FilenameList.count() > 0 )
     {
         QFileInfo fi( gsl_FilenameList.at( 0 ) );
 

@@ -22,7 +22,9 @@ void MainWindow::doRenameFiles()
 
 // **********************************************************************************************
 
-    if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
+    existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+
+    if ( gsl_FilenameList.count() > 0 )
     {
         if ( doRenameFilesDialog( gs_rf_SearchString, gs_rf_ReplaceString ) == QDialog::Accepted )
         {
