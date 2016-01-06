@@ -92,7 +92,7 @@ int MainWindow::compressFolder( const QString &s_Folder )
 
 void MainWindow::doCompressFolder()
 {
-    int		err                 = 0;
+    int		err = _NOERROR_;
 
     if ( chooseFolder() == _NOERROR_ )
         err = compressFolder( gs_Path );

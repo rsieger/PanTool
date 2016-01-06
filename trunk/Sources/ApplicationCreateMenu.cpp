@@ -345,6 +345,7 @@ void MainWindow::enableMenuItems( const QStringList sl_FilenameList )
         for ( int i=0; i<basicToolsMenuActions.count(); ++i )
             basicToolsMenuActions.at( i )->setEnabled( false );
 
+        compressFolderAction->setEnabled( true );
         compressFilesAction->setEnabled( true );
         decompressFilesAction->setEnabled( true );
 
