@@ -1053,11 +1053,26 @@ int MainWindow::decompressFile( const QString &s_Filename, const bool b_delZipFi
         #endif
 
         #if defined(Q_OS_WIN)
-            s_arg = "7z x \"" + QDir::toNativeSeparators( s_Filename ) + "\" -o\"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\"";
+            QString s_7zX86exe( getenv( "ProgramFiles(x86)" ) );
+            s_7zX86exe.append( "/7-Zip/7z.exe" );
+
+            switch ( i_Format )
+            {
+            case _ZIP_:
+                s_arg = "\"" + QDir::toNativeSeparators( s_7zX86exe ) + "\" x \"" + QDir::toNativeSeparators( s_Filename ) + "\" -o\"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\"";
+                break;
+
+            case _GZIP_:
+                s_arg = "\"" + QDir::toNativeSeparators( s_7zX86exe ) + "\" x \"" + QDir::toNativeSeparators( s_Filename ) + "\" -o\"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\""; // ???
+                break;
+
+            default:
+                break;
+            }
         #endif
 
         process.start( s_arg );
-        process.waitForFinished();
+        process.waitForFinished( -1 );
     }
 
     if ( b_delZipFile == true )
@@ -2153,18 +2168,13 @@ bool MainWindow::containsBinaryFile( const QStringList sl_FilenameList )
 bool MainWindow::check7z()
 {
 #if defined(Q_OS_WIN)
-    QString s_7zexe( getenv( "ProgramFiles" ) );
     QString s_7zX86exe( getenv( "ProgramFiles(x86)" ) );
-
-    s_7zexe.append( "/7-Zip/7z.exe" );
     s_7zX86exe.append( "/7-Zip/7z.exe" );
-
-    QFileInfo fi_7zexe( s_7zexe );
     QFileInfo fi_7zX86exe( s_7zX86exe );
 
-    if ( ( fi_7zexe.exists() == false ) && ( fi_7zX86exe.exists() == false ) )
+    if ( fi_7zX86exe.exists() == false )
     {
-        QMessageBox::information( this, getApplicationName( true ), tr( "You have to install the\nprogram 7-zip (http://7-zip.org)\nbefore using this function." ) );
+        QMessageBox::information( this, getApplicationName( true ), tr( "You have to install the\nprogram 7-zip 32-bit x86 (http://7-zip.org)\nbefore using this function." ) );
 
         return( _CHOOSEABORTED_ );
     }
