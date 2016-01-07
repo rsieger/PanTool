@@ -1001,29 +1001,10 @@ int MainWindow::decompressFile( const QString &s_Filename, const bool b_createNe
 
     QString	s_arg				= "";
     QString	s_NewDir			= "";
-    QString s_ZipProgramName    = "";
-    QString s_GZipProgramName   = "";
 
     QStringList sl_Message;
 
     QProcess process;
-
-// **********************************************************************************************
-
-    #if defined(Q_OS_LINUX)
-        s_ZipProgramName    = "unzip";
-        s_GZipProgramName   = "gzip";
-    #endif
-
-    #if defined(Q_OS_WIN)
-        s_ZipProgramName  = "\"" + QDir::toNativeSeparators( QCoreApplication::applicationDirPath() + "/" ) + "unzip.exe" + "\"";
-        s_GZipProgramName = "\"" + QDir::toNativeSeparators( QCoreApplication::applicationDirPath() + "/" ) + "gzip.exe" + "\"";
-    #endif
-
-    #if defined(Q_OS_MAC)
-        s_ZipProgramName    = "unzip";
-        s_GZipProgramName   = "gzip";
-    #endif
 
 // **********************************************************************************************
 
@@ -1051,19 +1032,43 @@ int MainWindow::decompressFile( const QString &s_Filename, const bool b_createNe
     {
         showMessage( tr( "Decompressing " ) + QDir::toNativeSeparators( s_Filename ) + tr( " ..." ), sl_Message );
 
-        switch ( i_Format )
-        {
-        case _ZIP_:
-            s_arg = "\"" + s_ZipProgramName + "\" -o \"" + QDir::toNativeSeparators( s_Filename ) + "\" -d \"" + QDir::toNativeSeparators( s_NewDir ) + "\"";
-            break;
+        #if defined(Q_OS_LINUX)
+            switch ( i_Format )
+            {
+            case _ZIP_:
+                s_arg = "unzip -o \"" + QDir::toNativeSeparators( s_Filename ) + "\" -d \"" + QDir::toNativeSeparators( s_NewDir ) + "\"";
+                break;
 
-        case _GZIP_:
-            s_arg = "\"" + s_GZipProgramName + "\" -d \"" + QDir::toNativeSeparators( s_Filename ) + "\"";
-            break;
+            case _GZIP_:
+                s_arg = "gzip -d \"" + QDir::toNativeSeparators( s_Filename ) + "\"";
+                break;
 
-        default:
-            break;
-        }
+            default:
+                break;
+            }
+        #endif
+
+        #if defined(Q_OS_MAC)
+            switch ( i_Format )
+            {
+            case _ZIP_:
+                s_arg = "unzip -o \"" + QDir::toNativeSeparators( s_Filename ) + "\" -d \"" + QDir::toNativeSeparators( s_NewDir ) + "\"";
+                break;
+
+            case _GZIP_:
+                s_arg = "gzip -d \"" + QDir::toNativeSeparators( s_Filename ) + "\"";
+                break;
+
+            default:
+                break;
+            }
+        #endif
+
+        #if defined(Q_OS_WIN)
+            s_arg = "7z x \"" + QDir::toNativeSeparators( s_Filename ) + "\" -o\"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\"";
+        #endif
+
+        qDebug() << s_arg;
 
         process.start( s_arg );
         process.waitForFinished();
