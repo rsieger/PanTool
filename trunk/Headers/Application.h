@@ -528,12 +528,13 @@ private:
     bool containsBinaryFile( const QStringList FilenameList );
     bool existsFirstFile( const int ActionNumber, const QString &FilenameFormat, const int Extension, QStringList &FilenameList );
     bool isEmptyLine( const QString &String );
+    bool check7z();
     int NumOfSections( const QString &String );
     int addToFilenameList( QStringList &FilenameList, const QString &Filename, const bool showAllFiles = true, const bool decompressFile = false );
     int calcFileSizeClass( const QString &FilenameIn, const int NumOfFiles, const int lowerLimit = 100, const int upperLimit = 1000 );
     int copyStringList( const QStringList InStringList, QStringList &OutStringList, const QString &s_Pattern = "*" );
     int emptyDir( const QString &Dir );
-    int decompressFile( const QString &Filename, const bool createNewDir = false, const bool delZipFile = false );
+    int decompressFile( const QString &Filename, const bool delZipFile = false );
     int incFileProgress( const int NumOfFiles, const int FileNumber );
     int incProgress( const int NumOfFiles, const int Step );
     int readFile( const QString &FilenameIn, QStringList &Input, const int Codec = -1, const int NumOfFiles = 0, const qint64 Bytes = 0 );

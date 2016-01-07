@@ -18,29 +18,34 @@ void MainWindow::doDecompressFiles()
 
 // **********************************************************************************************
 
-    existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+    err = check7z();
 
-    if ( gsl_FilenameList.count() > 0 )
+    if ( err == _NOERROR_ )
     {
-        initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Decompressing files ..." ) );
+        existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
 
-        while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
+        if ( gsl_FilenameList.count() > 0 )
         {
-            setStatusBar( tr( "Decompress " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
+            initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Decompressing files ..." ) );
 
-            fi.setFile( gsl_FilenameList.at( i ) );
+            while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
+            {
+                setStatusBar( tr( "Decompress " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
 
-            if ( ( fi.suffix().toLower() == "zip" ) || ( fi.suffix().toLower() == "gz" ) )
-                decompressFile( gsl_FilenameList.at( i ), false, false );
+                fi.setFile( gsl_FilenameList.at( i ) );
 
-            stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
+                if ( ( fi.suffix().toLower() == "zip" ) || ( fi.suffix().toLower() == "gz" ) )
+                    decompressFile( gsl_FilenameList.at( i ), false );
+
+                stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
+            }
+
+            resetFileProgress( gsl_FilenameList.count() );
         }
-
-        resetFileProgress( gsl_FilenameList.count() );
-    }
-    else
-    {
-        err = _CHOOSEABORTED_;
+        else
+        {
+            err = _CHOOSEABORTED_;
+        }
     }
 
 // **********************************************************************************************
