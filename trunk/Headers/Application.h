@@ -353,7 +353,6 @@ public:
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
 
-    void compressFile( const QString &FilenameIn );
     int compressFolder( const QString &Folder );
 
     void downloadDatasets( const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
@@ -542,6 +541,7 @@ private:
     int downloadFile( const QString &Url, const QString &absoluteFilePath );
     unsigned int incProgress( const int NumOfFiles, const unsigned int filesize, const unsigned int length, const QString &InputStr );
     void appendItem( QStringList &List, const QString &Item, const QString &SS = "", const QString &RS = "" );
+    void compressFile( const QString &FilenameIn );
     void clearFilenameList( int &ActionNumber, QStringList &FilenameList );
     void clearList( QStringList& List );
     void clearMessage();

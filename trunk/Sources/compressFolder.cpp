@@ -56,7 +56,7 @@ int MainWindow::compressFolder( const QString &s_Folder )
     #endif
 
     tout << "cd \"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\"" << endl;
-    tout << "zip -r \"" + fi.completeBaseName() + ".zip\"" + " \"" + fi.completeBaseName() + "/\" -x *.DS_Store";
+    tout << "zip -r \"" + fi.fileName() + ".zip\"" + " \"" + fi.fileName() + "/\" -x *.DS_Store";
 
     fout.close();
 
@@ -64,22 +64,23 @@ int MainWindow::compressFolder( const QString &s_Folder )
         s_arg = "chmod u+x \"" + QDir::toNativeSeparators( s_Script ) + "\"";
         process.start( s_arg );
         process.waitForFinished();
+        process.start( s_Script );
+        process.waitForFinished( -1 );
     #endif
 
     #if defined(Q_OS_MAC)
         s_arg = "chmod u+x \"" + QDir::toNativeSeparators( s_Script ) + "\"";
         process.start( s_arg );
         process.waitForFinished();
+        process.start( s_Script );
+        process.waitForFinished( -1 );
     #endif
 
     #if defined(Q_OS_WIN)
         ;
     #endif
 
-    process.start( s_Script );
-    process.waitForFinished( -1 );
-
-    removeFile( s_Script );
+   removeFile( s_Script );
 
 // **********************************************************************************************
 
@@ -92,12 +93,19 @@ int MainWindow::compressFolder( const QString &s_Folder )
 
 void MainWindow::doCompressFolder()
 {
-    int		err = _NOERROR_;
+    int	err = _NOERROR_;
 
-    if ( chooseFolder() == _NOERROR_ )
-        err = compressFolder( gs_Path );
-    else
-        err = _CHOOSEABORTED_;
+// **********************************************************************************************
+
+    err = check7z();
+
+    if ( err == _NOERROR_ )
+    {
+        if ( chooseFolder() == _NOERROR_ )
+            err = compressFolder( gs_Path );
+        else
+            err = _CHOOSEABORTED_;
+    }
 
     endTool( err, 0, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Compressing folder was canceled" ), true );
 

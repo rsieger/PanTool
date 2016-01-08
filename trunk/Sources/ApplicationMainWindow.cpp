@@ -982,7 +982,39 @@ int MainWindow::calcFileSizeClass( const QString &s_Filename, const int i_NumOfF
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2009-11-29
+// 2016-01-08
+
+/*! @brief Komprimieren von Dateien mit zip bzw. 7-Zip. */
+
+void MainWindow::compressFile( const QString &s_FilenameIn )
+{
+    QFileInfo fi( s_FilenameIn );
+
+    QProcess process;
+
+// **********************************************************************************************
+
+    #if defined(Q_OS_LINUX)
+        process.start( "zip -j \"" + QDir::toNativeSeparators( fi.absolutePath() + "/" + fi.completeBaseName() + ".zip" ) + "\"" + " \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
+    #endif
+
+    #if defined(Q_OS_MAC)
+        process.start( "zip -j \"" + QDir::toNativeSeparators( fi.absolutePath() + "/" + fi.completeBaseName() + ".zip" ) + "\"" + " \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
+    #endif
+
+    #if defined(Q_OS_WIN)
+        process.start( "7z a \"" + QDir::toNativeSeparators( fi.absolutePath() + "/" + fi.completeBaseName() + ".zip" ) + "\"" + " \"" + QDir::toNativeSeparators( s_FilenameIn ) + "\"" );
+    #endif
+
+    process.waitForFinished( -1 );
+
+    return;
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+// 2016-01-07
 
 /*! @brief Auspacken von Zip und GZip Dateien.
 *
@@ -1063,7 +1095,7 @@ int MainWindow::decompressFile( const QString &s_Filename, const bool b_delZipFi
                 break;
 
             case _GZIP_:
-                s_arg = "\"" + QDir::toNativeSeparators( s_7zX86exe ) + "\" x \"" + QDir::toNativeSeparators( s_Filename ) + "\" -o\"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\""; // ???
+                s_arg = "\"" + QDir::toNativeSeparators( s_7zX86exe ) + "\" x \"" + QDir::toNativeSeparators( s_Filename ) + "\" -o\"" + QDir::toNativeSeparators( fi.absolutePath() ) + "\"";
                 break;
 
             default:
