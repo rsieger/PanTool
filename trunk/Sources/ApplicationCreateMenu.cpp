@@ -46,7 +46,7 @@ void MainWindow::createActions()
 
     exitAction = new QAction(trUtf8("&Quit"), this);
     exitAction->setShortcut(trUtf8("Ctrl+Q"));
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    connect(exitAction, SIGNAL(triggered()), this, SLOT(exitApplication()));
 
     // Basic tools
 
@@ -231,15 +231,8 @@ void MainWindow::createMenus()
     fileMenu->addSeparator();
     fileMenu->addAction( setOptionsAction );
 
-#if defined(Q_OS_LINUX)
     fileMenu->addSeparator();
     fileMenu->addAction( exitAction );
-#endif
-
-#if defined(Q_OS_WIN)
-    fileMenu->addSeparator();
-    fileMenu->addAction( exitAction );
-#endif
 
 // **********************************************************************************************
 
@@ -290,8 +283,20 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( compressFolderAction );
     basicToolsMenu->addAction( compressFilesAction );
     basicToolsMenu->addAction( decompressFilesAction );
+
+#if defined(Q_OS_LINUX)
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( getFilesAction );
+#endif
+
+#if defined(Q_OS_MAC)
+    ;
+#endif
+
+#if defined(Q_OS_WIN)
+    basicToolsMenu->addSeparator();
+    basicToolsMenu->addAction( getFilesAction );
+#endif
 
 // **********************************************************************************************
 

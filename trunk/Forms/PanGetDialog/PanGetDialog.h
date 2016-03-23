@@ -13,7 +13,7 @@ class PanGetDialog : public QDialog, public Ui::PanGetDialog
 {
     Q_OBJECT
     Q_CLASSINFO( "author", "Rainer Sieger" )
-    Q_CLASSINFO( "url", "http://www.pangaea.de" )
+    Q_CLASSINFO( "url", "https://pangaea.de" )
 
 public:
     PanGetDialog(QWidget *parent = 0);

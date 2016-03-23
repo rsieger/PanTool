@@ -55,7 +55,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
     Q_CLASSINFO( "author", "Rainer Sieger" )
-    Q_CLASSINFO( "url", "http://www.pangaea.de" )
+    Q_CLASSINFO( "url", "https://pangaea.de" )
 
     struct structLocation
     {
@@ -463,6 +463,8 @@ private slots:
     int  chooseFolder( const QString &Folder = "" );
     int  saveFile();
     int  saveFileAs();
+
+    void exitApplication();
     void hideWindow();
     void newWindow();
     void displayHelp();
