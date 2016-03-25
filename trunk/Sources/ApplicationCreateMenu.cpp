@@ -284,19 +284,10 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( compressFilesAction );
     basicToolsMenu->addAction( decompressFilesAction );
 
-#if defined(Q_OS_LINUX)
+/*
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( getFilesAction );
-#endif
-
-#if defined(Q_OS_MAC)
-    ;
-#endif
-
-#if defined(Q_OS_WIN)
-    basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( getFilesAction );
-#endif
+*/
 
 // **********************************************************************************************
 
