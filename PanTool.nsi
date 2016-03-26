@@ -58,6 +58,8 @@ Section "MainSection" SEC01
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libgcc_s_dw2-1.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libstdc++-6.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libwinpthread-1.dll"
+  File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libeay32.dll"
+  File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\ssleay32.dll"
 
   SetOutPath "$INSTDIR\platforms"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\platforms\qminimal.dll"
@@ -111,6 +113,8 @@ Section Uninstall
   Delete "$INSTDIR\libgcc_s_dw2-1.dll"
   Delete "$INSTDIR\libstdc++-6.dll"
   Delete "$INSTDIR\libwinpthread-1.dll"
+  Delete "$INSTDIR\libeay32.dll"
+  Delete "$INSTDIR\ssleay32.dll"  
   Delete "$INSTDIR\platforms\qminimal.dll"
   Delete "$INSTDIR\platforms\qwindows.dll"
   Delete "$INSTDIR\uninst.exe"
