@@ -108,7 +108,7 @@ void PanGetDialog::displayHelp()
     {
         QString s_ApplicationName = "PanGet";
 
-        QDesktopServices::openUrl( QUrl( tr( "http://wiki.pangaea.de/wiki/" ) + s_ApplicationName ) );
+        QDesktopServices::openUrl( QUrl( tr( "https://wiki.pangaea.de/wiki/" ) + s_ApplicationName ) );
     }
 }
 
