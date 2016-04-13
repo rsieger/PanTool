@@ -58,7 +58,24 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
     {
     case QDialog::Accepted:
         s_ExternalWebPath = dialog.ExternalWebPath_lineEdit->text();
-        i_DialogResult    = QDialog::Accepted;
+
+        if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
+            s_ExternalWebPath.append( "/" );
+
+        if (
+                ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de" ) == true )
+             || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de" ) == true )
+             || ( s_ExternalWebPath.startsWith( "https://store.pangaea.de" ) == true )
+             || ( s_ExternalWebPath.startsWith( "doi:" ) == true )
+             || ( s_ExternalWebPath.startsWith( "hdl:" ) == true )
+           )
+           i_DialogResult = QDialog::Accepted;
+        else
+           i_DialogResult = QDialog::Rejected;
+
+        if ( i_DialogResult != QDialog::Accepted )
+            QMessageBox::information( this, getApplicationName( true ), tr( "Wrong format of URI" ) );
+
         break;
 
     case QDialog::Rejected:
@@ -67,9 +84,6 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
     default:
         break;
     }
-
-    if ( ( s_ExternalWebPath.startsWith( "http://" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
-        s_ExternalWebPath.append( "/" );
 
     posDialog = dialog.pos();
 
