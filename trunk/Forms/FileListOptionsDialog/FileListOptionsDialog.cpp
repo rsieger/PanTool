@@ -62,8 +62,8 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
         if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
             s_ExternalWebPath.append( "/" );
 
-        if (
-                ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de" ) == true )
+        if (    ( s_ExternalWebPath.isEmpty() == true )
+             || ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de" ) == true )
              || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de" ) == true )
              || ( s_ExternalWebPath.startsWith( "https://store.pangaea.de" ) == true )
              || ( s_ExternalWebPath.startsWith( "doi:" ) == true )
