@@ -4,16 +4,11 @@
 #include <QDialog>
 #include <QTextEdit>
 
-#include "Webfile.h"
 #include "ui_pangetdialog.h"
-
-class QProgressDialog;
 
 class PanGetDialog : public QDialog, public Ui::PanGetDialog
 {
     Q_OBJECT
-    Q_CLASSINFO( "author", "Rainer Sieger" )
-    Q_CLASSINFO( "url", "https://pangaea.de" )
 
 public:
     PanGetDialog(QWidget *parent = 0);

@@ -447,6 +447,7 @@ public:
     int doODPSampleLabelDialog( int &LegColumn, int &SiteColumn, int &HoleColumn, int &CoreColumn, int &CoreTypeColumn, int &SectionColumn, int &TopColumn, int &BottomColumn, bool &DeleteInputFile );
     int doTranslateCharacterEncodingDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
+    int doGetDatasetsDialog( QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
 
 protected:
     void dragEnterEvent( QDragEnterEvent *event );
@@ -506,7 +507,7 @@ private slots:
     void doSaveFilelist();
     void doTranslateCharacterEncoding();
     void doTransposeTable();
-
+    void doGetDatasets();
     void doCalcDepthFromPressure();
     void doCalcSalinityFromCondTempPress();
     void doCreateDateTime();
@@ -519,7 +520,6 @@ private slots:
     void doCheckTimeSeries();
 
 // Dialogs
-    void doGetDatasets();
     int  doGeneralOptionsDialog();
 
 private:
@@ -591,7 +591,7 @@ private:
     QAction *hideWindowAction;
     QAction *setOptionsAction;
     QAction *exitAction;
-    QAction *getFilesAction;
+    QAction *getDatasetsAction;
 
     QAction *addColumnAction;
     QAction *addLineAction;

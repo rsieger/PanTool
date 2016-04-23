@@ -139,7 +139,7 @@ int MainWindow::doExtractLinesDialog( int &i_StartLine, int &i_Increment, int &i
         b_SkipCommentLines         = dialog.SkipCommentLines_checkBox->isChecked();
         b_DeleteInputFile          = dialog.DeleteInputFile_checkBox->isChecked();
 
-        i_DialogResult     = QDialog::Accepted;
+        i_DialogResult             = QDialog::Accepted;
         break;
 
     case QDialog::Rejected:

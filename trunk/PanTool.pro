@@ -109,6 +109,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/deleteMatchedLines.cpp \
     ./Sources/deleteCommentBlocks.cpp \
     ./Sources/deleteDoubleLines.cpp \
+    ./Sources/getDatasets.cpp \
     ./Sources/insertCharactersAtPosition.cpp \
     ./Sources/recalcColumns.cpp \
     ./Sources/renameFiles.cpp \

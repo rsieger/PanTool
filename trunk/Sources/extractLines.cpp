@@ -1,3 +1,4 @@
+/* extractLines.cpp           */
 /* 2008-07-23                 */
 /* Dr. Rainer Sieger          */
 

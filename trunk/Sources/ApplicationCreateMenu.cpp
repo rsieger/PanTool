@@ -153,9 +153,9 @@ void MainWindow::createActions()
     saveFilelistAction = new QAction(trUtf8("Save list of files..."), this);
     connect(saveFilelistAction, SIGNAL(triggered()), this, SLOT(doSaveFilelist()));
 
-    getFilesAction = new QAction(trUtf8("Download PANGAEA datasets..."), this);
-    getFilesAction->setShortcut(trUtf8("Ctrl+D"));
-    connect(getFilesAction, SIGNAL(triggered()), this, SLOT(doGetDatasets()));
+    getDatasetsAction = new QAction(trUtf8("Download PANGAEA datasets..."), this);
+    getDatasetsAction->setShortcut(trUtf8("Ctrl+D"));
+    connect(getDatasetsAction, SIGNAL(triggered()), this, SLOT(doGetDatasets()));
 
     // Special tools
     checkTimeSeriesAction = new QAction(trUtf8("Check time series data"), this);
@@ -283,11 +283,8 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( compressFolderAction );
     basicToolsMenu->addAction( compressFilesAction );
     basicToolsMenu->addAction( decompressFilesAction );
-
-/*
     basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( getFilesAction );
-*/
+    basicToolsMenu->addAction( getDatasetsAction );
 
 // **********************************************************************************************
 
@@ -347,7 +344,7 @@ void MainWindow::enableMenuItems( const QStringList sl_FilenameList )
 
         renameFilesAction->setEnabled( true );
         saveFilelistAction->setEnabled( true );
-        getFilesAction->setEnabled( true );
+        getDatasetsAction->setEnabled( true );
     }
 
 // **********************************************************************************************
