@@ -14,7 +14,7 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
     int n                                   = 0;
     int err                                 = _NOERROR_;
 
-    int	stopProgress						= 0;
+    int	i_stopProgress						= 0;
     int	i_NumOfParents						= 0;
     int i_totalNumOfDownloads				= 0;
     int i_removedDatasets					= 0;
@@ -154,14 +154,14 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
 
     i = 0;
 
-    while ( ( i < i_totalNumOfDownloads ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
+    while ( ( i < i_totalNumOfDownloads ) && ( err == _NOERROR_ ) && ( i_stopProgress != _APPBREAK_ ) )
     {
         if ( b_isURL == true )
         {
             s_Domain = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 0, 2 ); // eg. http://iodp.tamu.edu/
 
             if ( sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ).isEmpty() == false )
-                s_Url = "/" + sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ); // eg. /janusweb/chemistry/chemcarb.cgi?leg=197&site=1203&hole=A
+                s_Url = s_Domain + "/" + sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", 3 ); // eg. /janusweb/chemistry/chemcarb.cgi?leg=197&site=1203&hole=A
         }
         else
         {
@@ -324,7 +324,7 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             }
         }
 
-        stopProgress = incFileProgress( i_totalNumOfDownloads, i++ );
+        i_stopProgress = incFileProgress( i_totalNumOfDownloads, i++ );
     }
 
 // **********************************************************************************************
