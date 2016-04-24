@@ -1,5 +1,5 @@
 /* PanGetDialog.cpp			  */
-/* 2016-04-323                 */
+/* 2016-04-23                 */
 /* Dr. Rainer Sieger          */
 
 #include <QtWidgets>
@@ -211,7 +211,6 @@ void PanGetDialog::dropEvent( QDropEvent *event )
     }
 }
 
-
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
@@ -220,24 +219,9 @@ int MainWindow::doGetDatasetsDialog( QString &s_IDListFile, QString &s_DownloadD
 {
     int i_DialogResult = QDialog::Rejected;
 
-// ***********************************************************************************************************************
+// **********************************************************************************************
 
     PanGetDialog dialog( this );
-
-    switch ( i_Extension )
-    {
-    case _CSV_:
-        dialog.CSV_radioButton->setChecked( true );
-        break;
-    default:
-        dialog.TXT_radioButton->setChecked( true );
-        break;
-    }
-
-    dialog.DownloadData_checkBox->setChecked( b_DownloadData );
-    dialog.DownloadCitation_checkBox->setChecked( b_DownloadCitation );
-    dialog.DownloadMetadata_checkBox->setChecked( b_DownloadMetadata );
-    dialog.CodecDownload_ComboBox->setCurrentIndex( i_CodecDownload );
 
 // **********************************************************************************************
 
@@ -266,8 +250,22 @@ int MainWindow::doGetDatasetsDialog( QString &s_IDListFile, QString &s_DownloadD
 
 // **********************************************************************************************
 
-    dialog.BuildScript_pushButton->setWhatsThis( "Build script" );
-    dialog.Cancel_pushButton->setWhatsThis( "Cancel dialog" );
+    switch ( i_Extension )
+    {
+    case _CSV_:
+        dialog.CSV_radioButton->setChecked( true );
+        break;
+    default:
+        dialog.TXT_radioButton->setChecked( true );
+        break;
+    }
+
+    dialog.DownloadData_checkBox->setChecked( b_DownloadData );
+    dialog.DownloadCitation_checkBox->setChecked( b_DownloadCitation );
+    dialog.DownloadMetadata_checkBox->setChecked( b_DownloadMetadata );
+    dialog.CodecDownload_ComboBox->setCurrentIndex( i_CodecDownload );
+
+// **********************************************************************************************
 
     dialog.setWindowTitle( getApplicationName( true ) + tr( " - download PANGAEA datasets" ) );
     dialog.setSizeGripEnabled( true );

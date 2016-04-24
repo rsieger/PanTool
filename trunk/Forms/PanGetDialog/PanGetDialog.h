@@ -27,7 +27,6 @@ private slots:
 protected:
     void dragEnterEvent( QDragEnterEvent *event );
     void dropEvent( QDropEvent *event );
-
 };
 
 #endif // PANGETDIALOG_H
