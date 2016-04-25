@@ -49,7 +49,7 @@ cd '/Volumes/PanTool'
 rm -rf .fseventsd
 mkdir .fseventsd
 touch .fseventsd/no_log
-cd ~/Development/Distribution
+cd ~/Development/Distribution/PanTool
 
 echo - verify package
 
@@ -57,3 +57,11 @@ codesign -d '/Volumes/PanTool/PanTool.app'
 
 echo
 hdiutil detach '/Volumes/PanTool'
+
+echo - move application
+
+rm -R /Applications/PanTool.app
+cp -R PanTool.app /Applications
+cd ~/Development/Distribution
+
+echo - finished
