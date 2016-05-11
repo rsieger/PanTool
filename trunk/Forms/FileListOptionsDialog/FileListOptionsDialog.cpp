@@ -70,8 +70,8 @@ void FileListOptionsDialog::browseLocalRootDirDialog()
 
         if ( fi.exists() == true )
         {
-            if ( fp.endsWith( QDir::toNativeSeparators( "/" ) ) == true )
-                fp = fp.remove( fp.length()-1, 1 );
+            if ( fp.endsWith( QDir::toNativeSeparators( "/" ) ) == false )
+                fp = fp.append( "/" );
 
             LocalRootDir_lineEdit->setText( QDir::toNativeSeparators( fp ) );
         }
@@ -108,8 +108,8 @@ void FileListOptionsDialog::dropEvent( QDropEvent *event )
 
     if ( fi.isFile() == false )
     {
-        if ( s_fileName.endsWith( QDir::toNativeSeparators( "/" ) ) == true )
-            s_fileName = s_fileName.remove( s_fileName.length()-1, 1 );
+        if ( s_fileName.endsWith( QDir::toNativeSeparators( "/" ) ) == false )
+            s_fileName = s_fileName.append( "/" );
 
         LocalRootDir_lineEdit->setText( QDir::toNativeSeparators( s_fileName ) );
     }
@@ -144,7 +144,10 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalRootDir, QString &s_Ext
     switch ( dialog.exec() )
     {
     case QDialog::Accepted:
-        s_LocalRootDir    = dialog.LocalRootDir_lineEdit->text();
+        s_LocalRootDir = dialog.LocalRootDir_lineEdit->text();
+
+        if ( s_LocalRootDir.endsWith( "/" ) == false )
+            s_LocalRootDir.append( "/" );
 
         s_ExternalWebPath = dialog.ExternalWebPath_lineEdit->text();
 

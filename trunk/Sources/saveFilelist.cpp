@@ -72,7 +72,7 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
             fi.setFile( sl_FilenameList.at( i ) );
 
             s_FilePath = fi.absoluteFilePath();
-            s_FilePath = s_FilePath.replace( s_LocalRootDir.section( "/", 0, s_LocalRootDir.count( "/" )-1 ) + "/", "" );
+            s_FilePath = s_FilePath.replace( s_LocalRootDir.section( "/", 0, s_LocalRootDir.count( "/" ) ), "" );
 
             tout << "???" << "\t";                      // Event label
             tout << "\t";                               // File content
