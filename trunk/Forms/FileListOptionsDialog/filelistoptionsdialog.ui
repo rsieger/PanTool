@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>611</width>
-    <height>149</height>
+    <height>184</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -19,7 +19,64 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox_SearchAndReplace_1">
+     <property name="title">
+      <string/>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="SearchForLabelText_2">
+        <property name="text">
+         <string>Local root directory:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="LocalRootDir_lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="browseLocalRootDirButton">
+        <property name="text">
+         <string>Browse...</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="SearchForLabelText_1">
+        <property name="text">
+         <string>External web path:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="ExternalWebPath_lineEdit">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>e.g: http://store.pangaea.de/Publications/Sieger-etal_2005/</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
    <item row="1" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
@@ -61,42 +118,11 @@
      </item>
     </layout>
    </item>
-   <item row="0" column="0">
-    <widget class="QGroupBox" name="groupBox_SearchAndReplace_1">
-     <property name="title">
-      <string/>
-     </property>
-     <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="SearchForLabelText_1">
-        <property name="text">
-         <string>External web path:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="ExternalWebPath_lineEdit">
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>e.g: http://store.pangaea.de/Publications/Sieger-etal_2005/</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>LocalRootDir_lineEdit</tabstop>
+  <tabstop>browseLocalRootDirButton</tabstop>
   <tabstop>ExternalWebPath_lineEdit</tabstop>
   <tabstop>ClearAll_pushButton</tabstop>
   <tabstop>OK_pushButton</tabstop>

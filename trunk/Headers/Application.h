@@ -347,6 +347,7 @@ public:
     bool        gb_tt_DeleteInputFile;               //!< loesche Inputdatei.
 
     // External web path
+    QString     gs_LocalRootDir;                     //!< Local root diretory
     QString     gs_ExternalWebPath;                  //!< External web path
 
     bool LineCanBeWritten( const QString &InputStr, const bool SkipEmptyLines, const bool SkipCommentLines );
@@ -393,7 +394,7 @@ public:
     int recalcColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnsList = "", const float MulX = 1., const float AddX = 0., const int NumOfDigits = 5, const bool OnlyIfEmpty = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int transposeTable( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int createScript(const QString &FilenameIn, const int CodecInput , const int NumOfFiles);
-    int saveFilelist( const QString &FilenameOut, const QStringList FilenameList, const int CodecOutput, const QString &ExternalWebPath, const int EOL );
+    int saveFilelist( const QString &FilenameOut, const QStringList FilenameList, const int CodecOutput, const QString &LocalRootDir, const QString &ExternalWebPath, const int EOL );
 
     int calcDepthFromPressure( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int LatitudeColumn, const int PressureColumn, const int NumOfDigits, const bool DeleteInputFile, const int NumOfFiles );
     float gravity( const float lat );
@@ -434,7 +435,7 @@ public:
     int doCharactersAtPositionDialog( const int mode, QString &PositionList, QString &Text, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doDateTimeDialog( int &DateColumn, int &YearColumn, int &MonthColumn, int &DayColumn, int &TimeColumn, int &HourColumn, int &MinuteColumn, int &SecondColumn, int &DateTimeColumn,  int &DayOfYearColumn, int &JulianDayColumn, int &MatLabDateColumn, bool &WriteDateTimeOnly );
     int doDeleteLinesDialog( int &StartLine, int &NumberOfLines, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
-    int doFileListOptionsDialog( QString &ExternalWebPath );
+    int doFileListOptionsDialog( QString &LocalRootDir, QString &ExternalWebPath );
     int doExtractLinesDialog( int &StartLine, int &Increment, int &NumberOfLines, bool &ExtractFristLineLastLine, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doFindAreaDialog( QString &AreaDatabaseFilename, bool &DeleteInputFile );
     int doFourColumnsDialog( const int mode, int &NumOfGeocodes, int &FieldDelimiter, QString &MissingValue, bool &DeleteInputFile );

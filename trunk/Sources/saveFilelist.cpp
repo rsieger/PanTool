@@ -8,9 +8,10 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl_FilenameList, const int i_CodecOutput, const QString &s_ExternalWebPath, const int i_EOL )
+int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl_FilenameList, const int i_CodecOutput, const QString &s_LocalRootDir, const QString &s_ExternalWebPath, const int i_EOL )
 {
-    QString     s_EOL = setEOLChar( i_EOL );
+    QString     s_FilePath  = "";
+    QString     s_EOL       = setEOLChar( i_EOL );
 
     QDateTime   CreationDateTime;
 
@@ -70,13 +71,16 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
         {
             fi.setFile( sl_FilenameList.at( i ) );
 
+            s_FilePath = fi.absoluteFilePath();
+            s_FilePath = s_FilePath.replace( s_LocalRootDir.section( "/", 0, s_LocalRootDir.count( "/" )-1 ) + "/", "" );
+
             tout << "???" << "\t";                      // Event label
             tout << "\t";                               // File content
             tout << fi.fileName() << "\t";              // File name
             tout << fi.completeBaseName() << "\t";      // File name
             tout << fi.suffix().toUpper() << "\t";      // File format
             tout << QString( "%1").arg( (float) fi.size()/1024., 0,'f', 3 ) << "\t";    // File size in KByte
-            tout << s_ExternalWebPath << fi.fileName(); // External web path plus file name
+            tout << s_ExternalWebPath << s_FilePath;    // External web path plus file name
             tout << s_EOL;
         }
     }
@@ -116,8 +120,8 @@ void MainWindow::doSaveFilelist()
             break;
         }
 
-        if ( ( s_FilenameOut.isEmpty() == false ) && ( doFileListOptionsDialog( gs_ExternalWebPath ) == QDialog::Accepted ) )
-            err = saveFilelist( s_FilenameOut, gsl_FilenameList, gi_CodecOutput, gs_ExternalWebPath, gi_EOL );
+        if ( ( s_FilenameOut.isEmpty() == false ) && ( doFileListOptionsDialog( gs_LocalRootDir, gs_ExternalWebPath ) == QDialog::Accepted ) )
+            err = saveFilelist( s_FilenameOut, gsl_FilenameList, gi_CodecOutput, gs_LocalRootDir, gs_ExternalWebPath, gi_EOL );
         else
             err = _CHOOSEABORTED_;
     }

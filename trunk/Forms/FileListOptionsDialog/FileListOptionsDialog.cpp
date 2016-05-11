@@ -16,6 +16,7 @@ FileListOptionsDialog::FileListOptionsDialog( QWidget *parent ) : QDialog( paren
     setupUi( this );
 
     connect( ClearAll_pushButton, SIGNAL( clicked() ), this, SLOT( clearAll() ) );
+    connect( browseLocalRootDirButton, SIGNAL( clicked() ), this, SLOT( browseLocalRootDirDialog() ) );
     connect( OK_pushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
     connect( Cancel_pushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
 }
@@ -26,14 +27,99 @@ FileListOptionsDialog::FileListOptionsDialog( QWidget *parent ) : QDialog( paren
 
 void FileListOptionsDialog::clearAll()
 {
+    LocalRootDir_lineEdit->setText( "" );
     ExternalWebPath_lineEdit->setText( "" );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+QString FileListOptionsDialog::getDocumentDir()
+{
+#if defined(Q_OS_LINUX)
+    return( QDir::homePath() );
+#endif
+
+#if defined(Q_OS_MAC)
+    return( QDir::homePath() );
+#endif
+
+#if defined(Q_OS_WIN)
+    return( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) );
+#endif
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+void FileListOptionsDialog::browseLocalRootDirDialog()
+{
+    QString fp	= "";
+    QString dir	= LocalRootDir_lineEdit->text();
+
+    if ( dir.isEmpty() == true )
+        dir = getDocumentDir();
+
+    fp = QFileDialog::getExistingDirectory( this, tr( "Choose Directory" ), dir, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog );
+
+    if ( fp.isEmpty() == false )
+    {
+        QFileInfo fi( fp );
+
+        if ( fi.exists() == true )
+        {
+            if ( fp.endsWith( QDir::toNativeSeparators( "/" ) ) == true )
+                fp = fp.remove( fp.length()-1, 1 );
+
+            LocalRootDir_lineEdit->setText( QDir::toNativeSeparators( fp ) );
+        }
+    }
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+void FileListOptionsDialog::dragEnterEvent( QDragEnterEvent *event )
+{
+    if ( event->mimeData()->hasFormat( "text/uri-list" ) )
+        event->acceptProposedAction();
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+void FileListOptionsDialog::dropEvent( QDropEvent *event )
+{
+    QList<QUrl> urls = event->mimeData()->urls();
+
+    if ( urls.isEmpty() == true )
+        return;
+
+    QString s_fileName = urls.first().toLocalFile();
+
+    if ( s_fileName.isEmpty() == true )
+        return;
+
+    QFileInfo fi( s_fileName );
+
+    if ( fi.isFile() == false )
+    {
+        if ( s_fileName.endsWith( QDir::toNativeSeparators( "/" ) ) == true )
+            s_fileName = s_fileName.remove( s_fileName.length()-1, 1 );
+
+        LocalRootDir_lineEdit->setText( QDir::toNativeSeparators( s_fileName ) );
+    }
 }
 
 // ***********************************************************************************************************************
 // ***********************************************************************************************************************
 // ***********************************************************************************************************************
 
-int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
+int MainWindow::doFileListOptionsDialog( QString &s_LocalRootDir, QString &s_ExternalWebPath )
 {
     int i_DialogResult = QDialog::Rejected;
 
@@ -41,6 +127,7 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
 
     FileListOptionsDialog dialog( this );
 
+    dialog.LocalRootDir_lineEdit->setText( s_LocalRootDir );
     dialog.ExternalWebPath_lineEdit->setText( s_ExternalWebPath );
 
     dialog.ExternalWebPath_lineEdit->selectAll();
@@ -57,6 +144,8 @@ int MainWindow::doFileListOptionsDialog( QString &s_ExternalWebPath )
     switch ( dialog.exec() )
     {
     case QDialog::Accepted:
+        s_LocalRootDir    = dialog.LocalRootDir_lineEdit->text();
+
         s_ExternalWebPath = dialog.ExternalWebPath_lineEdit->text();
 
         if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
