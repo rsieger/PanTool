@@ -379,7 +379,7 @@ void MainWindow::savePreferences()
 
     // File list Options
     settings.beginGroup( "FileListOptions" );
-    settings.setValue( "LocalRootDir", gs_LocalRootDir );
+    settings.setValue( "LocalDataDir", gs_LocalDataDir );
     settings.setValue( "ExternalWebPath", gs_ExternalWebPath );
     settings.endGroup();
 }
@@ -774,7 +774,7 @@ void MainWindow::loadPreferences()
 
     // File list options
     settings.beginGroup( "FileListOptions" );
-    gs_LocalRootDir    = settings.value( "LocalRootDir", "" ).toString();
+    gs_LocalDataDir    = settings.value( "LocalDataDir", "" ).toString();
     gs_ExternalWebPath = settings.value( "ExternalWebPath", "" ).toString();
     settings.endGroup();
 

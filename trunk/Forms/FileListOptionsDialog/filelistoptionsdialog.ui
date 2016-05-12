@@ -29,12 +29,12 @@
       <item row="0" column="0">
        <widget class="QLabel" name="SearchForLabelText_2">
         <property name="text">
-         <string>Local root directory:</string>
+         <string>Local data directory:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="LocalRootDir_lineEdit">
+       <widget class="QLineEdit" name="LocalDataDir_lineEdit">
         <property name="minimumSize">
          <size>
           <width>0</width>
@@ -44,7 +44,7 @@
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QPushButton" name="browseLocalRootDirButton">
+       <widget class="QPushButton" name="browseLocalDataDirButton">
         <property name="text">
          <string>Browse...</string>
         </property>
@@ -121,8 +121,8 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>LocalRootDir_lineEdit</tabstop>
-  <tabstop>browseLocalRootDirButton</tabstop>
+  <tabstop>LocalDataDir_lineEdit</tabstop>
+  <tabstop>browseLocalDataDirButton</tabstop>
   <tabstop>ExternalWebPath_lineEdit</tabstop>
   <tabstop>ClearAll_pushButton</tabstop>
   <tabstop>OK_pushButton</tabstop>

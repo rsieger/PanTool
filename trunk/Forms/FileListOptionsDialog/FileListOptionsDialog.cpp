@@ -16,7 +16,7 @@ FileListOptionsDialog::FileListOptionsDialog( QWidget *parent ) : QDialog( paren
     setupUi( this );
 
     connect( ClearAll_pushButton, SIGNAL( clicked() ), this, SLOT( clearAll() ) );
-    connect( browseLocalRootDirButton, SIGNAL( clicked() ), this, SLOT( browseLocalRootDirDialog() ) );
+    connect( browseLocalDataDirButton, SIGNAL( clicked() ), this, SLOT( browseLocalDataDirDialog() ) );
     connect( OK_pushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
     connect( Cancel_pushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
 }
@@ -27,7 +27,7 @@ FileListOptionsDialog::FileListOptionsDialog( QWidget *parent ) : QDialog( paren
 
 void FileListOptionsDialog::clearAll()
 {
-    LocalRootDir_lineEdit->setText( "" );
+    LocalDataDir_lineEdit->setText( "" );
     ExternalWebPath_lineEdit->setText( "" );
 }
 
@@ -54,10 +54,10 @@ QString FileListOptionsDialog::getDocumentDir()
 // **********************************************************************************************
 // **********************************************************************************************
 
-void FileListOptionsDialog::browseLocalRootDirDialog()
+void FileListOptionsDialog::browseLocalDataDirDialog()
 {
     QString fp	= "";
-    QString dir	= LocalRootDir_lineEdit->text();
+    QString dir	= LocalDataDir_lineEdit->text();
 
     if ( dir.isEmpty() == true )
         dir = getDocumentDir();
@@ -68,12 +68,12 @@ void FileListOptionsDialog::browseLocalRootDirDialog()
     {
         QFileInfo fi( fp );
 
-        if ( fi.exists() == true )
+        if ( ( fi.isFile() == false ) && ( fi.exists() == true ) )
         {
             if ( fp.endsWith( QDir::toNativeSeparators( "/" ) ) == false )
-                fp = fp.append( "/" );
+                fp = fp.append( QDir::toNativeSeparators( "/" ) );
 
-            LocalRootDir_lineEdit->setText( QDir::toNativeSeparators( fp ) );
+            LocalDataDir_lineEdit->setText( QDir::toNativeSeparators( fp ) );
         }
     }
 }
@@ -106,12 +106,12 @@ void FileListOptionsDialog::dropEvent( QDropEvent *event )
 
     QFileInfo fi( s_fileName );
 
-    if ( fi.isFile() == false )
+    if ( ( fi.isFile() == false ) && ( fi.exists() == true ) )
     {
         if ( s_fileName.endsWith( QDir::toNativeSeparators( "/" ) ) == false )
-            s_fileName = s_fileName.append( "/" );
+            s_fileName = s_fileName.append( QDir::toNativeSeparators( "/" ) );
 
-        LocalRootDir_lineEdit->setText( QDir::toNativeSeparators( s_fileName ) );
+        LocalDataDir_lineEdit->setText( QDir::toNativeSeparators( s_fileName ) );
     }
 }
 
@@ -119,7 +119,7 @@ void FileListOptionsDialog::dropEvent( QDropEvent *event )
 // ***********************************************************************************************************************
 // ***********************************************************************************************************************
 
-int MainWindow::doFileListOptionsDialog( QString &s_LocalRootDir, QString &s_ExternalWebPath )
+int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_ExternalWebPath )
 {
     int i_DialogResult = QDialog::Rejected;
 
@@ -127,10 +127,16 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalRootDir, QString &s_Ext
 
     FileListOptionsDialog dialog( this );
 
-    dialog.LocalRootDir_lineEdit->setText( s_LocalRootDir );
+    QFileInfo fi( s_LocalDataDir );
+
+    if ( ( fi.isFile() == false ) && ( fi.exists() == true ) )
+        dialog.LocalDataDir_lineEdit->setText( s_LocalDataDir );
+    else
+        dialog.LocalDataDir_lineEdit->setText( getDocumentDir() + QDir::toNativeSeparators( "/" ) );
+
     dialog.ExternalWebPath_lineEdit->setText( s_ExternalWebPath );
 
-    dialog.ExternalWebPath_lineEdit->selectAll();
+    dialog.LocalDataDir_lineEdit->selectAll();
 
     dialog.OK_pushButton->setWhatsThis( "Close dialog" );
     dialog.Cancel_pushButton->setWhatsThis( "Cancel dialog" );
@@ -144,20 +150,26 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalRootDir, QString &s_Ext
     switch ( dialog.exec() )
     {
     case QDialog::Accepted:
-        s_LocalRootDir = dialog.LocalRootDir_lineEdit->text();
+        s_LocalDataDir = dialog.LocalDataDir_lineEdit->text();
 
-        if ( s_LocalRootDir.endsWith( "/" ) == false )
-            s_LocalRootDir.append( "/" );
+        if ( s_LocalDataDir.endsWith( QDir::toNativeSeparators( "/" ) ) == false )
+            s_LocalDataDir.append( QDir::toNativeSeparators( "/" ) );
 
         s_ExternalWebPath = dialog.ExternalWebPath_lineEdit->text();
+
+        if ( s_ExternalWebPath.contains( "/hs/usero/") == true )
+            s_ExternalWebPath = tr( "http://hs.pangaea.de/" ) + s_ExternalWebPath.section( "/hs/usero/", 1, 1 );
+
+        if ( s_ExternalWebPath.contains( "/pangaea-family/store/") == true )
+            s_ExternalWebPath = tr( "https://store.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea-family/store/", 1, 1 );
 
         if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
             s_ExternalWebPath.append( "/" );
 
         if (    ( s_ExternalWebPath.isEmpty() == true )
-             || ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de" ) == true )
-             || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de" ) == true )
-             || ( s_ExternalWebPath.startsWith( "https://store.pangaea.de" ) == true )
+             || ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de/" ) == true )
+             || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de/" ) == true )
+             || ( s_ExternalWebPath.startsWith( "https://store.pangaea.de/" ) == true )
              || ( s_ExternalWebPath.startsWith( "doi:" ) == true )
              || ( s_ExternalWebPath.startsWith( "hdl:" ) == true )
            )

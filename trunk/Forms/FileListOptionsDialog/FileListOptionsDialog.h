@@ -17,7 +17,7 @@ private:
 
 private slots:
     void clearAll();
-    void browseLocalRootDirDialog();
+    void browseLocalDataDirDialog();
 
 protected:
     void dragEnterEvent( QDragEnterEvent *event );
