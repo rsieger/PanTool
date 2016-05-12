@@ -18,7 +18,8 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
 // **********************************************************************************************
 // open output file
 
-    QFileInfo fi( s_FilenameOut );
+    QFileInfo fi_FilenameOut( s_FilenameOut );
+    QFileInfo fi_LocalDataDir( s_LocalDataDir );
 
     QFile fout( s_FilenameOut );
 
@@ -48,17 +49,17 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
     {
         for ( int i=0; i<sl_FilenameList.count(); i++ )
         {
-            fi.setFile( sl_FilenameList.at( i ) );
+            fi_FilenameOut.setFile( sl_FilenameList.at( i ) );
 
-            CreationDateTime.setDate( fi.created().date() );
-            CreationDateTime.setTime( fi.created().time() );
+            CreationDateTime.setDate( fi_FilenameOut.created().date() );
+            CreationDateTime.setTime( fi_FilenameOut.created().time() );
 
-            tout << QDir::toNativeSeparators( fi.absoluteFilePath() ) << "\t";
-            tout << QDir::toNativeSeparators( fi.absolutePath() + "/" ) << "\t";
-            tout << fi.fileName() << "\t";
-            tout << fi.completeBaseName() << "\t";
-            tout << fi.suffix() << "\t";
-            tout << fi.size() << "\t";
+            tout << QDir::toNativeSeparators( fi_FilenameOut.absoluteFilePath() ) << "\t";
+            tout << QDir::toNativeSeparators( fi_FilenameOut.absolutePath() + "/" ) << "\t";
+            tout << fi_FilenameOut.fileName() << "\t";
+            tout << fi_FilenameOut.completeBaseName() << "\t";
+            tout << fi_FilenameOut.suffix() << "\t";
+            tout << fi_FilenameOut.size() << "\t";
             tout << CreationDateTime.toString( "yyyy-MM-ddThh:mm:ss" );
             tout << s_EOL;
         }
@@ -69,18 +70,15 @@ int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl
 
         for ( int i=0; i<sl_FilenameList.count(); i++ )
         {
-            fi.setFile( sl_FilenameList.at( i ) );
-
-            s_FilePath = fi.absoluteFilePath();
-            s_FilePath = s_FilePath.replace( s_LocalDataDir.section( "/", 0, s_LocalDataDir.count( "/" ) ), "" );
+            fi_FilenameOut.setFile( sl_FilenameList.at( i ) );
 
             tout << "???" << "\t";                      // Event label
             tout << "\t";                               // File content
-            tout << fi.fileName() << "\t";              // File name
-            tout << fi.completeBaseName() << "\t";      // File name
-            tout << fi.suffix().toUpper() << "\t";      // File format
-            tout << QString( "%1").arg( (float) fi.size()/1024., 0,'f', 3 ) << "\t";    // File size in KByte
-            tout << s_ExternalWebPath << s_FilePath;    // External web path plus file name
+            tout << fi_FilenameOut.fileName() << "\t";              // File name
+            tout << fi_FilenameOut.completeBaseName() << "\t";      // File name
+            tout << fi_FilenameOut.suffix().toUpper() << "\t";      // File format
+            tout << QString( "%1").arg( (float) fi_FilenameOut.size()/1024., 0,'f', 3 ) << "\t";    // File size in KByte
+            tout << s_ExternalWebPath << fi_FilenameOut.absoluteFilePath().replace( fi_LocalDataDir.absolutePath().section( "/", 0, fi_LocalDataDir.absolutePath().count( "/" ) ) + "/" , "" );    // External web path plus file name
             tout << s_EOL;
         }
     }

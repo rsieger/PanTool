@@ -130,9 +130,9 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
     QFileInfo fi( s_LocalDataDir );
 
     if ( ( fi.isFile() == false ) && ( fi.exists() == true ) )
-        dialog.LocalDataDir_lineEdit->setText( s_LocalDataDir );
+        dialog.LocalDataDir_lineEdit->setText( QDir::toNativeSeparators( s_LocalDataDir ) );
     else
-        dialog.LocalDataDir_lineEdit->setText( getDocumentDir() + QDir::toNativeSeparators( "/" ) );
+        dialog.LocalDataDir_lineEdit->setText( QDir::toNativeSeparators( getDocumentDir() + "/" ) );
 
     dialog.ExternalWebPath_lineEdit->setText( s_ExternalWebPath );
 
@@ -150,7 +150,7 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
     switch ( dialog.exec() )
     {
     case QDialog::Accepted:
-        s_LocalDataDir = dialog.LocalDataDir_lineEdit->text();
+        s_LocalDataDir =  QDir::toNativeSeparators( dialog.LocalDataDir_lineEdit->text() );
 
         if ( s_LocalDataDir.endsWith( QDir::toNativeSeparators( "/" ) ) == false )
             s_LocalDataDir.append( QDir::toNativeSeparators( "/" ) );
