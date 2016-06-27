@@ -161,15 +161,20 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
             s_ExternalWebPath = tr( "http://hs.pangaea.de/" ) + s_ExternalWebPath.section( "/hs/usero/", 1, 1 );
 
         if ( s_ExternalWebPath.contains( "/pangaea-family/store/") == true )
-            s_ExternalWebPath = tr( "https://store.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea-family/store/", 1, 1 );
+            s_ExternalWebPath = tr( "http://store.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea-family/store/", 1, 1 );
+
+        if ( s_ExternalWebPath.contains( "/pangaea-family/www/") == true )
+            s_ExternalWebPath = tr( "https://www.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea-family/www/", 1, 1 );
 
         if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
             s_ExternalWebPath.append( "/" );
 
+        s_ExternalWebPath = s_ExternalWebPath.toLower();
+
         if (    ( s_ExternalWebPath.isEmpty() == true )
              || ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de/" ) == true )
              || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de/" ) == true )
-             || ( s_ExternalWebPath.startsWith( "https://store.pangaea.de/" ) == true )
+             || ( s_ExternalWebPath.startsWith( "https://www.pangaea.de/" ) == true )
              || ( s_ExternalWebPath.startsWith( "doi:" ) == true )
              || ( s_ExternalWebPath.startsWith( "hdl:" ) == true )
            )
@@ -178,8 +183,11 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
            i_DialogResult = QDialog::Rejected;
 
         if ( i_DialogResult != QDialog::Accepted )
-            QMessageBox::information( this, getApplicationName( true ), tr( "Wrong format of URI" ) );
-
+        {
+            QString s_Message = tr( "Wrong format of URI\n  " ) + s_ExternalWebPath +
+                                tr( "\n\nURI must start with:\n  - http://hs.pangaea.de/ or \n  - http://store.pangaea.de/ or \n  - https://www.pangaea.de/ or \n  - doi: or \n  - hdl:" );
+            QMessageBox::information( this, getApplicationName( true ), s_Message );
+        }
         break;
 
     case QDialog::Rejected:
