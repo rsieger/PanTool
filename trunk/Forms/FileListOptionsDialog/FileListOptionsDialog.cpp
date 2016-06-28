@@ -185,7 +185,7 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
         if ( i_DialogResult != QDialog::Accepted )
         {
             QString s_Message = tr( "Wrong format of URI\n  " ) + s_ExternalWebPath +
-                                tr( "\n\nURI must start with:\n  - http://hs.pangaea.de/ or \n  - http://store.pangaea.de/ or \n  - https://www.pangaea.de/ or \n  - doi: or \n  - hdl:" );
+                                tr( "\n\nURI must be started with:\n  - http://hs.pangaea.de/ or \n  - http://store.pangaea.de/ or \n  - https://www.pangaea.de/ or \n  - doi: or \n  - hdl:" );
             QMessageBox::information( this, getApplicationName( true ), s_Message );
         }
         break;
