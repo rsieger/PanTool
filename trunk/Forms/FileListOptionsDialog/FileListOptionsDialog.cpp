@@ -169,8 +169,6 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
         if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
             s_ExternalWebPath.append( "/" );
 
-        s_ExternalWebPath = s_ExternalWebPath.toLower();
-
         if (    ( s_ExternalWebPath.isEmpty() == true )
              || ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de/" ) == true )
              || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de/" ) == true )
