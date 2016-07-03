@@ -25,9 +25,10 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     QDate           d( 1970, 1, 1 );
     QTime           t( 0, 0, 0, 0 );
 
-    QString			InputStr				= "";
+//  QString         s_QutputFormatDateTime  = "yyyy-MM-ddThh:mm:ss";
+    QString         s_QutputFormatDateTime  = "hh:mm";
 
-    QString			s_Time					= "";
+    QString			InputStr				= "";
 
     int				i_Day					= 0;
     int				i_Month					= 0;
@@ -246,10 +247,10 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         if ( b_writeDateTimeOnly == true )
         {
             // Date and Time
-//          tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t" << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) << sl_Input.at( i ) << s_EOL;
-//          tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
-//          tout << dt.toString( "yyyy-MM-ddThh:mm" )        << "\t"                                                            << sl_Input.at( i ) << s_EOL;
-            tout << dt.toString( "yyyy-MM-ddThh:mm:ss" )     << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+//          tout << dt.toString( s_QutputFormatDateTime ) << "\t" << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) << sl_Input.at( i ) << s_EOL;
+//          tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+//          tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+            tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
         }
         else
         {
