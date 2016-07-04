@@ -13,7 +13,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
                                 const int i_DateColumn, const int i_YearColumn, const int i_MonthColumn, const int i_DayColumn,
                                 const int i_TimeColumn, const int i_HourColumn, const int i_MinuteColumn, const int i_SecondColumn,
                                 const int i_DateTimeColumn, const int i_DayOfYearColumn, const int i_JulianDayColumn, const int i_MatLabDateColumn,
-                                const bool b_writeDateTimeOnly, const int i_NumOfFiles )
+                                const bool b_writeDateTimeOnly, const int i_OutputFormatDateTime, const int i_NumOfFiles )
 {
     int             i                               = 1;
     int             n                               = 0;
@@ -25,10 +25,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     QDate           d( 1970, 1, 1 );
     QTime           t( 0, 0, 0, 0 );
 
-//  QString         s_QutputFormatDateTime  = "yyyy-MM-ddThh:mm:ss";
-    QString         s_QutputFormatDateTime  = "hh:mm";
-
     QString			InputStr				= "";
+    QString         s_OutputFormatDateTime  = "yyyy-MM-ddThh:mm";
 
     int				i_Day					= 0;
     int				i_Month					= 0;
@@ -46,6 +44,43 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     QString         s_EOL                   = setEOLChar( i_EOL );
 
     QStringList     sl_Input;
+
+// **********************************************************************************************
+// set output format of date/time values
+
+    switch( i_OutputFormatDateTime )
+    {
+    case 0:
+        s_OutputFormatDateTime = "yyyy";
+        break;
+    case 1:
+        s_OutputFormatDateTime = "yyyy-MM";
+        break;
+    case 2:
+        s_OutputFormatDateTime = "yyyy-MM-dd";
+        break;
+    case 3:
+        s_OutputFormatDateTime = "yyyy-MM-ddThh:mm";
+        break;
+    case 4:
+        s_OutputFormatDateTime = "yyyy-MM-ddThh:mm:ss";
+        break;
+    case 5:
+        s_OutputFormatDateTime = "yyyy-MM-ddThh:mm:ss.zzz";
+        break;
+    case 6:
+        s_OutputFormatDateTime = "hh:mm";
+        break;
+    case 7:
+        s_OutputFormatDateTime = "hh:mm:ss";
+        break;
+    case 8:
+        s_OutputFormatDateTime = "hh:mm:ss.zzz";
+        break;
+    default:
+        s_OutputFormatDateTime = "yyyy-MM-ddThh:mm";
+        break;
+    }
 
 // **********************************************************************************************
 // read file
@@ -250,7 +285,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 //          tout << dt.toString( s_QutputFormatDateTime ) << "\t" << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) << sl_Input.at( i ) << s_EOL;
 //          tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
 //          tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
-            tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+            tout << dt.toString( s_OutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
         }
         else
         {
@@ -469,8 +504,8 @@ QTime MainWindow::getTime( const QString s_TimeIn )
     if ( s_Time.count( " " ) == 1 )	// 27.11.2004 18:58:34.345
         s_Time = s_Time.section( " ", 1, 1 );
 
-    if ( s_Time.count( "T" ) == 1 ) // 2004-11-27T18:58:34.345
-        s_Time = s_Time.section( "T", 1, 1 );
+    if ( s_Time.count( "t" ) == 1 ) // 2004-11-27T18:58:34.345
+        s_Time = s_Time.section( "t", 1, 1 );
 
     if ( s_Time.count( " " ) == 3 ) // 27 Nov 2004 18:58:34.345
         s_Time = s_Time.section( " ", 3, 3 );
@@ -653,7 +688,7 @@ void MainWindow::doCreateDateTime()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-          if ( doDateTimeDialog( gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly ) == QDialog::Accepted )
+          if ( doDateTimeDialog( gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly, gi_OutputFormatDateTime ) == QDialog::Accepted )
           {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Creating date/time..." ) );
 
@@ -669,7 +704,7 @@ void MainWindow::doCreateDateTime()
                         b_incActionNumber = false;
                     }
 
-                    err = createDateTime( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly, gsl_FilenameList.count() );
+                    err = createDateTime( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_dt_DateColumn, gi_dt_YearColumn, gi_dt_MonthColumn, gi_dt_DayColumn, gi_dt_TimeColumn, gi_dt_HourColumn, gi_dt_MinuteColumn, gi_dt_SecondColumn, gi_dt_DateTimeColumn, gi_dt_DayOfYearColumn, gi_dt_JulianDayColumn, gi_dt_MatLabDateColumn, gb_dt_WriteDateTimeOnly, gi_OutputFormatDateTime, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }

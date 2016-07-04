@@ -30,9 +30,9 @@ DateTimeDialog::DateTimeDialog( QWidget *parent ) : QDialog( parent )
     JulianDayColumn_lineEdit->setValidator( new QIntValidator( 1, 9999, this ) );
     MatLabDateColumn_lineEdit->setValidator( new QIntValidator( 1, 9999, this ) );
 
-    connect(ClearAll_pushButton, SIGNAL(clicked()), this, SLOT(clearAll()));
-    connect(OK_pushButton, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(Cancel_pushButton, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(ClearAll_pushButton, SIGNAL(clicked()), this, SLOT( clearAll() ) );
+    connect(OK_pushButton, SIGNAL(clicked()), this, SLOT( accept() ) );
+    connect(Cancel_pushButton, SIGNAL(clicked()), this, SLOT( reject() ) );
 
     connect( DateColumn_lineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
     connect( YearColumn_lineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
@@ -45,6 +45,7 @@ DateTimeDialog::DateTimeDialog( QWidget *parent ) : QDialog( parent )
     connect( DayOfYearColumn_lineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
     connect( JulianDayColumn_lineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
     connect( MatLabDateColumn_lineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
+    connect( WriteDateTimeOnly_checkBox, SIGNAL( clicked( bool ) ), this, SLOT( enableOKButton() ) );
 }
 
 // ***********************************************************************************************************************
@@ -128,6 +129,11 @@ void DateTimeDialog::enableOKButton()
         }
     }
 
+    if ( WriteDateTimeOnly_checkBox->isChecked() == true )
+        OutputFormatDateTimeComboBox->setEnabled( true );
+    else
+        OutputFormatDateTimeComboBox->setEnabled( false );
+
     if ( b_OK == true )
     {
         OK_pushButton->setEnabled( true );
@@ -146,7 +152,7 @@ void DateTimeDialog::enableOKButton()
 
 int MainWindow::doDateTimeDialog( int &i_DateColumn, int &i_YearColumn, int &i_MonthColumn, int &i_DayColumn, int &i_TimeColumn, int &i_HourColumn,
                                   int &i_MinuteColumn, int &i_SecondColumn, int &i_DateTimeColumn, int &i_DayOfYearColumn, int &i_JulianDayColumn,
-                                  int &i_MatLabDateColumn, bool &b_WriteDateTimeOnly )
+                                  int &i_MatLabDateColumn, bool &b_WriteDateTimeOnly, int &i_OutputFormatDateTime )
 {
     int i_DialogResult = QDialog::Rejected;
 
@@ -166,8 +172,8 @@ int MainWindow::doDateTimeDialog( int &i_DateColumn, int &i_YearColumn, int &i_M
     dialog.DayOfYearColumn_lineEdit->setText( QString( "%1" ).arg( i_DayOfYearColumn ) );
     dialog.JulianDayColumn_lineEdit->setText( QString( "%1" ).arg( i_JulianDayColumn ) );
     dialog.MatLabDateColumn_lineEdit->setText( QString( "%1" ).arg( i_MatLabDateColumn ) );
-
     dialog.WriteDateTimeOnly_checkBox->setChecked( b_WriteDateTimeOnly );
+    dialog.OutputFormatDateTimeComboBox->setCurrentIndex( i_OutputFormatDateTime );
 
     dialog.OK_pushButton->setWhatsThis( tr( "Close dialog" ) );
     dialog.Cancel_pushButton->setWhatsThis( tr( "Cancel dialog" ) );
@@ -183,22 +189,22 @@ int MainWindow::doDateTimeDialog( int &i_DateColumn, int &i_YearColumn, int &i_M
     switch ( dialog.exec() )
     {
     case QDialog::Accepted:
-        i_DateColumn        = dialog.DateColumn_lineEdit->text().toInt();
-        i_YearColumn        = dialog.YearColumn_lineEdit->text().toInt();
-        i_MonthColumn       = dialog.MonthColumn_lineEdit->text().toInt();
-        i_DayColumn         = dialog.DayColumn_lineEdit->text().toInt();
-        i_TimeColumn        = dialog.TimeColumn_lineEdit->text().toInt();
-        i_HourColumn        = dialog.HourColumn_lineEdit->text().toInt();
-        i_MinuteColumn      = dialog.MinuteColumn_lineEdit->text().toInt();
-        i_SecondColumn      = dialog.SecondColumn_lineEdit->text().toInt();
-        i_DateTimeColumn    = dialog.DateTimeColumn_lineEdit->text().toInt();
-        i_DayOfYearColumn   = dialog.DayOfYearColumn_lineEdit->text().toInt();
-        i_JulianDayColumn   = dialog.JulianDayColumn_lineEdit->text().toInt();
-        i_MatLabDateColumn  = dialog.MatLabDateColumn_lineEdit->text().toInt();
+        i_DateColumn            = dialog.DateColumn_lineEdit->text().toInt();
+        i_YearColumn            = dialog.YearColumn_lineEdit->text().toInt();
+        i_MonthColumn           = dialog.MonthColumn_lineEdit->text().toInt();
+        i_DayColumn             = dialog.DayColumn_lineEdit->text().toInt();
+        i_TimeColumn            = dialog.TimeColumn_lineEdit->text().toInt();
+        i_HourColumn            = dialog.HourColumn_lineEdit->text().toInt();
+        i_MinuteColumn          = dialog.MinuteColumn_lineEdit->text().toInt();
+        i_SecondColumn          = dialog.SecondColumn_lineEdit->text().toInt();
+        i_DateTimeColumn        = dialog.DateTimeColumn_lineEdit->text().toInt();
+        i_DayOfYearColumn       = dialog.DayOfYearColumn_lineEdit->text().toInt();
+        i_JulianDayColumn       = dialog.JulianDayColumn_lineEdit->text().toInt();
+        i_MatLabDateColumn      = dialog.MatLabDateColumn_lineEdit->text().toInt();
+        i_OutputFormatDateTime  = dialog.OutputFormatDateTimeComboBox->currentIndex();
+        b_WriteDateTimeOnly     = dialog.WriteDateTimeOnly_checkBox->isChecked();
 
-        b_WriteDateTimeOnly = dialog.WriteDateTimeOnly_checkBox->isChecked();
-
-        i_DialogResult      = QDialog::Accepted;
+        i_DialogResult          = QDialog::Accepted;
         break;
 
     case QDialog::Rejected:
