@@ -415,7 +415,7 @@ public:
     int getTimeClass3h( const int Hour );
 
     QDate getDate( const QString DateIn );
-    QTime getTime( const QString TimeIn );
+    QTime getTime( const QString TimeIn, bool &nextDay );
 
     int checkTimeSeries( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );
     int calcSalinityFromCondTempPress( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles );

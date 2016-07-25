@@ -21,7 +21,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
     int             stopProgress                    = 0;
 
-    QDateTime       dt( QDate( 1970, 1, 1 ), QTime( 0, 0 ) );
+    QDateTime       dt = QDateTime().toUTC();
     QDate           d( 1970, 1, 1 );
     QTime           t( 0, 0, 0, 0 );
 
@@ -40,6 +40,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     int				i_DayOfYear				= 0;
 
     double          d_MatLabDate            = 0.;
+
+    bool            b_nextDay               = false;
 
     QString         s_EOL                   = setEOLChar( i_EOL );
 
@@ -153,6 +155,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
         i_DayOfYear = 0;
 
+        b_nextDay   = false;
+
         d.setDate( 1970, 1, 1 );
         t.setHMS( 0, 0, 0, 0 );
 
@@ -262,13 +266,13 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // Time calculated from time string
 
         if ( i_TimeColumn > 0 )
-            t = getTime( InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 ) );
+            t = getTime( InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 ), b_nextDay );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Time calculated from date/time string
 
         if ( i_DateTimeColumn > 0 )
-            t = getTime( InputStr.section( "\t", i_DateTimeColumn-1, i_DateTimeColumn-1 ) );
+            t = getTime( InputStr.section( "\t", i_DateTimeColumn-1, i_DateTimeColumn-1 ), b_nextDay );
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Output
@@ -277,7 +281,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
         dt.setTime( t );
         dt.setOffsetFromUtc( 0 );
 
-        dt = dt.toUTC();
+        if ( b_nextDay == true )
+            dt = dt.addDays( 1 );
 
         if ( b_writeDateTimeOnly == true )
         {
@@ -481,7 +486,7 @@ int MainWindow::getMonth( const QString s_MonthIn )
 // **********************************************************************************************
 // **********************************************************************************************
 
-QTime MainWindow::getTime( const QString s_TimeIn )
+QTime MainWindow::getTime( const QString s_TimeIn, bool &b_nextDay )
 {
     QString s_Time = s_TimeIn;
 
@@ -587,6 +592,12 @@ QTime MainWindow::getTime( const QString s_TimeIn )
         i_Hour	 = s_Time.left( 2 ).toInt();
         i_Minute = s_Time.mid( 2, 2 ).toInt();
 //      f_Second = 0.0;
+    }
+
+    if ( i_Hour == 24 )
+    {
+        i_Hour    = 0;
+        b_nextDay = true;
     }
 
     t.setHMS( i_Hour, i_Minute, 0, 0 );
