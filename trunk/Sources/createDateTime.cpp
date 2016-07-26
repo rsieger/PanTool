@@ -42,6 +42,7 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
     double          d_MatLabDate            = 0.;
 
     bool            b_nextDay               = false;
+    bool            b_isTimeEmpty           = false;
 
     QString         s_EOL                   = setEOLChar( i_EOL );
 
@@ -155,7 +156,8 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 
         i_DayOfYear = 0;
 
-        b_nextDay   = false;
+        b_nextDay       = false;
+        b_isTimeEmpty   = false;
 
         d.setDate( 1970, 1, 1 );
         t.setHMS( 0, 0, 0, 0 );
@@ -266,7 +268,12 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 // Time calculated from time string
 
         if ( i_TimeColumn > 0 )
-            t = getTime( InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 ), b_nextDay );
+        {
+            if ( InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 ).isEmpty() == false )
+                t = getTime( InputStr.section( "\t", i_TimeColumn-1, i_TimeColumn-1 ), b_nextDay );
+            else
+                b_isTimeEmpty = true;
+        }
 
 //-----------------------------------------------------------------------------------------------------------------------
 // Time calculated from date/time string
@@ -290,39 +297,60 @@ int MainWindow::createDateTime( const QString &s_FilenameIn, const QString &s_Fi
 //          tout << dt.toString( s_QutputFormatDateTime ) << "\t" << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) << sl_Input.at( i ) << s_EOL;
 //          tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
 //          tout << dt.toString( s_QutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
-            tout << dt.toString( s_OutputFormatDateTime ) << "\t"                                                            << sl_Input.at( i ) << s_EOL;
+
+            if ( b_isTimeEmpty == true )
+                tout << "\t"                                                                                                 << sl_Input.at( i ) << s_EOL;
+            else
+                tout << dt.toString( s_OutputFormatDateTime ) << "\t"                                                        << sl_Input.at( i ) << s_EOL;
         }
         else
         {
-            // Date
-            tout << dt.toString( "yyyy-MM-ddThh:mm" )        << "\t";
-            tout << dt.toString( "yyyy-MM-ddThh:mm:ss" )     << "\t";
-            tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t";
-            tout << dt.toString( "yyyy-MM-dd" )              << "\t";
+            if ( b_isTimeEmpty == false )
+            {
+                // Date
+                tout << dt.toString( "yyyy-MM-ddThh:mm" )        << "\t";
+                tout << dt.toString( "yyyy-MM-ddThh:mm:ss" )     << "\t";
+                tout << dt.toString( "yyyy-MM-ddThh:mm:ss.zzz" ) << "\t";
+                tout << dt.toString( "yyyy-MM-dd" )              << "\t";
 
-            // Time
-            tout << dt.toString( "hh:mm" )                   << "\t";
-            tout << dt.toString( "hh:mm:ss" )                << "\t";
-            tout << dt.toString( "hh:mm:ss.zzz" )            << "\t";
+                // Time
+                tout << dt.toString( "hh:mm" )                   << "\t";
+                tout << dt.toString( "hh:mm:ss" )                << "\t";
+                tout << dt.toString( "hh:mm:ss.zzz" )            << "\t";
 
-            // Time decimal
-            tout << QString( "%1" ).arg( -dt.time().secsTo( QTime( 0, 0, 0, 0) )/86400., 0, 'f', 5 ) << "\t";
+                // Time decimal
+                tout << QString( "%1" ).arg( -dt.time().secsTo( QTime( 0, 0, 0, 0) )/86400., 0, 'f', 5 ) << "\t";
 
-            // Time in milliseconds
-            tout << QString( "%1" ).arg( dt.time().msecsSinceStartOfDay() ) << "\t";
+                // Time in milliseconds
+                tout << QString( "%1" ).arg( dt.time().msecsSinceStartOfDay() ) << "\t";
+            }
+            else
+            {
+                tout << "\t\t\t";     // missing time
+                tout << dt.toString( "yyyy-MM-dd" ) << "\t";
+                tout << "\t\t\t\t\t"; // missing time
+            }
 
             // Date
             tout << dt.toString( "yyyy" ) << "\t";
             tout << dt.toString( "M" )    << "\t";
             tout << dt.toString( "d" )    << "\t";
 
-            // Time
-            tout << dt.toString( "h" )    << "\t";
-            tout << dt.toString( "m" )    << "\t";
-            tout << dt.toString( "s.z" )  << "\t";
+            if ( b_isTimeEmpty == false )
+            {
+                // Time
+                tout << dt.toString( "h" )    << "\t";
+                tout << dt.toString( "m" )    << "\t";
+                tout << dt.toString( "s.z" )  << "\t";
 
-            // 3 time class
-            tout << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) ) << "\t";
+                // 3 time class
+                tout << QString( "%1" ).arg( getTimeClass3h( dt.time().hour() ) ) << "\t";
+            }
+            else
+            {
+                tout << "\t\t\t";   // missing time
+                tout << "\t";       // missing time
+            }
 
             // Day of Year
             tout << dt.date().dayOfYear() << "\t";
