@@ -8,7 +8,7 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList sl_FilenameList, const int i_CodecOutput, const QString &s_LocalDataDir, const QString &s_ExternalWebPath, const int i_EOL )
+int MainWindow::saveFilelist( const QString &s_FilenameOut, const QStringList &sl_FilenameList, const int i_CodecOutput, const QString &s_LocalDataDir, const QString &s_ExternalWebPath, const int i_EOL )
 {
     QString     s_FilePath  = "";
     QString     s_EOL       = setEOLChar( i_EOL );

@@ -395,7 +395,7 @@ public:
     int recalcColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnsList = "", const float MulX = 1., const float AddX = 0., const int NumOfDigits = 5, const bool OnlyIfEmpty = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int transposeTable( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int createScript(const QString &FilenameIn, const int CodecInput , const int NumOfFiles);
-    int saveFilelist( const QString &FilenameOut, const QStringList FilenameList, const int CodecOutput, const QString &LocalDataDir, const QString &ExternalWebPath, const int EOL );
+    int saveFilelist( const QString &FilenameOut, const QStringList &FilenameList, const int CodecOutput, const QString &LocalDataDir, const QString &ExternalWebPath, const int EOL );
 
     int calcDepthFromPressure( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int LatitudeColumn, const int PressureColumn, const int NumOfDigits, const bool DeleteInputFile, const int NumOfFiles );
     float gravity( const float lat );
@@ -403,7 +403,7 @@ public:
 
     int findArea( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, QVector<AreaItem> &Area, QVector<PositionItem> &Position, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int readAreaDataBaseFile(const QString &FilenameADB, QVector<AreaItem> &Area, QVector<PositionItem> &Position );
-    int buildAreaDatabase( const QString& FilenameIn, const int CodecInput, const int NumOfFiles );
+    int buildAreaDatabase( const QString &FilenameIn, const int CodecInput, const int NumOfFiles );
     int PtInPolygon( double d_Latitude, double d_Longitude, int StartPosition, int NumOfPoints, QVector<PositionItem> &v_Position );
     int polyCentroid( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const bool DeleteInputFile, const int NumOfFiles );
 
@@ -526,16 +526,16 @@ private slots:
 
 private:
     QStringList expandCommandline();
-    QStringList renameFiles( const QStringList Filename, const QString &searchStr, const QString &replaceStr );
+    QStringList renameFiles( const QStringList &Filename, const QString &searchStr, const QString &replaceStr );
     bool buildFilename( const int ActionNumber, const QString &FilenameFormat, const int Extension, const QString &Filename, QString &FilenameIn, QString &FilenameOut );
-    bool containsBinaryFile( const QStringList FilenameList );
+    bool containsBinaryFile( const QStringList &FilenameList );
     bool existsFirstFile( const int ActionNumber, const QString &FilenameFormat, const int Extension, QStringList &FilenameList );
     bool isEmptyLine( const QString &String );
     bool check7z();
     int NumOfSections( const QString &String );
     int addToFilenameList( QStringList &FilenameList, const QString &Filename, const bool showAllFiles = true, const bool decompressFile = false );
     int calcFileSizeClass( const QString &FilenameIn, const int NumOfFiles, const int lowerLimit = 100, const int upperLimit = 1000 );
-    int copyStringList( const QStringList InStringList, QStringList &OutStringList, const QString &s_Pattern = "*" );
+    int copyStringList( const QStringList &InStringList, QStringList &OutStringList, const QString &s_Pattern = "*" );
     int emptyDir( const QString &Dir );
     int decompressFile( const QString &Filename, const bool delZipFile = false );
     int incFileProgress( const int NumOfFiles, const int FileNumber );
@@ -547,12 +547,12 @@ private:
     void appendItem( QStringList &List, const QString &Item, const QString &SS = "", const QString &RS = "" );
     void compressFile( const QString &FilenameIn );
     void clearFilenameList( int &ActionNumber, QStringList &FilenameList );
-    void clearList( QStringList& List );
+    void clearList( QStringList &List );
     void clearMessage();
     void createActions();
     void createMenus();
     void createStatusBar( const bool showProgressBar );
-    void enableMenuItems( const QStringList FilenameList );
+    void enableMenuItems( const QStringList &FilenameList );
     void endTool( const int err, const int stopProgress, int &ActionNumber, const QString &FilenameFormat, const int Extension, QStringList &FilenameList, const QString &doneMessage = "Done", const QString &canceledMessage = "Converter was canceled", const bool clearList = false, const bool incActionNumber = true );
     void initFileProgress( const int NumOfFiles, const QString &FilenameIn, const QString &MessageText );
     void initProgress( const int NumOfFiles, const QString &Filename, const QString &MessageText, const int totalNumberOfSteps );
@@ -565,10 +565,10 @@ private:
     void setNormalCursor();
     void setStatusBar( const QString &Message = "", const int seconds = 0 );
     void setStatusBarFileInProgress( const QString &Filename, const QString &Message = "", const int i_seconds = 0 );
-    void setWTitle( const int ActionNumber, const QString &FilenameFormat, const int Extension, const QStringList FilenameList );
+    void setWTitle( const int ActionNumber, const QString &FilenameFormat, const int Extension, const QStringList &FilenameList );
     void setWaitCursor();
-    void showFilenameList( const int ActionNumber, const QString &FilenameFormat, const int Extension, const QStringList FilenameList );
-    void showList( const QStringList List );
+    void showFilenameList( const int ActionNumber, const QString &FilenameFormat, const int Extension, const QStringList &FilenameList );
+    void showList( const QStringList &List );
     void showMessage( const QString &Message, QStringList &MessageList );
     void wait( const int msec );
 
