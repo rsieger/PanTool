@@ -90,13 +90,13 @@ int MainWindow::createScript( const QString &s_FilenameIn, const int i_CodecInpu
     fout.close();
 
     #if defined(Q_OS_LINUX)
-        s_arg = "chmod u+x \"" + QDir::toNativeSeparators( s_FilenameOut ) + "\"";
+        s_arg = "chmod u+x \"" + s_FilenameOut + "\"";
         process.start( s_arg );
         process.waitForFinished();
     #endif
 
     #if defined(Q_OS_MAC)
-        s_arg = "chmod u+x \"" + QDir::toNativeSeparators( s_FilenameOut ) + "\"";
+        s_arg = "chmod u+x \"" + s_FilenameOut + "\"";
         process.start( s_arg );
         process.waitForFinished();
     #endif

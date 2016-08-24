@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "PanTool"
-!define PRODUCT_VERSION "3.21"
+!define PRODUCT_VERSION "3.22"
 !define PRODUCT_PUBLISHER "PANGAEA"
 !define PRODUCT_WEB_SITE "http://www.pangaea.de"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\PanTool.exe"
@@ -48,6 +48,7 @@ RequestExecutionLevel admin
 Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\PanTool.exe"
+  File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\curl.exe"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Core.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Gui.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Network.dll"
@@ -100,6 +101,7 @@ FunctionEnd
 
 Section Uninstall
   Delete "$INSTDIR\PanTool.exe"
+  Delete "$INSTDIR\curl.exe"
   Delete "$INSTDIR\Qt5Core.dll"
   Delete "$INSTDIR\Qt5Gui.dll"
   Delete "$INSTDIR\Qt5Network.dll"

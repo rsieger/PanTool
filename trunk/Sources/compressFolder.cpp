@@ -61,7 +61,7 @@ int MainWindow::compressFolder( const QString &s_Folder )
     fout.close();
 
     #if defined(Q_OS_LINUX)
-        s_arg = "chmod u+x \"" + QDir::toNativeSeparators( s_Script ) + "\"";
+        s_arg = "chmod u+x \"" + s_Script + "\"";
         process.start( s_arg );
         process.waitForFinished();
         process.start( s_Script );
@@ -69,7 +69,7 @@ int MainWindow::compressFolder( const QString &s_Folder )
     #endif
 
     #if defined(Q_OS_MAC)
-        s_arg = "chmod u+x \"" + QDir::toNativeSeparators( s_Script ) + "\"";
+        s_arg = "chmod u+x \"" + s_Script + "\"";
         process.start( s_arg );
         process.waitForFinished();
         process.start( s_Script );
