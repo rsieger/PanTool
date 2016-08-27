@@ -13,11 +13,13 @@ void MainWindow::doCompressFiles()
     int		err                 = 0;
     int		stopProgress        = 0;
 
+    QString s_Program           = "";
+
 // **********************************************************************************************
 
-    err = check7z();
+    s_Program = findZip( _ZIP_ );
 
-    if ( err == _NOERROR_ )
+    if ( s_Program != "Zip not found" )
     {
         existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
 
@@ -25,11 +27,11 @@ void MainWindow::doCompressFiles()
         {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Compressing files ..." ) );
 
-            while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
+            while ( ( i < gsl_FilenameList.count() ) && ( stopProgress != _APPBREAK_ ) )
             {
                 setStatusBar( tr( "Compress " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
 
-                compressFile( gsl_FilenameList.at( i ) );
+                compressFile( gsl_FilenameList.at( i ), _ZIP_, s_Program );
 
                 stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
             }
