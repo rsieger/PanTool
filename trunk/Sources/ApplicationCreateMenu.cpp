@@ -137,11 +137,14 @@ void MainWindow::createActions()
     createScriptAction = new QAction(trUtf8("Create script files"), this);
     connect(createScriptAction, SIGNAL(triggered()), this, SLOT(doCreateScript()));
 
-    compressFolderAction = new QAction(trUtf8("Compress folder"), this);
+    compressFolderAction = new QAction(trUtf8("Compress folder with zip"), this);
     connect(compressFolderAction, SIGNAL(triggered()), this, SLOT(doCompressFolder()));
 
-    compressFilesAction = new QAction(trUtf8("Compress files"), this);
-    connect(compressFilesAction, SIGNAL(triggered()), this, SLOT(doCompressFiles()));
+    compressFilesZipAction = new QAction(trUtf8("Compress files with zip"), this);
+    connect(compressFilesZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesZip()));
+
+    compressFilesGZipAction = new QAction(trUtf8("Compress files with gzip"), this);
+    connect(compressFilesGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesGZip()));
 
     decompressFilesAction = new QAction(trUtf8("Decompress files"), this);
     connect(decompressFilesAction, SIGNAL(triggered()), this, SLOT(doDecompressFiles()));
@@ -281,7 +284,8 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( createScriptAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( compressFolderAction );
-    basicToolsMenu->addAction( compressFilesAction );
+    basicToolsMenu->addAction( compressFilesZipAction );
+    basicToolsMenu->addAction( compressFilesGZipAction );
     basicToolsMenu->addAction( decompressFilesAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( getDatasetsAction );
@@ -339,7 +343,8 @@ void MainWindow::enableMenuItems( const QStringList &sl_FilenameList )
             basicToolsMenuActions.at( i )->setEnabled( false );
 
         compressFolderAction->setEnabled( true );
-        compressFilesAction->setEnabled( true );
+        compressFilesZipAction->setEnabled( true );
+        compressFilesGZipAction->setEnabled( true );
         decompressFilesAction->setEnabled( true );
 
         renameFilesAction->setEnabled( true );

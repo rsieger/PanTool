@@ -30,10 +30,6 @@ macx {
 }
 
 win32 {
-    # OpenSSL
-    LIBS += -LC:/Qt/OpenSSL-Win32/bin -lubsec
-    INCLUDEPATH += C:/Qt/OpenSSL-Win32/include
-
     # Icon
     RC_FILE = ./Resources/Application.rc
 }
@@ -51,7 +47,6 @@ HEADERS = ./Headers/Application.h \
     ./Headers/Globals.h \
     ./Headers/Ellipsoid.h \
     ./Headers/findArea.h \
-    ./Headers/Webfile.h \
     ./Forms/AboutDialog/AboutDialog.h \
     ./Forms/AddDialog/AddDialog.h \
     ./Forms/CharactersAtPositionDialog/CharactersAtPositionDialog.h \
@@ -122,7 +117,6 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/splitFileByLines.cpp \
     ./Sources/splitFileByColumns.cpp \
     ./Sources/LineCanBeWritten.cpp \
-    ./Sources/Webfile.cpp \
     ./Forms/AboutDialog/AboutDialog.cpp \
     ./Forms/AddDialog/AddDialog.cpp \
     ./Forms/CharactersAtPositionDialog/CharactersAtPositionDialog.cpp \

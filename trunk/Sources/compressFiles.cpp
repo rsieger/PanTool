@@ -7,7 +7,7 @@
 // **********************************************************************************************
 // **********************************************************************************************
 
-void MainWindow::doCompressFiles()
+void MainWindow::doCompressFiles( const int mode )
 {
     int		i                   = 0;
     int		err                 = 0;
@@ -17,7 +17,7 @@ void MainWindow::doCompressFiles()
 
 // **********************************************************************************************
 
-    s_Program = findZip( _ZIP_ );
+    s_Program = findZip( mode );
 
     if ( s_Program != "Zip not found" )
     {
@@ -31,7 +31,7 @@ void MainWindow::doCompressFiles()
             {
                 setStatusBar( tr( "Compress " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
 
-                compressFile( gsl_FilenameList.at( i ), _ZIP_, s_Program );
+                compressFile( gsl_FilenameList.at( i ), mode, s_Program );
 
                 stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
             }
@@ -47,4 +47,22 @@ void MainWindow::doCompressFiles()
     endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Compressing files was canceled" ), true );
 
     onError( err );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+void MainWindow::doCompressFilesZip()
+{
+    doCompressFiles( _ZIP_ );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+
+void MainWindow::doCompressFilesGZip()
+{
+    doCompressFiles( _GZIP_ );
 }

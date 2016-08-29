@@ -8,34 +8,34 @@
 // **********************************************************************************************
 // **********************************************************************************************
 
-void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s_DownloadDirectory, const bool b_DownloadData, const bool b_DownloadCitation, const bool b_DownloadMetadata, const int i_CodecDownload, const int i_EOL, const int i_Extension )
+void MainWindow::getDatasets( const QString &s_IDListFile, const QString &s_DownloadDirectory, const bool b_DownloadData, const bool b_DownloadCitation, const bool b_DownloadMetadata, const int i_CodecDownload, const int i_EOL, const int i_Extension )
 {
-    int i       							= 0;
-    int n                                   = 0;
-    int err                                 = _NOERROR_;
+    int i       				= 0;
+    int n                       = 0;
+    int err                     = _NOERROR_;
 
-    int	i_stopProgress						= 0;
-    int	i_NumOfParents						= 0;
-    int i_totalNumOfDownloads				= 0;
-    int i_removedDatasets					= 0;
+    int	i_stopProgress			= 0;
+    int	i_NumOfParents			= 0;
+    int i_totalNumOfDownloads	= 0;
+    int i_removedDatasets		= 0;
 
-    QString s_Message						= "";
-    QString s_DatasetID						= "";
-    QString	s_Data							= "";
-    QString s_Domain                        = "";
-    QString s_ExportFilename				= "";
-    QString s_Url							= "";
-    QString s_Size							= "";
-    QString s_EOL                           = setEOLChar( i_EOL );
+    QString s_EOL               = setEOLChar( i_EOL );
+
+    QString s_Message			= "";
+    QString s_DatasetID			= "";
+    QString	s_Data				= "";
+    QString s_Domain            = "";
+    QString s_Filename          = "";
+    QString s_Url				= "";
+    QString s_Size				= "";
+    QString s_Curl              = "";
 
     QStringList	sl_Input;
     QStringList sl_Data;
     QStringList sl_Result;
 
-    bool	b_ExportFilenameExists			= false;
-    bool	b_isURL             			= false;
-
-    QProcess process;
+    bool	b_ExportFileExists	= false;
+    bool	b_isURL             = false;
 
 // **********************************************************************************************
 // read ID list
@@ -69,8 +69,17 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
         break;
     }
 
+    s_Curl = findCurl();
+
 // **********************************************************************************************
-// Read data
+
+    if ( b_isURL == true )
+        tout << "URL\tfile name\tComment" << endl;
+    else
+        tout << "*ID\tComment" << endl;
+
+// **********************************************************************************************
+// Read data and build dataset list
 
     if ( ( sl_Input.at( 0 ).startsWith( "<html>", Qt::CaseInsensitive ) == true ) || ( sl_Input.at( 0 ).startsWith( "<!doctype html", Qt::CaseInsensitive ) == true ) || ( sl_Input.at( 0 ).startsWith( "PANGAEA Home </>" ) == true ) )
     {
@@ -119,13 +128,13 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             b_isURL = true;
 
         if ( sl_Input.at( 0 ).section( "\t", 1, 1 ).toLower() == "filename" )
-            b_ExportFilenameExists = true;
+            b_ExportFileExists = true;
 
         if ( sl_Input.at( 0 ).section( "\t", 1, 1 ).toLower() == "file name" )
-            b_ExportFilenameExists = true;
+            b_ExportFileExists = true;
 
         if ( sl_Input.at( 0 ).section( "\t", 1, 1 ).toLower() == "file" )
-            b_ExportFilenameExists = true;
+            b_ExportFileExists = true;
 
         while ( ++i < sl_Input.count() )
         {
@@ -136,13 +145,6 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
                 sl_Data.append( s_Data );
         }
     }
-
-// **********************************************************************************************
-
-    if ( b_isURL == true )
-        tout << "URL\tfile name\tComment" << s_EOL;
-    else
-        tout << "*ID\tExport file name\tComment" << s_EOL;
 
 // **********************************************************************************************
 
@@ -185,31 +187,31 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             s_DatasetID.replace( tr( ", doi registration in progress" ), tr( "" ) );
         }
 
-        if ( b_ExportFilenameExists == true )
+        if ( b_ExportFileExists == true )
         {
-            s_ExportFilename = sl_Data.at( i ).section( "\t", 1, 1 );
-            s_ExportFilename.replace( " ", "_" );
+            s_Filename = sl_Data.at( i ).section( "\t", 1, 1 );
+            s_Filename.replace( " ", "_" );
 
-            if ( s_ExportFilename.isEmpty() == true )
+            if ( s_Filename.isEmpty() == true )
             {
                 if ( b_isURL == true )
-                    s_ExportFilename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
+                    s_Filename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
                 else
-                    s_ExportFilename = tr( "not_given" );
+                    s_Filename = tr( "not_given" );
             }
 
             if ( b_isURL == false )
             {
-                s_ExportFilename.append( tr( "~" ) );
-                s_ExportFilename.append( s_DatasetID );
+                s_Filename.append( tr( "~" ) );
+                s_Filename.append( s_DatasetID );
             }
         }
         else
         {
             if ( b_isURL == true )
-                s_ExportFilename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
+                s_Filename = sl_Data.at( i ).section( "\t", 0, 0 ).section( "/", -1, -1 );
             else
-                s_ExportFilename.sprintf( "%06d", s_DatasetID.toInt() );
+                s_Filename.sprintf( "%06d", s_DatasetID.toInt() );
         }
 
         if ( ( b_DownloadCitation == true ) && ( b_isURL == false ) )
@@ -217,9 +219,9 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             s_Url = s_Domain + "/10.1594/PANGAEA."+ s_DatasetID + "?format=citation_text";
 
             if ( sl_Data.at( i ).section( "\t", 1, 1 ) == "parent" )
-                downloadFile( s_Url, s_DownloadDirectory + "/" + "is_parent_" + s_ExportFilename + "_citation" + setExtension( i_Extension ) );
+                downloadFile( s_Curl, s_Url, s_DownloadDirectory + "/" + "is_parent_" + s_Filename + "_citation" + setExtension( i_Extension ) );
             else
-                downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_citation" + setExtension( i_Extension ) );
+                downloadFile( s_Curl, s_Url, s_DownloadDirectory + "/" + s_Filename + "_citation" + setExtension( i_Extension ) );
 
             wait( 100 );
         }
@@ -229,9 +231,9 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
             s_Url = s_Domain + "/10.1594/PANGAEA."+ s_DatasetID + "?format=metainfo_xml";
 
             if ( sl_Data.at( i ).section( "\t", 1, 1 ) == "parent" )
-                downloadFile( s_Url, s_DownloadDirectory + "/" + "is_parent_" + s_ExportFilename + "_metadata.xml" );
+                downloadFile( s_Curl, s_Url, s_DownloadDirectory + "/" + "is_parent_" + s_Filename + "_metadata.xml" );
             else
-                downloadFile( s_Url, s_DownloadDirectory + "/" + s_ExportFilename + "_metadata.xml" );
+                downloadFile( s_Curl, s_Url, s_DownloadDirectory + "/" + s_Filename + "_metadata.xml" );
 
             wait( 100 );
         }
@@ -240,13 +242,13 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
         {
             if ( ( b_isURL == true ) || ( s_DatasetID.toInt() >= 50000 ) )
             {
-                s_ExportFilename = s_DownloadDirectory + "/" + s_ExportFilename;
+                s_Filename = s_DownloadDirectory + "/" + s_Filename;
 
                 if ( b_isURL == false )
                 {
-                    // dowload PANGAEA data sets with downloadFile()
+                    // dowload PANGAEA data sets
 
-                    s_ExportFilename.append( setExtension( i_Extension ) );
+                    s_Filename.append( setExtension( i_Extension ) );
                     s_Url = s_Domain + "/10.1594/PANGAEA." + s_DatasetID + "?format=textfile";
 
                     switch ( i_CodecDownload )
@@ -264,34 +266,23 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
                         break;
                     }
 
-                    downloadFile( s_Url, s_ExportFilename );
+                    downloadFile( s_Curl, s_Url, s_Filename );
 
-                    QFile fileExport( s_ExportFilename );
-                    QFileInfo fd( s_ExportFilename );
+                    QFileInfo fd( s_Filename );
 
                     if ( fd.size() == 0 )
                     {
-                        fileExport.remove();
-
                         i_removedDatasets++;
-
-                        switch ( i_Extension )
-                        {
-                        case _CSV_:
-                            tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
-                            break;
-                        default:
-                            tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "login required or data set is parent" << s_EOL;
-                            break;
-                        }
+                        removeFile( s_Filename );
+                        tout << s_DatasetID << "\t" << "login required or data set is a parent or static URL" << s_EOL;
                     }
                     else
                     {
-                        if ( ( ( s_ExportFilename.toLower().endsWith( ".txt" ) == true ) || ( s_ExportFilename.toLower().endsWith( ".csv" ) == true ) ) && ( readFile( s_ExportFilename, sl_Input, _SYSTEM_, 8000 ) > 0 ) )
+                        if ( ( ( s_Filename.toLower().endsWith( ".txt" ) == true ) || ( s_Filename.toLower().endsWith( ".csv" ) == true ) ) && ( readFile( s_Filename, sl_Input, _SYSTEM_, 8000 ) > 0 ) )
                         {
                             if ( sl_Input.at( 0 ).startsWith( "/* DATA DESCRIPTION:" ) == false  )
                             {
-                                fileExport.remove();
+                                removeFile( s_Filename );
 
                                 i_removedDatasets++;
 
@@ -313,17 +304,7 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
                                 sl_Result = sl_Input.filter( "The dataset is currently not available for download. Try again later!" );
 
                                 if ( sl_Result.count() > 0 )
-                                {
-                                    switch ( i_Extension )
-                                    {
-                                    case _CSV_:
-                                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.csv", s_DatasetID.toInt() ) << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
-                                        break;
-                                    default:
-                                        tout << s_DatasetID << "\t" << s_ExportFilename.sprintf( "%06d.txt", s_DatasetID.toInt() ) << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
-                                        break;
-                                    }
-                                }
+                                    tout << s_DatasetID << "\t" << "Dataset not available at this time. Please try again later." << s_EOL;
                             }
                         }
                     }
@@ -332,32 +313,15 @@ void MainWindow::downloadDatasets( const QString &s_IDListFile, const QString &s
                 {
                     // dowload binary data with curl
 
-                    #if defined(Q_OS_LINUX)
-                        process.start( "curl -o \"" + QDir::toNativeSeparators( s_ExportFilename ) + "\"" + " " + s_Url );
-                        process.waitForFinished( -1 );
-                    #endif
+                    downloadFile( s_Curl, s_Url, s_Filename );
 
-                    #if defined(Q_OS_MAC)
-                        process.start( "curl -o \"" + QDir::toNativeSeparators( s_ExportFilename ) + "\"" + " " + s_Url );
-                        process.waitForFinished( -1 );
-                    #endif
-
-                    #if defined(Q_OS_WIN)
-                        QString s_curl = QDir::toNativeSeparators( QCoreApplication::applicationDirPath() + "/" + "curl.exe" );
-                        process.start( "\"" + s_curl + "\" -o \"" + QDir::toNativeSeparators( s_ExportFilename ) + "\"" + " " + s_Url );
-                        process.waitForFinished( -1 );
-                    #endif
-
-                    QFile fileExport( s_ExportFilename );
-                    QFileInfo fd( s_ExportFilename );
+                    QFileInfo fd( s_Filename );
 
                     if ( fd.size() == 0 )
                     {
-                        fileExport.remove();
-
                         i_removedDatasets++;
-
-                        tout << s_Url << "\t" << QDir::toNativeSeparators( s_ExportFilename ) << "\t" << "login required or file not found" << s_EOL;
+                        removeFile( s_Filename );
+                        tout << s_Url << "\t" << QDir::toNativeSeparators( s_Filename ) << "\t" << "login required or file not found" << s_EOL;
                     }
                 }
 
@@ -435,7 +399,7 @@ void MainWindow::doGetDatasets()
 {
     if ( doGetDatasetsDialog( gs_IDListFile, gs_DownloadDirectory, gb_DownloadData, gb_DownloadCitation, gb_DownloadMetadata, gi_CodecDownload, gi_Extension ) == QDialog::Accepted )
     {
-        downloadDatasets( gs_IDListFile, gs_DownloadDirectory, gb_DownloadData, gb_DownloadCitation, gb_DownloadMetadata, gi_CodecDownload, gi_EOL, gi_Extension );
+        getDatasets( gs_IDListFile, gs_DownloadDirectory, gb_DownloadData, gb_DownloadCitation, gb_DownloadMetadata, gi_CodecDownload, gi_EOL, gi_Extension );
 
         if ( gs_DownloadDirectory.isEmpty() == false )
             chooseFolder( gs_DownloadDirectory );
