@@ -56,6 +56,7 @@ Section "MainSection" SEC01
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libgcc_s_dw2-1.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libstdc++-6.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libwinpthread-1.dll"
+  File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\curl-ca-bundle.crt"
 
   SetOutPath "$INSTDIR\platforms"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\platforms\qminimal.dll"
@@ -113,6 +114,7 @@ Section Uninstall
   Delete "$INSTDIR\License\Readme.txt"
   Delete "$INSTDIR\License\License.txt"
   Delete "$INSTDIR\License\gpl-3.0.txt"
+  Delete "$INSTDIR\curl-ca-bundle.crt"
 
   Delete "$SMPROGRAMS\PANGAEA\PanTool\Uninstall.lnk"
   Delete "$SMPROGRAMS\PANGAEA\PanTool\PanTool.lnk"
