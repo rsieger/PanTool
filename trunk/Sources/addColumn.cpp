@@ -63,10 +63,17 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
 
     if ( LineCanBeWritten( sl_Input.at( i ), b_SkipEmptyLines, b_SkipCommentLines ) == true )
     {
-        if ( b_AddFilename == true ) tout << "Event label" << "\t";
-        if ( b_AddFullPath == true ) tout << "Filename" << "\t";
-        if ( b_AddOrdinalNumber == true ) tout << "No" << "\t";
-        if ( b_AddColumn == true ) tout << s_HeaderText << "\t";
+        if ( b_AddFilename == true )
+            tout << "Event label" << "\t";
+
+        if ( b_AddFullPath == true )
+            tout << "Filename" << "\t";
+
+        if ( b_AddOrdinalNumber == true )
+            tout << "No" << "\t";
+
+        if ( b_AddColumn == true )
+            tout << s_HeaderText << "\t";
 
         tout << sl_Input.at( i ) << s_EOL;
     }
@@ -77,10 +84,17 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
     {
         if ( LineCanBeWritten( sl_Input.at( i ), b_SkipEmptyLines, b_SkipCommentLines ) == true )
         {
-            if ( b_AddFilename == true ) tout << fi.baseName() << "\t";
-            if ( b_AddFullPath == true ) tout << fi.absoluteFilePath() << "\t";
-            if ( b_AddOrdinalNumber == true ) tout << QString( "%1\t" ).arg( ++k ) << "\t";
-            if ( b_AddColumn == true ) tout << s_ColumnText << "\t";
+            if ( b_AddFilename == true )
+                tout << fi.baseName() << "\t";
+
+            if ( b_AddFullPath == true )
+                tout << fi.absoluteFilePath() << "\t";
+
+            if ( b_AddOrdinalNumber == true )
+                tout << QString( "%1" ).arg( ++k ) << "\t";
+
+            if ( b_AddColumn == true )
+                tout << s_ColumnText << "\t";
 
             tout << sl_Input.at( i ) << s_EOL;
         }
