@@ -83,9 +83,9 @@ void MainWindow::getDatasets( const QString &s_Query, const QString &s_IDListFil
     QFile fout;
 
     if ( s_PathDir != s_PathFile )
-        fout.setFileName( fidd.absoluteFilePath().section( "/", 0, fidd.absoluteFilePath().count( "/" )-1 ) + "/" + fidd.absoluteFilePath().section( "/", -1, -1 ) + "_failed.txt" );
+        fout.setFileName( fidd.absoluteFilePath().section( "/", 0, fidd.absoluteFilePath().count( "/" )-1 ) + "/" + fidd.absoluteFilePath().section( "/", -1, -1 ) + "_failed" + setExtension( i_Extension ) );
     else
-        fout.setFileName( fifailed.absolutePath() + "/" + fifailed.completeBaseName() + "_failed.txt" );
+        fout.setFileName( fifailed.absolutePath() + "/" + fifailed.completeBaseName() + "_failed" + setExtension( i_Extension ) );
 
     if ( fout.open( QIODevice::WriteOnly | QIODevice::Text ) == false )
         return;
@@ -430,37 +430,34 @@ int MainWindow::checkFile( const QString &s_Filename, const bool isbinary )
 
 // **********************************************************************************************
 
-    if ( ( s_Filename.toLower().endsWith( ".txt" ) == true ) || ( s_Filename.toLower().endsWith( ".csv" ) == true ) )
+    if ( readFile( s_Filename, sl_Input, _SYSTEM_, 8000 ) > 0 )
     {
-        if ( readFile( s_Filename, sl_Input, _SYSTEM_, 8000 ) > 0 )
+        if ( sl_Input.at( 0 ).startsWith( "/* DATA DESCRIPTION:" ) == false  )
         {
-            if ( sl_Input.at( 0 ).startsWith( "/* DATA DESCRIPTION:" ) == false  )
-            {
-                sl_Result = sl_Input.filter( "was substituted by an other version at" );
+            sl_Result = sl_Input.filter( "was substituted by an other version at" );
 
-                if ( sl_Result.count() > 0 )
-                    return( -20 );
+            if ( sl_Result.count() > 0 )
+                return( -20 );
 
-                sl_Result = sl_Input.filter( "TEXTFILE format is not available for collection data sets!" );
+            sl_Result = sl_Input.filter( "TEXTFILE format is not available for collection data sets!" );
 
-                if ( sl_Result.count() > 0 )
-                    return( -30 );
+            if ( sl_Result.count() > 0 )
+                return( -30 );
 
-                sl_Result = sl_Input.filter( "No data available!" );
+            sl_Result = sl_Input.filter( "No data available!" );
 
-                if ( sl_Result.count() > 0 )
-                    return( -40 );
+            if ( sl_Result.count() > 0 )
+                return( -40 );
 
-                sl_Result = sl_Input.filter( "A data set identified by" );
+            sl_Result = sl_Input.filter( "A data set identified by" );
 
-                if ( sl_Result.count() > 0 )
-                    return( -50 );
+            if ( sl_Result.count() > 0 )
+                return( -50 );
 
-                sl_Result = sl_Input.filter( "The dataset is currently not available for download. Try again later!" );
+            sl_Result = sl_Input.filter( "The dataset is currently not available for download. Try again later!" );
 
-                if ( sl_Result.count() > 0 )
-                    return( -60 );
-            }
+            if ( sl_Result.count() > 0 )
+                return( -60 );
         }
     }
 

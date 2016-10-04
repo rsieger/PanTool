@@ -169,6 +169,19 @@
         </item>
        </widget>
       </item>
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </widget>
    </item>
@@ -229,6 +242,12 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="Help_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>85</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
         <string>Help</string>
        </property>
@@ -236,6 +255,12 @@
      </item>
      <item>
       <widget class="QPushButton" name="Clear_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>85</width>
+         <height>0</height>
+        </size>
+       </property>
        <property name="text">
         <string>Clear</string>
        </property>
@@ -255,25 +280,37 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="Cancel_pushButton">
+       <property name="minimumSize">
+        <size>
+         <width>85</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>&amp;Cancel</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="GetDatasets_pushButton">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>85</width>
+         <height>0</height>
+        </size>
        </property>
        <property name="text">
         <string>&amp;Go</string>
        </property>
        <property name="default">
         <bool>false</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="Cancel_pushButton">
-       <property name="text">
-        <string>&amp;Cancel</string>
-       </property>
-       <property name="default">
-        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -295,8 +332,8 @@
   <tabstop>DownloadMetadata_checkBox</tabstop>
   <tabstop>Help_pushButton</tabstop>
   <tabstop>Clear_pushButton</tabstop>
-  <tabstop>GetDatasets_pushButton</tabstop>
   <tabstop>Cancel_pushButton</tabstop>
+  <tabstop>GetDatasets_pushButton</tabstop>
  </tabstops>
  <resources/>
  <connections/>
