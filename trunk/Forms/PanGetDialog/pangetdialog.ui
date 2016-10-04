@@ -7,8 +7,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>626</width>
-    <height>343</height>
+    <width>661</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="acceptDrops">
@@ -17,80 +17,125 @@
   <property name="windowTitle">
    <string>PanGet</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout_6">
+  <layout class="QGridLayout" name="gridLayout_5">
    <item row="0" column="0" colspan="2">
-    <widget class="QGroupBox" name="IDListGroupBox">
+    <widget class="QGroupBox" name="DownloadDirectoryGroupBox">
      <property name="title">
-      <string>ID list</string>
+      <string/>
      </property>
-     <layout class="QGridLayout" name="gridLayout_5">
+     <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
-       <widget class="QLabel" name="FileTextLabel">
+       <widget class="QLabel" name="URLTextLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>0</width>
           <height>0</height>
          </size>
         </property>
-        <property name="text">
-         <string>&amp;File:</string>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
         </property>
-        <property name="buddy">
-         <cstring>IDListFileLineEdit</cstring>
+        <property name="text">
+         <string>PANGAEA Query URL:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
-       <widget class="QLineEdit" name="IDListFileLineEdit">
+      <item row="0" column="1" colspan="2">
+       <widget class="QLineEdit" name="QueryLineEdit">
         <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="acceptDrops">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="browseIDListFileButton">
+      <item row="1" column="1" colspan="2">
+       <widget class="QLabel" name="ExampleLabel">
+        <property name="text">
+         <string>e.g. https://pangaea.de/?q=polarstern&amp;f.author%5B%5D=Rohardt%2C+Gerd</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="FileTextLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>ID List:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="IDListFileLineEdit">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="browseIDListFile_pushButton">
         <property name="text">
          <string>Br&amp;owse ...</string>
         </property>
        </widget>
       </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QGroupBox" name="DownloadDirectoryGroupBox">
-     <property name="title">
-      <string>Download directory</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
+      <item row="3" column="0">
        <widget class="QLabel" name="DirTextLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="minimumSize">
          <size>
-          <width>60</width>
+          <width>0</width>
           <height>0</height>
          </size>
         </property>
-        <property name="text">
-         <string>&amp;Directory:</string>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
         </property>
-        <property name="buddy">
-         <cstring>DownloadDirectoryLineEdit</cstring>
+        <property name="text">
+         <string>Download directory:</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="1">
+      <item row="3" column="1">
        <widget class="QLineEdit" name="DownloadDirectoryLineEdit">
         <property name="enabled">
          <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="0" column="2">
-       <widget class="QPushButton" name="browseDownloadDirectoryButton">
+      <item row="3" column="2">
+       <widget class="QPushButton" name="browseDownloadDirectory_pushButton">
         <property name="text">
          <string>Bro&amp;wse ...</string>
         </property>
@@ -99,7 +144,7 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="1" column="0">
     <widget class="QGroupBox" name="EncodingGroupBox">
      <property name="title">
       <string>Encoding</string>
@@ -127,10 +172,10 @@
      </layout>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="1">
     <widget class="QGroupBox" name="groupBox_4">
      <property name="title">
-      <string>File extension of output filename</string>
+      <string>File extension of export filename</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
       <item row="0" column="0">
@@ -150,7 +195,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
       <string>Options</string>
@@ -180,30 +225,37 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <layout class="QHBoxLayout">
+   <item row="3" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="HelpButton">
+      <widget class="QPushButton" name="Help_pushButton">
        <property name="text">
         <string>Help</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer>
+      <widget class="QPushButton" name="Clear_pushButton">
+       <property name="text">
+        <string>Clear</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
        <property name="sizeHint" stdset="0">
         <size>
-         <width>371</width>
+         <width>40</width>
          <height>20</height>
         </size>
        </property>
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="BuildScript_pushButton">
+      <widget class="QPushButton" name="GetDatasets_pushButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -230,18 +282,20 @@
   </layout>
  </widget>
  <tabstops>
+  <tabstop>QueryLineEdit</tabstop>
   <tabstop>IDListFileLineEdit</tabstop>
-  <tabstop>browseIDListFileButton</tabstop>
+  <tabstop>browseIDListFile_pushButton</tabstop>
   <tabstop>DownloadDirectoryLineEdit</tabstop>
-  <tabstop>browseDownloadDirectoryButton</tabstop>
+  <tabstop>browseDownloadDirectory_pushButton</tabstop>
   <tabstop>CodecDownload_ComboBox</tabstop>
   <tabstop>TXT_radioButton</tabstop>
   <tabstop>CSV_radioButton</tabstop>
   <tabstop>DownloadData_checkBox</tabstop>
   <tabstop>DownloadCitation_checkBox</tabstop>
   <tabstop>DownloadMetadata_checkBox</tabstop>
-  <tabstop>HelpButton</tabstop>
-  <tabstop>BuildScript_pushButton</tabstop>
+  <tabstop>Help_pushButton</tabstop>
+  <tabstop>Clear_pushButton</tabstop>
+  <tabstop>GetDatasets_pushButton</tabstop>
   <tabstop>Cancel_pushButton</tabstop>
  </tabstops>
  <resources/>

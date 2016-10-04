@@ -312,6 +312,7 @@ public:
     bool        gb_pd_DeleteInputFile;               //!< loesche Inputdatei.
 
     // PanGet
+    QString     gs_Query;                            //!< PanGet, PANGAEA Query URL
     QString     gs_IDListFile;                       //!< PanGet, Name der Datei, die die ID-Liste enthaelt
     QString     gs_DownloadDirectory;                //!< PanGet, Download-Verzeichnis
     bool        gb_DownloadData;                     //!< PanGet, hole Dataset als Text
@@ -357,7 +358,8 @@ public:
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
 
-    void getDatasets( const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
+    void getDatasets( const QString &Query, const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
+    int checkFile( const QString &Filename, const bool isbinary );
 
     int extractColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnList = "", const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const int NumOfFiles = 0 );
     int extractMatchedColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &SearchString = "", const bool SaveNoMatch = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const bool DeleteInputFile = false, const bool DeleteEmptyOutputFile = false, const int NumOfFiles = 0 );
@@ -449,7 +451,7 @@ public:
     int doODPSampleLabelDialog( int &LegColumn, int &SiteColumn, int &HoleColumn, int &CoreColumn, int &CoreTypeColumn, int &SectionColumn, int &TopColumn, int &BottomColumn, bool &DeleteInputFile );
     int doTranslateCharacterEncodingDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
-    int doGetDatasetsDialog( QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
+    int doGetDatasetsDialog( QString &Query, QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
 
 protected:
     void dragEnterEvent( QDragEnterEvent *event );

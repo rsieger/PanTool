@@ -1,3 +1,7 @@
+/* PanGetDialog.h             */
+/* 2016-10-04                 */
+/* Dr. Rainer Sieger          */
+
 #ifndef PANGETDIALOG_H
 #define PANGETDIALOG_H
 
@@ -22,6 +26,7 @@ private slots:
     void enableBuildButton();
     void browseIDListFileDialog();
     void browseDownloadDirectoryDialog();
+    void clear();
     void displayHelp();
 
 protected:
