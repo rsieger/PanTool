@@ -29,6 +29,9 @@ PanGetDialog::PanGetDialog( QWidget *parent ) : QDialog( parent )
     connect( IDListFileLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableBuildButton() ) );
     connect( DownloadDirectoryLineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableBuildButton() ) );
     connect( Clear_pushButton, SIGNAL( clicked() ), this, SLOT( clear() ) );
+    connect( DownloadData_checkBox, SIGNAL( toggled( bool ) ), this, SLOT( enableBuildButton() ) );
+    connect( DownloadCitation_checkBox, SIGNAL( toggled( bool ) ), this, SLOT( enableBuildButton() ) );
+    connect( DownloadMetadata_checkBox, SIGNAL( toggled( bool ) ), this, SLOT( enableBuildButton() ) );
 
 // **********************************************************************************************
 
@@ -70,6 +73,9 @@ void PanGetDialog::enableBuildButton()
     QFileInfo fi( IDListFileLineEdit->text() );
 
     if ( ( ( fi.isFile() == false ) || ( fi.exists() == false ) ) && ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/?q" ) == false ) )
+        b_OK = false;
+
+    if ( ( DownloadData_checkBox->isChecked() == false ) && ( DownloadCitation_checkBox->isChecked() == false ) && ( DownloadMetadata_checkBox->isChecked() == false ) )
         b_OK = false;
 
     QFileInfo di( DownloadDirectoryLineEdit->text() );
