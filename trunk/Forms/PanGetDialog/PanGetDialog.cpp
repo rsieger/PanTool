@@ -49,16 +49,16 @@ PanGetDialog::PanGetDialog( QWidget *parent ) : QDialog( parent )
 
 QString PanGetDialog::getDocumentDir()
 {
-#if defined(Q_OS_LINUX)
-    return( QDir::homePath() );
-#endif
+    #if defined(Q_OS_LINUX)
+        return( QDir::homePath() );
+    #endif
 
-#if defined(Q_OS_MAC)
-    return( QDir::homePath() );
-#endif
+    #if defined(Q_OS_MAC)
+        return( QDir::homePath() );
+    #endif
 
-#if defined(Q_OS_WIN)
-    return( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) );
+    #if defined(Q_OS_WIN)
+        return( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) );
 #endif
 }
 

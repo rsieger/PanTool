@@ -34,7 +34,6 @@
 #include <qmath.h>
 
 #include "Globals.h"
-
 #include "findArea.h"
 
 #ifndef MAINWINDOW_H
