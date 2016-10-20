@@ -7,7 +7,7 @@
     const QString _PROGRAMDOI_                       = "doi:10.1594/PANGAEA.787549";
     const QString _PROGRAMREADME_                    = "https://wiki.pangaea.de/wiki/PanTool";
 
-    const QString _VERSION_                          = "3.23";	// Version number, 2016-10-04
+    const QString _VERSION_                          = "3.24";	// Version number, 2016-10-16
     const QChar   _PSEPARATOR_                       = '|';
 
     const int   _NOERROR_                            = 0;

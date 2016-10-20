@@ -72,7 +72,9 @@ void PanGetDialog::enableBuildButton()
 
     QFileInfo fi( IDListFileLineEdit->text() );
 
-    if ( ( ( fi.isFile() == false ) || ( fi.exists() == false ) ) && ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/?q" ) == false ) )
+    if ( ( ( fi.isFile() == false ) || ( fi.exists() == false ) ) &&
+         ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/?q" ) == false ) &&
+         ( QueryLineEdit->text().toLower().startsWith( "https://www.pangaea.de/?q" ) == false ) )
         b_OK = false;
 
     if ( ( DownloadData_checkBox->isChecked() == false ) && ( DownloadCitation_checkBox->isChecked() == false ) && ( DownloadMetadata_checkBox->isChecked() == false ) )

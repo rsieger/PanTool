@@ -137,8 +137,11 @@ void MainWindow::createActions()
     createScriptAction = new QAction(trUtf8("Create script files"), this);
     connect(createScriptAction, SIGNAL(triggered()), this, SLOT(doCreateScript()));
 
-    compressFolderAction = new QAction(trUtf8("Compress folder with zip"), this);
-    connect(compressFolderAction, SIGNAL(triggered()), this, SLOT(doCompressFolder()));
+    compressFolderZipAction = new QAction(trUtf8("Compress folder with zip"), this);
+    connect(compressFolderZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderZip()));
+
+    compressFolderGZipAction = new QAction(trUtf8("Compress folder with gzip"), this);
+    connect(compressFolderGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderGZip()));
 
     compressFilesZipAction = new QAction(trUtf8("Compress files with zip"), this);
     connect(compressFilesZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesZip()));
@@ -283,9 +286,12 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( saveFilelistAction );
     basicToolsMenu->addAction( createScriptAction );
     basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( compressFolderAction );
+    basicToolsMenu->addAction( compressFolderZipAction );
     basicToolsMenu->addAction( compressFilesZipAction );
+    basicToolsMenu->addSeparator();
+    basicToolsMenu->addAction( compressFolderGZipAction );
     basicToolsMenu->addAction( compressFilesGZipAction );
+    basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( decompressFilesAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( getDatasetsAction );
@@ -342,8 +348,9 @@ void MainWindow::enableMenuItems( const QStringList &sl_FilenameList )
         for ( int i=0; i<basicToolsMenuActions.count(); ++i )
             basicToolsMenuActions.at( i )->setEnabled( false );
 
-        compressFolderAction->setEnabled( true );
+        compressFolderZipAction->setEnabled( true );
         compressFilesZipAction->setEnabled( true );
+        compressFolderGZipAction->setEnabled( true );
         compressFilesGZipAction->setEnabled( true );
         decompressFilesAction->setEnabled( true );
 

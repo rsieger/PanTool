@@ -497,7 +497,8 @@ private slots:
     void doCompressFilesZip();
     void doCompressFilesGZip();
     void doCompressFiles( const int mode = 1 );
-    void doCompressFolder();
+    void doCompressFolderZip();
+    void doCompressFolderGZip();
     void doConcatenateFilesByColumns();
     void doConcatenateFilesByLines();
     void doRecalcColumns();
@@ -550,7 +551,7 @@ private:
     int downloadFile( const QString &Curl, const QString &Url, const QString &Filename );
     unsigned int incProgress( const int NumOfFiles, const unsigned int filesize, const unsigned int length, const QString &InputStr );
     void appendItem( QStringList &List, const QString &Item, const QString &SS = "", const QString &RS = "" );
-    void compressFolder( const QString &Program, const QString &Folder );
+    void compressFolder( const QString &FolderIn, const int mode = 1, const QString &Program = "zip" );
     void compressFile( const QString &FilenameIn, const int mode = 1, const QString &Program = "zip" );
     void clearFilenameList( int &ActionNumber, QStringList &FilenameList );
     void clearList( QStringList &List );
@@ -621,7 +622,8 @@ private:
     QAction *replaceCharactersAtPositionAction;
     QAction *compressFilesZipAction;
     QAction *compressFilesGZipAction;
-    QAction *compressFolderAction;
+    QAction *compressFolderZipAction;
+    QAction *compressFolderGZipAction;
     QAction *decompressFilesAction;
     QAction *createScriptAction;
     QAction *concatenateFilesByLinesAction;

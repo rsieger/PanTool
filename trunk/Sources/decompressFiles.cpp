@@ -44,6 +44,9 @@ void MainWindow::doDecompressFiles()
                 if ( fi.suffix().toLower() == "gz" )
                     err = decompressFile( gsl_FilenameList.at( i ), false, _GZIP_, s_ProgramGzip );
 
+                if ( fi.suffix().toLower() == "tar" )
+                    err = decompressFile( gsl_FilenameList.at( i ), false, _GZIP_, s_ProgramGzip );
+
                 stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
             }
 
