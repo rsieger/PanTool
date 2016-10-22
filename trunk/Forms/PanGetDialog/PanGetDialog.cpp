@@ -59,7 +59,7 @@ QString PanGetDialog::getDocumentDir()
 
     #if defined(Q_OS_WIN)
         return( QStandardPaths::writableLocation( QStandardPaths::DocumentsLocation ) );
-#endif
+    #endif
 }
 
 // **********************************************************************************************
