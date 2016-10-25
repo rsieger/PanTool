@@ -140,13 +140,13 @@ void MainWindow::createActions()
     compressFolderZipAction = new QAction(trUtf8("Compress folder with zip"), this);
     connect(compressFolderZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderZip()));
 
-    compressFolderGZipAction = new QAction(trUtf8("Compress folder with gzip"), this);
+    compressFolderGZipAction = new QAction(trUtf8("Compress folder with gz"), this);
     connect(compressFolderGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderGZip()));
 
     compressFilesZipAction = new QAction(trUtf8("Compress files with zip"), this);
     connect(compressFilesZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesZip()));
 
-    compressFilesGZipAction = new QAction(trUtf8("Compress files with gzip"), this);
+    compressFilesGZipAction = new QAction(trUtf8("Compress files with gz"), this);
     connect(compressFilesGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesGZip()));
 
     decompressFilesAction = new QAction(trUtf8("Decompress files"), this);
