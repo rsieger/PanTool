@@ -1019,9 +1019,13 @@ int MainWindow::calcFileSizeClass( const QString &s_Filename, const int i_NumOfF
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2016-10-20
+// 2016-10-25
 
-/*! @brief Komprimieren eines Verzeichnisses mit zip, tar+gz oder 7-Zip..
+/*! @brief Komprimieren eines Verzeichnisses mit zip, tar+gz oder 7-Zip.
+*
+*   @param  s_Folder Name des zu zippenden Verzeichnisses.
+*   @param  mode Zip Mode ( _ZIP_ oder _GZIP_ )
+*   @param  s_Program Zip-Programm (zip, gz oder 7-Zip)
 */
 
 void MainWindow::compressFolder( const QString &s_Folder, const int mode, const QString &s_Program )
@@ -1110,9 +1114,14 @@ void MainWindow::compressFolder( const QString &s_Folder, const int mode, const 
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2016-01-08
+// 2016-10-25
 
-/*! @brief Komprimieren von Dateien mit zip, gz oder 7-Zip. */
+/*! @brief Komprimieren von Dateien mit zip, gz oder 7-Zip.
+*
+*   @param  s_Filename Dateiname der zu zippenden Datei.
+*   @param  mode Zip Mode ( _ZIP_ oder _GZIP_ )
+*   @param  s_Program Zip-Programm (zip, gz oder 7-Zip)
+*/
 
 void MainWindow::compressFile( const QString &s_Filename, const int mode, const QString &s_Program )
 {
@@ -1178,7 +1187,7 @@ void MainWindow::compressFile( const QString &s_Filename, const int mode, const 
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2016-01-07
+// 2016-10-25
 
 /*! @brief Auspacken von Zip und GZip Dateien.
 *
