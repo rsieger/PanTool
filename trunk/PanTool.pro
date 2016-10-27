@@ -56,9 +56,10 @@ HEADERS = ./Headers/Application.h \
     ./Forms/FileListOptionsDialog/FileListOptionsDialog.h \
     ./Forms/FilenameFolderDialog/FilenameFolderDialog.h \
     ./Forms/FourColumnsDialog/FourColumnsDialog.h \
-    ./Forms/ExtractLinesDialog/ExtractLinesDialog.h \
     ./Forms/DateTimeDialog/DateTimeDialog.h \
     ./Forms/DeleteLinesDialog/DeleteLinesDialog.h \
+    ./Forms/ExiftoolOptionsDialog/ExiftoolOptionsDialog.h \
+    ./Forms/ExtractLinesDialog/ExtractLinesDialog.h \
     ./Forms/GeneralOptionsDialog/GeneralOptionsDialog.h \
     ./Forms/LatLongOptionsDialog/LatLongOptionsDialog.h \
     ./Forms/ODPSampleLabelDialog/ODPSampleLabelDialog.h \
@@ -89,6 +90,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/createODPSampleLabel.cpp \
     ./Sources/createScript.cpp \
     ./Sources/decompressFiles.cpp \
+    ./Sources/extractExif.cpp \
     ./Sources/extractColumns.cpp \
     ./Sources/extractMatchedColumns.cpp \
     ./Sources/extractLines.cpp \
@@ -124,6 +126,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Forms/ConcatenateFilesOptionsDialog/ConcatenateFilesOptionsDialog.cpp \
     ./Forms/DateTimeDialog/DateTimeDialog.cpp \
     ./Forms/DeleteLinesDialog/DeleteLinesDialog.cpp \
+    ./Forms/ExiftoolOptionsDialog/ExiftoolOptionsDialog.cpp \
     ./Forms/ExtractLinesDialog/ExtractLinesDialog.cpp \
     ./Forms/FindAreaDialog/FindAreaDialog.cpp \
     ./Forms/FileListOptionsDialog/FileListOptionsDialog.cpp \
@@ -148,6 +151,7 @@ FORMS = ./Forms/AboutDialog/aboutdialog.ui \
     ./Forms/ConcatenateFilesOptionsDialog/concatenatefilesoptionsdialog.ui \
     ./Forms/DateTimeDialog/datetimedialog.ui \
     ./Forms/DeleteLinesDialog/deletelinesdialog.ui \
+    ./Forms/ExiftoolOptionsDialog/exiftooloptionsdialog.ui \
     ./Forms/ExtractLinesDialog/extractlinesdialog.ui \
     ./Forms/FindAreaDialog/findareadialog.ui \
     ./Forms/FileListOptionsDialog/filelistoptionsdialog.ui \

@@ -331,7 +331,7 @@ void MainWindow::savePreferences()
     settings.setValue( "DayOfYearColumn", gi_dt_DayOfYearColumn );
     settings.setValue( "JulianDayColumn", gi_dt_JulianDayColumn );
     settings.setValue( "MatLabDateColumn", gi_dt_MatLabDateColumn );
-    settings.setValue( "OutputFormatDateTime", gi_OutputFormatDateTime );
+    settings.setValue( "OutputFormatDateTime", gi_dt_OutputFormatDateTime );
     settings.setValue( "WriteDateTimeOnly", gb_dt_WriteDateTimeOnly );
     settings.endGroup();
 
@@ -383,6 +383,14 @@ void MainWindow::savePreferences()
     settings.beginGroup( "FileListOptions" );
     settings.setValue( "LocalDataDir", gs_LocalDataDir );
     settings.setValue( "ExternalWebPath", gs_ExternalWebPath );
+    settings.endGroup();
+
+    // ExifTool
+    settings.beginGroup( "ExifTool" );
+    settings.setValue( "FilenameExifOut", gs_et_FilenameOut );
+    settings.setValue( "UtcOffset", gi_et_UtcOffset );
+    settings.setValue( "CreateKmlFile", gb_et_CreateKmlFile );
+    settings.setValue( "OutputFormatDateTimeExiftool", gi_et_OutputFormatDateTime );
     settings.endGroup();
 }
 
@@ -716,20 +724,20 @@ void MainWindow::loadPreferences()
 
     // date/time
     settings.beginGroup( "DateTimeConverter" );
-    gi_dt_DateColumn        = settings.value( "DateColumn", 0 ).toInt();
-    gi_dt_YearColumn        = settings.value( "YearColumn", 0 ).toInt();
-    gi_dt_MonthColumn       = settings.value( "MonthColumn", 0 ).toInt();
-    gi_dt_DayColumn         = settings.value( "DayColumn", 0 ).toInt();
-    gi_dt_TimeColumn        = settings.value( "TimeColumn", 0 ).toInt();
-    gi_dt_HourColumn        = settings.value( "HourColumn", 0 ).toInt();
-    gi_dt_MinuteColumn      = settings.value( "MinuteColumn", 0 ).toInt();
-    gi_dt_SecondColumn      = settings.value( "SecondColumn", 0 ).toInt();
-    gi_dt_DateTimeColumn    = settings.value( "DateTimeColumn", 0 ).toInt();
-    gi_dt_DayOfYearColumn   = settings.value( "DayOfYearColumn", 0 ).toInt();
-    gi_dt_JulianDayColumn   = settings.value( "JulianDayColumn", 0 ).toInt();
-    gi_dt_MatLabDateColumn  = settings.value( "MatLabDateColumn", 0 ).toInt();
-    gi_OutputFormatDateTime = settings.value( "OutputFormatDateTime", 3 ).toInt();
-    gb_dt_WriteDateTimeOnly = settings.value( "WriteDateTimeOnly", true ).toBool();
+    gi_dt_DateColumn           = settings.value( "DateColumn", 0 ).toInt();
+    gi_dt_YearColumn           = settings.value( "YearColumn", 0 ).toInt();
+    gi_dt_MonthColumn          = settings.value( "MonthColumn", 0 ).toInt();
+    gi_dt_DayColumn            = settings.value( "DayColumn", 0 ).toInt();
+    gi_dt_TimeColumn           = settings.value( "TimeColumn", 0 ).toInt();
+    gi_dt_HourColumn           = settings.value( "HourColumn", 0 ).toInt();
+    gi_dt_MinuteColumn         = settings.value( "MinuteColumn", 0 ).toInt();
+    gi_dt_SecondColumn         = settings.value( "SecondColumn", 0 ).toInt();
+    gi_dt_DateTimeColumn       = settings.value( "DateTimeColumn", 0 ).toInt();
+    gi_dt_DayOfYearColumn      = settings.value( "DayOfYearColumn", 0 ).toInt();
+    gi_dt_JulianDayColumn      = settings.value( "JulianDayColumn", 0 ).toInt();
+    gi_dt_MatLabDateColumn     = settings.value( "MatLabDateColumn", 0 ).toInt();
+    gi_dt_OutputFormatDateTime = settings.value( "OutputFormatDateTime", 3 ).toInt();
+    gb_dt_WriteDateTimeOnly    = settings.value( "WriteDateTimeOnly", true ).toBool();
     settings.endGroup();
 
     // Pressure to depth
@@ -780,6 +788,14 @@ void MainWindow::loadPreferences()
     settings.beginGroup( "FileListOptions" );
     gs_LocalDataDir    = settings.value( "LocalDataDir", "" ).toString();
     gs_ExternalWebPath = settings.value( "ExternalWebPath", "" ).toString();
+    settings.endGroup();
+
+    // ExifTool
+    settings.beginGroup( "ExifTool" );
+    gs_et_FilenameOut          = settings.value( "FilenameExifOut", getDocumentDir() ).toString();
+    gi_et_UtcOffset            = settings.value( "UtcOffset", 2 ).toInt();
+    gb_et_CreateKmlFile        = settings.value( "CreateKmlFile", true ).toBool();
+    gi_et_OutputFormatDateTime = settings.value( "OutputFormatDateTimeExiftool", 3 ).toInt();
     settings.endGroup();
 
     settings.endGroup();

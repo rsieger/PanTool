@@ -194,6 +194,9 @@ void MainWindow::createActions()
     Columns2TableFormatAction = new QAction(trUtf8("Columns -> table"), this);
     connect(Columns2TableFormatAction, SIGNAL(triggered()), this, SLOT(doColumns2TableFormat()));
 
+    extractExifAction = new QAction(tr("Extract exif record of images..."), this);
+    connect(extractExifAction, SIGNAL(triggered()), this, SLOT(doExtractExif()));
+
     // Help menu
     aboutAction = new QAction(trUtf8("&About ") + getApplicationName( true ), this);
     connect(aboutAction, SIGNAL(triggered()), this, SLOT(about()));
@@ -316,6 +319,9 @@ void MainWindow::createMenus()
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( buildAreaDatabaseAction );
     specialToolsMenu->addAction( buildSearchAndReplaceDatabaseAction );
+    specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( extractExifAction );
+
 
 // **********************************************************************************************
 

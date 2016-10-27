@@ -50,6 +50,10 @@
     const int   _ADDBLOCK                            = 2;
     const int   _ADDCOLUMN                           = 3;
 
+    const int   _BUILDDATE                           = 1;
+    const int   _BUILDDATETIME                       = 2;
+    const int   _BUILDISODATETIME                    = 3;
+
     const int   _ZIP_                                = 1;
     const int   _GZIP_                               = 2;
 

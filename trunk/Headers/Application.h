@@ -300,7 +300,7 @@ public:
     int         gi_dt_DayOfYearColumn;               //!< Spalte fuer Tag im Jahr
     int         gi_dt_JulianDayColumn;               //!< Spalte fuer den Julianischen Tag
     int         gi_dt_MatLabDateColumn;              //!< Spalte fuer das MatLab Date
-    int         gi_OutputFormatDateTime;             //!< Ausgabeformat für Date/Time Werte
+    int         gi_dt_OutputFormatDateTime;             //!< Ausgabeformat für Date/Time Werte
     bool        gb_dt_WriteDateTimeOnly;             //!< schreibe nur die Spalte Date/Time
 
     // Pressure to depth
@@ -352,6 +352,14 @@ public:
     // External web path
     QString     gs_LocalDataDir;                     //!< Local root diretory
     QString     gs_ExternalWebPath;                  //!< External web path
+
+    // Exiftool
+    QString     gs_et_FilenameOut;                   //!< Name der Datei fuer Exif Output Datei.
+    int         gi_et_OutputFormatDateTime;          //!< Date/Time Format.
+    int         gi_et_UtcOffset;                     //!< Offset to UTC
+    bool        gb_et_CreateKmlFile;                 //!< Create KML File
+
+// *********************************************************************************************************************
 
     bool LineCanBeWritten( const QString &InputStr, const bool SkipEmptyLines, const bool SkipCommentLines );
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );
@@ -452,6 +460,9 @@ public:
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doGetDatasetsDialog( QString &Query, QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
 
+    int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );
+    QString findExifTool();
+
 protected:
     void dragEnterEvent( QDragEnterEvent *event );
     void dropEvent( QDropEvent *event );
@@ -524,9 +535,11 @@ private slots:
     void doFindPolygonCentroid();
     void doBuildAreaDatabase();
     void doCheckTimeSeries();
+    void doExtractExif();
 
 // Dialogs
-    int  doGeneralOptionsDialog();
+    int doGeneralOptionsDialog();
+    int doExifToolOptionsDialog();
 
 private:
     QStringList expandCommandline();
@@ -649,6 +662,7 @@ private:
     QAction *Table2ColumnsFormatAction;
     QAction *Columns2TableFormatAction;
     QAction *translateCharacterEncodingAction;
+    QAction *extractExifAction;
 
     QAction *aboutAction;
     QAction *aboutQtAction;
