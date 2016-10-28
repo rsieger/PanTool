@@ -61,6 +61,7 @@ HEADERS = ./Headers/Application.h \
     ./Forms/ExiftoolOptionsDialog/ExiftoolOptionsDialog.h \
     ./Forms/ExtractLinesDialog/ExtractLinesDialog.h \
     ./Forms/GeneralOptionsDialog/GeneralOptionsDialog.h \
+    ./Forms/GoogleEarthOptionsDialog/GoogleEarthOptionsDialog.h \
     ./Forms/LatLongOptionsDialog/LatLongOptionsDialog.h \
     ./Forms/ODPSampleLabelDialog/ODPSampleLabelDialog.h \
     ./Forms/PanGetDialog/PanGetDialog.h \
@@ -87,6 +88,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/compressFolder.cpp \
     ./Sources/concatenateFiles.cpp \
     ./Sources/createDateTime.cpp \
+    ./Sources/createGoogleEarthImportFile.cpp \
     ./Sources/createODPSampleLabel.cpp \
     ./Sources/createScript.cpp \
     ./Sources/decompressFiles.cpp \
@@ -126,6 +128,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Forms/ConcatenateFilesOptionsDialog/ConcatenateFilesOptionsDialog.cpp \
     ./Forms/DateTimeDialog/DateTimeDialog.cpp \
     ./Forms/DeleteLinesDialog/DeleteLinesDialog.cpp \
+    ./Forms/GoogleEarthOptionsDialog/GoogleEarthOptionsDialog.cpp \
     ./Forms/ExiftoolOptionsDialog/ExiftoolOptionsDialog.cpp \
     ./Forms/ExtractLinesDialog/ExtractLinesDialog.cpp \
     ./Forms/FindAreaDialog/FindAreaDialog.cpp \
@@ -158,6 +161,7 @@ FORMS = ./Forms/AboutDialog/aboutdialog.ui \
     ./Forms/FilenameFolderDialog/filenamefolderdialog.ui \
     ./Forms/FourColumnsDialog/fourcolumnsdialog.ui \
     ./Forms/GeneralOptionsDialog/generaloptionsdialog.ui \
+    ./Forms/GoogleEarthOptionsDialog/googleearthoptionsdialog.ui \
     ./Forms/LatLongOptionsDialog/latlongoptionsdialog.ui \
     ./Forms/ODPSampleLabelDialog/odpsamplelabeldialog.ui \
     ./Forms/PanGetDialog/pangetdialog.ui \

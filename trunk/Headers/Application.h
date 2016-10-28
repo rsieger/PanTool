@@ -359,11 +359,39 @@ public:
     int         gi_et_UtcOffset;                     //!< Offset to UTC
     bool        gb_et_CreateKmlFile;                 //!< Create KML File
 
+
+    // Google Earth
+    QString     gs_ge_FilenameGoogleEarthProgram;      //!< Pfad und Name des Google Earth Programmes.
+    QString     gs_ge_FilenameGoogleEarth;             //!< Pfad und Name der KML-Datei
+
+    int         gi_ge_IconColor;                       //!< Farbe der Marker bei KML
+    int         gi_ge_IconSize;                        //!< Groesse der Marker bei KML
+    int         gi_ge_IconSymbol;                      //!< Style der Marker bei KML
+    int         gi_ge_TracklineWidth;                  //!< Breite der Trackline bei KML
+    int         gi_ge_TracklineColor;                  //!< Farbe der Trackline bei KML
+    int         gi_ge_DateTimeFormat;                  //!< Date/Time Format.
+    int         gi_ge_UtcOffset;                       //!< Offset to UTC
+
+    bool        gb_ge_startGoogleEarth;                //!< true wenn Google Earth automatisch gestart werden soll.
+    bool        gb_ge_displayEventLabel;
+    bool        gb_ge_displayDescription;
+    bool        gb_ge_CreateKmlFile;                   //!< Create KML File
+
 // *********************************************************************************************************************
 
     bool LineCanBeWritten( const QString &InputStr, const bool SkipEmptyLines, const bool SkipCommentLines );
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
+
+    int openKMLFile( QFile& fkml );
+    int closeKMLFile( QFile& fkml );
+    int writeKMLEntry( QFile& fkml, const QStringList &MetadataList, const bool displayEventLabel, const bool displayDescription, const float IconSize, const int IconColor, const int IconStyle, const int i );
+    int writeKMLTrack( QFile& fkml, const QStringList &MetadataList, const int TracklineWidth, const int TracklineColor, const int Start, const int End );
+    int openKMLFolder( QFile& fkml, const QString &Campaign );
+    int closeKMLFolder( QFile& fkml, const int n=2 );
+
+    QString setIconSymbol( const int IconSymbol );
+    QString setIconColor( const int IconColor );
 
     void getDatasets( const QString &Query, const QString &IDListFile, const QString &DownloadDirectory, const bool DownloadData, const bool DownloadCitation, const bool DownloadMetadata, const int CodecDownload, const int EOL, const int Extension );
     int checkFile( const QString &Filename, const bool isbinary );
@@ -540,6 +568,7 @@ private slots:
 // Dialogs
     int doGeneralOptionsDialog();
     int doExifToolOptionsDialog();
+    int doGoogleEarthOptionsDialog();
 
 private:
     QStringList expandCommandline();

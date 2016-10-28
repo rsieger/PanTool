@@ -7,7 +7,7 @@
     const QString _PROGRAMDOI_                       = "doi:10.1594/PANGAEA.787549";
     const QString _PROGRAMREADME_                    = "https://wiki.pangaea.de/wiki/PanTool";
 
-    const QString _VERSION_                          = "3.25";	// Version number, 2016-10-25
+    const QString _VERSION_                          = "3.26";	// Version number, 2016-10-28
     const QChar   _PSEPARATOR_                       = '|';
 
     const int   _NOERROR_                            = 0;
@@ -57,8 +57,26 @@
     const int   _ZIP_                                = 1;
     const int   _GZIP_                               = 2;
 
+    const int   _EVENTLABELPOS                       = 1;
+    const int   _DATETIMEPOS                         = 2;
+    const int   _LATITUDEPOS                         = 3;
+    const int   _LONGITUDEPOS                        = 4;
+
+    const int   _MAX_NUM_OF_URLS                     = 20;
     const int   _MAX_NUM_OF_AREAS					 = 5000;	// maximum number of areas, used in find areas tool
     const int   _MAX_NUM_OF_LOCATIONS				 = 500000;	// maximum number of locations, used in find areas tool
+
+    const int   _RED                                 = 0;
+    const int   _GREEN                               = 1;
+    const int   _BLUE                                = 2;
+    const int   _ORANGE                              = 3;
+    const int   _YELLOW                              = 4;
+    const int   _WHITE                               = 5;
+
+    const int   _CIRCLE                              = 0;
+    const int   _SQUARE                              = 1;
+    const int   _STAR                                = 2;
+    const int   _TRIANGLE                            = 3;
 
     const int   _TABSTOP_                            = 0;
     const int   _COMMA_                              = 1;
