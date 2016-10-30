@@ -25,69 +25,21 @@
   <property name="sizeGripEnabled">
    <bool>true</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_7">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <widget class="QGroupBox" name="InputFile_groupBox">
-     <property name="title">
-      <string>Input file</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_6">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Encoding:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="CodecInput_ComboBox">
-        <item>
-         <property name="text">
-          <string>UTF-8</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Apple Roman</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Latin-1 (ISO 8859-1)</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="0" column="1">
     <widget class="QGroupBox" name="View_groupBox">
      <property name="title">
       <string>View</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_4">
-      <item row="1" column="0">
+      <item row="2" column="0">
        <widget class="QCheckBox" name="showDescription_checkBox">
         <property name="text">
          <string>show description</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
+      <item row="1" column="0">
        <widget class="QCheckBox" name="showEventLabel_checkBox">
         <property name="text">
          <string>show event label</string>
@@ -103,13 +55,6 @@
       <string>Marker</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Color:</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="IconColor_comboBox">
         <item>
@@ -144,6 +89,33 @@
         </item>
        </widget>
       </item>
+      <item row="2" column="1">
+       <widget class="QSpinBox" name="IconSize_spinBox">
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="singleStep">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Color:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Symbol:</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="2">
        <spacer name="horizontalSpacer_2">
         <property name="orientation">
@@ -157,10 +129,10 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Symbol:</string>
+         <string>Size:</string>
         </property>
        </widget>
       </item>
@@ -188,108 +160,10 @@
         </item>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Size:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QSpinBox" name="IconSize_spinBox">
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="singleStep">
-         <number>5</number>
-        </property>
-       </widget>
-      </item>
      </layout>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QGroupBox" name="Trackline_groupBox">
-     <property name="title">
-      <string>Trackline</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Color:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="TracklineColor_comboBox">
-        <item>
-         <property name="text">
-          <string>red</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>green</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>blue</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>orange</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>yellow</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <spacer name="horizontalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>65</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_7">
-        <property name="text">
-         <string>Width:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QSpinBox" name="TracklineWidth_spinBox">
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>100</number>
-        </property>
-        <property name="singleStep">
-         <number>5</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="2">
+   <item row="2" column="0">
     <widget class="QGroupBox" name="OutputFilename_groupBox">
      <property name="title">
       <string>Output file</string>
@@ -318,7 +192,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
+   <item row="3" column="0">
     <widget class="QGroupBox" name="GoogleEarth_groupBox">
      <property name="title">
       <string>Google Earth</string>
@@ -357,7 +231,7 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="4" column="0">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
       <spacer name="horizontalSpacer">
@@ -397,13 +271,9 @@
   </layout>
  </widget>
  <tabstops>
-  <tabstop>CodecInput_ComboBox</tabstop>
-  <tabstop>showEventLabel_checkBox</tabstop>
   <tabstop>showDescription_checkBox</tabstop>
   <tabstop>IconColor_comboBox</tabstop>
   <tabstop>IconSize_spinBox</tabstop>
-  <tabstop>TracklineColor_comboBox</tabstop>
-  <tabstop>TracklineWidth_spinBox</tabstop>
   <tabstop>GoogleEarthFilename_lineEdit</tabstop>
   <tabstop>BrowseGoogleEarthFilename_pushButton</tabstop>
   <tabstop>GoogleEarthProgram_lineEdit</tabstop>

@@ -378,5 +378,7 @@ void MainWindow::enableMenuItems( const QStringList &sl_FilenameList )
     {
         for ( int i=0; i<specialToolsMenuActions.count(); ++i )
             specialToolsMenuActions.at( i )->setEnabled( false );
+
+        extractExifAction->setEnabled( true );
     }
 }

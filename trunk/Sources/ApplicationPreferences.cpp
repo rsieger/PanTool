@@ -392,6 +392,19 @@ void MainWindow::savePreferences()
     settings.setValue( "CreateKmlFile", gb_et_CreateKmlFile );
     settings.setValue( "OutputFormatDateTimeExiftool", gi_et_OutputFormatDateTime );
     settings.endGroup();
+
+    // Google Earth
+    settings.beginGroup( "GoogleEarth" );
+    settings.setValue( "FilenameGoogleEarthProgram", gs_ge_FilenameGoogleEarthProgram );
+    settings.setValue( "FilenameGoogleEarth", gs_ge_FilenameGoogleEarth );
+    settings.setValue( "StartGoogleEarth", gb_ge_startGoogleEarth );
+    settings.setValue( "DisplayEventLabel", gb_ge_displayEventLabel );
+    settings.setValue( "DisplayDescription", gb_ge_displayDescription );
+    settings.setValue( "IconSize", gi_ge_IconSize );
+    settings.setValue( "IconColor", gi_ge_IconColor );
+    settings.setValue( "IconSymbol", gi_ge_IconSymbol );
+    settings.endGroup();
+
 }
 
 // **********************************************************************************************
@@ -796,6 +809,18 @@ void MainWindow::loadPreferences()
     gi_et_UtcOffset            = settings.value( "UtcOffset", 2 ).toInt();
     gb_et_CreateKmlFile        = settings.value( "CreateKmlFile", true ).toBool();
     gi_et_OutputFormatDateTime = settings.value( "OutputFormatDateTimeExiftool", 3 ).toInt();
+    settings.endGroup();
+
+    // Google Earth
+    settings.beginGroup( "GoogleEarth" );
+    gs_ge_FilenameGoogleEarthProgram = settings.value( "FilenameGoogleEarthProgram", "Browse through the Google Earth program file with \"Browse ...\"" ).toString();
+    gs_ge_FilenameGoogleEarth        = settings.value( "FilenameGoogleEarth", "" ).toString();
+    gb_ge_startGoogleEarth           = settings.value( "StartGoogleEarth", false ).toBool();
+    gb_ge_displayEventLabel          = settings.value( "DisplayEventLabel", false ).toBool();
+    gb_ge_displayDescription         = settings.value( "DisplayDescription", false ).toBool();
+    gi_ge_IconSize                   = settings.value( "IconSize", 40 ).toInt();
+    gi_ge_IconColor                  = settings.value( "IconColor", _RED ).toInt();
+    gi_ge_IconSymbol                 = settings.value( "IconSymbol", _CIRCLE ).toInt();
     settings.endGroup();
 
     settings.endGroup();

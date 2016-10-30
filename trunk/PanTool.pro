@@ -113,6 +113,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/renameFiles.cpp \
     ./Sources/replaceCharactersAtPosition.cpp \
     ./Sources/saveFilelist.cpp \
+    ./Sources/startProgram.cpp \
     ./Sources/transposeTable.cpp \
     ./Sources/scanList.cpp \
     ./Sources/searchOneString.cpp \

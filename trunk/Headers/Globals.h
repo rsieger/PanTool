@@ -57,12 +57,13 @@
     const int   _ZIP_                                = 1;
     const int   _GZIP_                               = 2;
 
-    const int   _EVENTLABELPOS                       = 1;
+    const int   _EVENTLABELPOS                       = 0;
     const int   _DATETIMEPOS                         = 2;
     const int   _LATITUDEPOS                         = 3;
     const int   _LONGITUDEPOS                        = 4;
+    const int   _ALTITUDEPOS                         = 5;
+    const int   _FILENAMEPOS                         = 6;
 
-    const int   _MAX_NUM_OF_URLS                     = 20;
     const int   _MAX_NUM_OF_AREAS					 = 5000;	// maximum number of areas, used in find areas tool
     const int   _MAX_NUM_OF_LOCATIONS				 = 500000;	// maximum number of locations, used in find areas tool
 

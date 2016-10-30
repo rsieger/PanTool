@@ -29,24 +29,18 @@ int MainWindow::doGoogleEarthOptionsDialog()
 {
     int i_DialogResult = QDialog::Rejected;
 
-    QFileInfo fi( gs_ge_FilenameGoogleEarth );
-    QDir di( fi.absolutePath() );
+    QFileInfo fin( gs_et_FilenameOut );
 
-    if ( di.exists() == false )
-        gs_ge_FilenameGoogleEarth = getDocumentDir() + "/" + fi.baseName() + ".kml";
+// ***********************************************************************************************************************
 
     GoogleEarthOptionsDialog dialog( this );
 
-    dialog.GoogleEarthFilename_lineEdit->setText( QDir::toNativeSeparators( gs_ge_FilenameGoogleEarth ) );
+    dialog.GoogleEarthFilename_lineEdit->setText( QDir::toNativeSeparators( fin.absolutePath() + "/" + fin.baseName() + ".kml" ) );
     dialog.showEventLabel_checkBox->setChecked( gb_ge_displayEventLabel );
     dialog.showDescription_checkBox->setChecked( gb_ge_displayDescription );
     dialog.IconColor_comboBox->setCurrentIndex( gi_ge_IconColor );
     dialog.IconSymbol_comboBox->setCurrentIndex( gi_ge_IconSymbol );
     dialog.IconSize_spinBox->setValue( gi_ge_IconSize );
-    dialog.TracklineColor_comboBox->setCurrentIndex( gi_ge_TracklineColor );
-    dialog.TracklineWidth_spinBox->setValue( gi_ge_TracklineWidth );
-
-    dialog.CodecInput_ComboBox->setCurrentIndex( gi_CodecInput );
 
     dialog.StartGoogleEarth_checkBox->setChecked( gb_ge_startGoogleEarth );
     dialog.GoogleEarthProgram_lineEdit->setText( QDir::toNativeSeparators( gs_ge_FilenameGoogleEarthProgram ) );
@@ -79,10 +73,7 @@ int MainWindow::doGoogleEarthOptionsDialog()
         gi_ge_IconColor                  = dialog.IconColor_comboBox->currentIndex();
         gi_ge_IconSymbol                 = dialog.IconSymbol_comboBox->currentIndex();
         gi_ge_IconSize                   = dialog.IconSize_spinBox->value();
-        gi_ge_TracklineColor             = dialog.TracklineColor_comboBox->currentIndex();
-        gi_ge_TracklineWidth             = dialog.TracklineWidth_spinBox->value();
         gb_ge_startGoogleEarth           = dialog.StartGoogleEarth_checkBox->isChecked();
-        gi_CodecInput                    = dialog.CodecInput_ComboBox->currentIndex();
 
         i_DialogResult = QDialog::Accepted;
         break;

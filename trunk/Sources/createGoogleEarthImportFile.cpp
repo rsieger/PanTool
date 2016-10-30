@@ -8,6 +8,47 @@
 
 #include "Application.h"
 
+/*! @brief Liest Zeilen aus einer Datei, verarbeitet sie und schreibt sie in eine neue Datei. */
+
+int MainWindow::createGoogleEarthImportFile( const QString &s_FilenameIn, const QString &s_FilenameOut,
+                                             const bool b_displayEventLabel, const bool b_displayDescription,
+                                             const int i_IconSize, const int i_IconColor, const int i_IconSymbol )
+{
+    int             n                       = 0;
+    int             err                     = _NOERROR_;
+
+    float           f_IconSize              = (float) i_IconSize/100.;
+
+    QStringList     sl_InputStr;
+
+//-----------------------------------------------------------------------------------------------------------------------
+
+    if ( ( n = readFile( s_FilenameIn, sl_InputStr, _SYSTEM_ ) ) < 1 )
+        return( _ERROR_ );
+
+//-----------------------------------------------------------------------------------------------------------------------
+
+    QFile fkml( s_FilenameOut );
+
+    if ( fkml.open( QIODevice::WriteOnly | QIODevice::Text) == false )
+        return( -20 );
+
+//-----------------------------------------------------------------------------------------------------------------------
+
+    err = openKMLFile( fkml );
+
+    for ( int i=1; i< n; i++ )
+        err = writeKMLEntry( fkml, sl_InputStr.at( i ), b_displayEventLabel, b_displayDescription, f_IconSize, i_IconColor, i_IconSymbol );
+
+    err = closeKMLFile( fkml );
+
+//-----------------------------------------------------------------------------------------------------------------------
+
+    fkml.close();
+
+    return( _NOERROR_ );
+}
+
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
@@ -70,116 +111,6 @@ int MainWindow::closeKMLFile( QFile& fkml )
     tkml << "</kml>\n";
 
     return( 0 );
-}
-
-// **********************************************************************************************
-// **********************************************************************************************
-// **********************************************************************************************
-
-int MainWindow::openKMLFolder( QFile& fkml, const QString &s_Campaign )
-{
-    QTextStream tkml( &fkml );
-    tkml.setCodec("UTF-8");
-
-    tkml << "  <Folder>\n";
-
-    if ( ( s_Campaign != "xxx" ) && ( s_Campaign != "unknown campaign" ) )
-    {
-        tkml << "    <name>Campaign: " << s_Campaign.section( " (", 0, 0 ) << "</name>\n";
-        tkml << "    <description><![CDATA[<a href=\"https://pangaea.de/search?q=" << s_Campaign.section( " (", 0, 0 ) << "\">search all Datasets</a>]]></description>\n";
-    }
-    else
-    {
-        tkml << "    <name>Campaign unknown</name>\n";
-    }
-
-    tkml << "    <Folder>\n";
-    tkml << "      <name>Events</name>\n";
-    tkml << "      <open>0</open>\n";
-
-    return( 2 );
-}
-
-// **********************************************************************************************
-// **********************************************************************************************
-// **********************************************************************************************
-
-int MainWindow::closeKMLFolder( QFile& fkml, const int n )
-{
-    QTextStream tkml( &fkml );
-    tkml.setCodec("UTF-8");
-
-    switch ( n )
-    {
-      case 4:
-        tkml << "    </Folder>\n";
-        break;
-      default:
-        tkml << "  </Folder>\n";
-        break;
-    }
-
-
-    return( 1 );
-}
-
-// **********************************************************************************************
-// **********************************************************************************************
-// **********************************************************************************************
-
-int MainWindow::writeKMLTrack( QFile& fkml, const QStringList &sl_MetadataList, const int i_TracklineWidth, const int i_TracklineColor, const int i_Start, const int i_End )
-{
-    if ( i_Start+1 < i_End )
-    {
-        QTextStream tkml( &fkml );
-        tkml.setCodec("UTF-8");
-
-        tkml << "    <Placemark><name>Trackline</name>" << endl;
-
-        switch ( i_TracklineColor )
-        {
-            case _RED:
-                tkml << "      <Style><LineStyle><color>ff0000ff</color>";
-                break;
-            case _GREEN:
-                tkml << "      <Style><LineStyle><color>ff00ff00</color>";
-                break;
-            case _BLUE:
-                tkml << "      <Style><LineStyle><color>ffff0000</color>";
-                break;
-            case _ORANGE:
-                tkml << "      <Style><LineStyle><color>ff0099ff</color>";
-                break;
-            case _YELLOW:
-                tkml << "      <Style><LineStyle><color>ff33ffff</color>";
-                break;
-            default:
-                tkml << "      <Style><LineStyle><color>ff0099ff</color>";
-                break;
-        }
-
-        tkml << "<width>" << (float) i_TracklineWidth/10. << "</width></LineStyle></Style>" << endl;
-        tkml << "      <LineString>" << endl;
-        tkml << "        <tessellate>1</tessellate>" << endl;
-        tkml << "        <coordinates>" << endl;
-
-        for ( int i=i_Start; i<i_End; i++ )
-        {
-            double d_Latitude  = sl_MetadataList.at( i ).section( "\t", _LATITUDEPOS, _LATITUDEPOS ).toDouble();
-            double d_Longitude = sl_MetadataList.at( i ).section( "\t", _LONGITUDEPOS, _LONGITUDEPOS ).toDouble();
-
-            if ( d_Longitude > 180 )
-                d_Longitude -= 360;
-
-            tkml << "          " << QString( "%1,%2" ).arg( d_Longitude, 0, 'f', 5 ).arg( d_Latitude, 0, 'f', 5 ) << endl;
-        }
-
-        tkml << "        </coordinates>" << endl;
-        tkml << "      </LineString>" << endl;
-        tkml << "    </Placemark>" << endl;
-    }
-
-    return( i_End );
 }
 
 // **********************************************************************************************
@@ -262,13 +193,14 @@ QString MainWindow::setIconColor( const int i_IconColor )
 // **********************************************************************************************
 // **********************************************************************************************
 
-int MainWindow::writeKMLEntry( QFile& fkml, const QStringList &sl_MetadataList, const bool b_displayEventLabel, const bool b_displayDescription, const float f_IconSize, const int i_IconColor, const int i_IconSymbol, const int i )
+int MainWindow::writeKMLEntry( QFile& fkml, const QString &InputStr, const bool b_displayEventLabel, const bool b_displayDescription, const float f_IconSize, const int i_IconColor, const int i_IconSymbol )
 {
-    double d_Latitude      = sl_MetadataList.at( i ).section( "\t", _LATITUDEPOS, _LATITUDEPOS ).toDouble();   // Latitude
-    double d_Longitude     = sl_MetadataList.at( i ).section( "\t", _LONGITUDEPOS, _LONGITUDEPOS ).toDouble(); // Longitude
+    QString s_EventLabel    = InputStr.section( "\t", _EVENTLABELPOS, _EVENTLABELPOS );         // Event label
+    QString s_DateTime      = InputStr.section( "\t", _DATETIMEPOS, _DATETIMEPOS );             // Date/Time
 
-    QString s_EventLabel    = sl_MetadataList.at( i ).section( "\t", _EVENTLABELPOS, _EVENTLABELPOS );         // Event label
-    QString s_DateTime      = sl_MetadataList.at( i ).section( "\t", _DATETIMEPOS, _DATETIMEPOS );                     // Date
+    double d_Latitude      = InputStr.section( "\t", _LATITUDEPOS, _LATITUDEPOS ).toDouble();   // Latitude
+    double d_Longitude     = InputStr.section( "\t", _LONGITUDEPOS, _LONGITUDEPOS ).toDouble(); // Longitude
+    double d_Altitude      = InputStr.section( "\t", _ALTITUDEPOS, _ALTITUDEPOS ).toDouble();   // Altitude
 
 // **********************************************************************************************
 
@@ -277,13 +209,14 @@ int MainWindow::writeKMLEntry( QFile& fkml, const QStringList &sl_MetadataList, 
 
     QString s_Longitude = QString( "%1" ).arg( d_Longitude, 0, 'f', 5 );
     QString s_Latitude  = QString( "%1" ).arg( d_Latitude, 0, 'f', 5 );
+    QString s_Altitude  = QString( "%1" ).arg( d_Altitude, 0, 'f', 1 );
 
 // **********************************************************************************************
 
     QTextStream tkml( &fkml );
     tkml.setCodec("UTF-8");
 
-    tkml << "      <Placemark>";
+    tkml << "  <Placemark>";
 
     if ( b_displayEventLabel == true )
         tkml << "<name>" << s_EventLabel << "</name>";
@@ -291,7 +224,17 @@ int MainWindow::writeKMLEntry( QFile& fkml, const QStringList &sl_MetadataList, 
     if ( b_displayDescription == true )
     {
         tkml << "<description>";
-        tkml << "Decription of photo";
+        tkml << "Event: " << s_EventLabel << " * ";
+        if ( s_DateTime.contains( ":" ) == true )
+            tkml << "Date/Time: " << s_DateTime << " * ";
+        else
+            tkml << "Date: " << s_DateTime << " * ";
+        tkml << "Latitude: " << s_Latitude << " * ";
+        tkml << "Longitude: " << s_Longitude << " * ";
+        tkml << "Altitude: " << s_Altitude;
+        tkml << "<br /><![CDATA[<a href=\"";
+        tkml << "https://pangaea.de/search?q=" << s_EventLabel;
+        tkml << "\">search data</a>]]><br />";
         tkml << "</description>";
     }
 
@@ -303,9 +246,8 @@ int MainWindow::writeKMLEntry( QFile& fkml, const QStringList &sl_MetadataList, 
 
     tkml << "<styleUrl>#" << setIconSymbol( i_IconSymbol ) << "-" << setIconColor( i_IconColor ) << "</styleUrl>";
     tkml << "<Style><IconStyle>" << QString( "<scale>%1</scale>" ).arg( f_IconSize ) << "</IconStyle></Style>";
-    tkml << "<Point><coordinates>" << s_Longitude << "," << s_Latitude << ",0</coordinates></Point>";
+    tkml << "<Point><coordinates>" << s_Longitude << "," << s_Latitude << ",0," << "</coordinates></Point>";
     tkml << "</Placemark>\n";
 
     return( 0 );
 }
-

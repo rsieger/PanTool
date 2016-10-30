@@ -75,7 +75,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
             QDir::setCurrent( fiIn.absolutePath() );
 
             s_arg = s_ExifTool;
-            s_arg.append( " -n -T -filename -gpsdatetime -gpslatitude -gpslongitude" );
+            s_arg.append( " -n -T -filename -GPSDateTime -GPSLatitude -GPSLongitude -GPSAltitude" );
             s_arg.append( " -w txt" );
             s_arg.append( " " + fiIn.fileName() );
 
@@ -103,7 +103,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
         QTextStream tout( &fout );
 
         tout << "Event label" << "\t" << "Date/Time (UTC)" << "\t" << "Date/Time (local)" << "\t";
-        tout << "Latitude" << "\t" << "Longitude" << "\t" << "File name" << endl;
+        tout << "Latitude" << "\t" << "Longitude" << "\t" << "Altitude [m]" << "\t" << "File name" << endl;
 
         for ( int i=0; i<sl_FilenameList.count(); i++ )
         {
@@ -126,6 +126,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
                     QString s_DateTime   = s_Date + "T" + s_Time;
                     double  d_Latitude   = sl_Input.at( 0 ).section( "\t", 2, 2 ).toDouble();
                     double  d_Longitude  = sl_Input.at( 0 ).section( "\t", 3, 3 ).toDouble();
+                    double  d_Altitude   = sl_Input.at( 0 ).section( "\t", 4, 4 ).toDouble();
 
                     QDateTime dtUtc   = QDateTime::fromString( s_DateTime, "yyyy-MM-ddThh:mm:ss" );
                     QDateTime dtLocal = QDateTime::fromString( s_DateTime, "yyyy-MM-ddThh:mm:ss" ).addSecs( i_UtcOffset );
@@ -135,6 +136,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
                     tout << dtLocal.toString( s_DateTimeFormat ) << "\t";
                     tout << QString( "%1" ).arg( d_Latitude, 0, 'f', 6 ) << "\t";
                     tout << QString( "%1" ).arg( d_Longitude, 0, 'f', 6 ) << "\t";
+                    tout << QString( "%1" ).arg( d_Altitude, 0, 'f', 1 ) << "\t";
                     tout << sl_FilenameList.at( i ) << endl;
                 }
 
@@ -186,14 +188,21 @@ void MainWindow::doExtractExif()
 
     if ( ( err == _NOERROR_ ) && ( gb_et_CreateKmlFile == true ) )
     {
-        gsl_FilenameList.clear();
-        gsl_FilenameList.append( gs_et_FilenameOut );
-//      doCreateGoogleEarthImportFile();
+        if ( doGoogleEarthOptionsDialog() == QDialog::Accepted )
+            createGoogleEarthImportFile( gs_et_FilenameOut, gs_ge_FilenameGoogleEarth, gb_ge_displayEventLabel, gb_ge_displayDescription, gi_ge_IconSize, gi_ge_IconColor, gi_ge_IconSymbol );
     }
 
 // **********************************************************************************************
 
     endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Extracting exif record was canceled" ), true );
+
+// **********************************************************************************************
+// start Google Earth
+
+    if ( ( err == _NOERROR_ ) && ( gb_et_CreateKmlFile == true ) && ( gb_ge_startGoogleEarth == true ) )
+        err = startGoogleEarth( gs_ge_FilenameGoogleEarthProgram, gs_ge_FilenameGoogleEarth );
+
+// **********************************************************************************************
 
     onError( err );
 }

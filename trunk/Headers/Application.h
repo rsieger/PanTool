@@ -367,8 +367,6 @@ public:
     int         gi_ge_IconColor;                       //!< Farbe der Marker bei KML
     int         gi_ge_IconSize;                        //!< Groesse der Marker bei KML
     int         gi_ge_IconSymbol;                      //!< Style der Marker bei KML
-    int         gi_ge_TracklineWidth;                  //!< Breite der Trackline bei KML
-    int         gi_ge_TracklineColor;                  //!< Farbe der Trackline bei KML
     int         gi_ge_DateTimeFormat;                  //!< Date/Time Format.
     int         gi_ge_UtcOffset;                       //!< Offset to UTC
 
@@ -383,12 +381,13 @@ public:
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
 
+    int createGoogleEarthImportFile( const QString &FilenameIn, const QString &FilenameOut, const bool displayEventLabel, const bool displayDescription, const int IconSize, const int IconColor, const int IconSymbol );
+    int startGoogleEarth( const QString &FilenameGoogleEarthProgram, const QString &FilenameGoogleEarth );
+    int startProgram( const QString &Program, const QString &Filename );
+
     int openKMLFile( QFile& fkml );
     int closeKMLFile( QFile& fkml );
-    int writeKMLEntry( QFile& fkml, const QStringList &MetadataList, const bool displayEventLabel, const bool displayDescription, const float IconSize, const int IconColor, const int IconStyle, const int i );
-    int writeKMLTrack( QFile& fkml, const QStringList &MetadataList, const int TracklineWidth, const int TracklineColor, const int Start, const int End );
-    int openKMLFolder( QFile& fkml, const QString &Campaign );
-    int closeKMLFolder( QFile& fkml, const int n=2 );
+    int writeKMLEntry( QFile& fkml, const QString &InputStr, const bool displayEventLabel, const bool displayDescription, const float IconSize, const int IconColor, const int IconSymbol );
 
     QString setIconSymbol( const int IconSymbol );
     QString setIconColor( const int IconColor );
