@@ -157,11 +157,82 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
+// 2016-10-31
+
+int MainWindow::writeToExif( const QString &s_ExifTool, const QStringList &sl_FilenameList )
+{
+    int         n                 = 0;
+    int         err               = _NOERROR_;
+
+    double      d_Latitude        = 0;
+    double      d_Longitude       = 0;
+    double      d_Altitude        = 0;
+
+    QString     InputStr          = "";
+
+    QString     s_arg             = "";
+
+    QString     s_GPSLatitudeRef  = "";
+    QString     s_GPSLongitudeRef = "";
+    QString     s_GPSAltitudeRef  = "";
+
+    QString     s_GPSDateStamp    = "2016-10-27";
+    QString     s_GPSTimeStamp    = "15:23";
+
+    QStringList sl_Input;
+
+    QProcess    process;
+
+// **********************************************************************************************
+// Event -> Date/Time -> Latitude -> Longitude -> Altitude [m] -> File name
+
+    for ( int i=0; i<sl_FilenameList.count(); i++ )
+    {
+        if ( ( n = readFile( sl_FilenameList.at( i ), sl_Input, _SYSTEM_ ) ) > 1 )
+        {
+            for ( int j=1; j<n; j++ )
+            {
+                InputStr = sl_Input.at( j );
+
+                s_GPSDateStamp = InputStr.section( "\t", 1, 1 ).section( "T", 0, 0 );
+                s_GPSTimeStamp = InputStr.section( "\t", 1, 1 ).section( "T", 1, 1 );
+
+                d_Latitude     = InputStr.section( "\t", 2, 2 ).toDouble();
+                d_Longitude    = InputStr.section( "\t", 3, 3 ).toDouble();
+                d_Altitude     = InputStr.section( "\t", 4, 4 ).toDouble();
+
+                if ( d_Latitude < 0 )  s_GPSLatitudeRef  = "S"; else s_GPSLatitudeRef = "N";
+                if ( d_Longitude < 0 ) s_GPSLongitudeRef = "W"; else s_GPSLongitudeRef = "O";
+                if ( d_Altitude < 0 )  s_GPSAltitudeRef  = "below"; else s_GPSAltitudeRef = "above";
+
+                s_arg = s_ExifTool;
+                s_arg.append( " -overwrite_original" );
+                s_arg.append( " -exif:GPSDateStamp=" ).append( s_GPSDateStamp );
+                s_arg.append( " -exif:GPSTimeStamp=" ).append( s_GPSTimeStamp );
+                s_arg.append( QString( " -exif:GPSLatitude=%1" ).arg( qAbs( d_Latitude ), 0, 'f', 6 ).append( " -exif:GPSLatitudeRef=" ).append( s_GPSLatitudeRef ) );
+                s_arg.append( QString( " -exif:GPSLongitude=%1" ).arg( qAbs( d_Longitude ), 0, 'f', 6 ).append( " -exif:GPSLongitudeRef=" ).append( s_GPSLongitudeRef ) );
+                s_arg.append( QString( " -exif:GPSAltitude=%1" ).arg( qAbs( d_Altitude ), 0, 'f', 1 ).append( " -exif:GPSAltitudeRef=" ).append( s_GPSAltitudeRef ) );
+                s_arg.append( " " ).append( InputStr.section( "\t", 5, 5 ) );
+
+                process.start( s_arg );
+                process.waitForFinished( -1 );
+
+                wait( 500 );
+            }
+        }
+    }
+
+    return( err );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
 // 2016-08-17
 
 void MainWindow::doExtractExif()
 {
-    int		  err            = 0;
+    int		  err            = _NOERROR_;
     int       stopProgress   = 0;
 
     QString   s_ExifTool     = "";
@@ -201,6 +272,45 @@ void MainWindow::doExtractExif()
 
     if ( ( err == _NOERROR_ ) && ( gb_et_CreateKmlFile == true ) && ( gb_ge_startGoogleEarth == true ) )
         err = startGoogleEarth( gs_ge_FilenameGoogleEarthProgram, gs_ge_FilenameGoogleEarth );
+
+// **********************************************************************************************
+
+    onError( err );
+}
+
+// **********************************************************************************************
+// **********************************************************************************************
+// **********************************************************************************************
+// 2016-08-17
+
+void MainWindow::doWriteToExif()
+{
+    int		  err            = 0;
+    int       stopProgress   = 0;
+
+    QString   s_ExifTool     = "";
+
+// **********************************************************************************************
+
+    s_ExifTool = findExifTool();
+
+    if ( s_ExifTool != "ExifTool not found" )
+    {
+        existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList );
+
+        if ( gsl_FilenameList.count() > 0 )
+            err = writeToExif( s_ExifTool, gsl_FilenameList );
+        else
+            err = _CHOOSEABORTED_;
+    }
+    else
+    {
+        err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Writing exif record was canceled" ), true );
 
 // **********************************************************************************************
 
