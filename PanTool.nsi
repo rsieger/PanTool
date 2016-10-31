@@ -49,6 +49,7 @@ Section "MainSection" SEC01
   SetOutPath "$INSTDIR"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\PanTool.exe"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\curl.exe"
+  File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\exiftool.exe"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Core.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Gui.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Network.dll"
@@ -101,6 +102,7 @@ FunctionEnd
 Section Uninstall
   Delete "$INSTDIR\PanTool.exe"
   Delete "$INSTDIR\curl.exe"
+  Delete "$INSTDIR\exiftool.exe"  
   Delete "$INSTDIR\Qt5Core.dll"
   Delete "$INSTDIR\Qt5Gui.dll"
   Delete "$INSTDIR\Qt5Network.dll"

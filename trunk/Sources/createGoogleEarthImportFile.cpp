@@ -46,7 +46,7 @@ int MainWindow::createGoogleEarthImportFile( const QString &s_FilenameIn, const 
 
     fkml.close();
 
-    return( _NOERROR_ );
+    return( err );
 }
 
 // **********************************************************************************************
