@@ -487,7 +487,7 @@ public:
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doGetDatasetsDialog( QString &Query, QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
 
-    int writeToExif( const QString &ExifTool, const QStringList &FilenameList );
+    int writeExif( const QString &ExifTool, const QString &s_FilenameIn, const int NumOfFiles );
     int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );
     QString findExifTool();
 
@@ -564,7 +564,7 @@ private slots:
     void doBuildAreaDatabase();
     void doCheckTimeSeries();
     void doExtractExif();
-    void doWriteToExif();
+    void dowriteExif();
 
 // Dialogs
     int doGeneralOptionsDialog();
@@ -693,7 +693,7 @@ private:
     QAction *Columns2TableFormatAction;
     QAction *translateCharacterEncodingAction;
     QAction *extractExifAction;
-    QAction *writeToExifAction;
+    QAction *writeExifAction;
 
     QAction *aboutAction;
     QAction *aboutQtAction;

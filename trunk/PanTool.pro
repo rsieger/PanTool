@@ -122,6 +122,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/splitFileByLines.cpp \
     ./Sources/splitFileByColumns.cpp \
     ./Sources/LineCanBeWritten.cpp \
+    ./Sources/writeExif.cpp \
     ./Forms/AboutDialog/AboutDialog.cpp \
     ./Forms/AddDialog/AddDialog.cpp \
     ./Forms/CharactersAtPositionDialog/CharactersAtPositionDialog.cpp \
