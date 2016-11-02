@@ -77,7 +77,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
             s_arg = s_ExifTool;
             s_arg.append( " -n -T -filename -GPSDateTime -GPSLatitude -GPSLongitude -GPSAltitude" );
             s_arg.append( " -w txt" );
-            s_arg.append( " " + fiIn.fileName() );
+            s_arg.append( " " ).append( "\"" + QDir::toNativeSeparators( fiIn.fileName() ) + "\"" );
 
             process.start( s_arg );
             process.waitForFinished( -1 );

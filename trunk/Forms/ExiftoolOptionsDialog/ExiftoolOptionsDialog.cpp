@@ -31,6 +31,7 @@ int MainWindow::doExifToolOptionsDialog()
     int i_DialogResult = QDialog::Rejected;
 
     QFileInfo fi( gs_et_FilenameOut );
+
     QTime time( 0, 0, 0 );
 
 // ***********************************************************************************************************************
@@ -41,7 +42,7 @@ int MainWindow::doExifToolOptionsDialog()
         time = time.addSecs( -gi_et_UtcOffset );
 
     if ( fi.exists() == false )
-        gs_et_FilenameOut = getDocumentDir() + "/" + fi.baseName() + "_position.txt";
+        gs_et_FilenameOut = getDocumentDir() + "/" + fi.baseName() + ".txt";
 
     ExifToolOptionsDialog dialog( this );
 

@@ -158,11 +158,11 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
                 {
                     if ( InputStr.section( "\t", i_FilenameColumn, i_FilenameColumn ).isEmpty() == false )
                     {
-                        QFile ImportFile( InputStr.section( "\t", i_FilenameColumn, i_FilenameColumn ) );
+                        QFileInfo ImportFile( InputStr.section( "\t", i_FilenameColumn, i_FilenameColumn ) );
 
                         if ( ImportFile.exists() == true )
                         {
-                            s_arg.append( " " ).append( InputStr.section( "\t", i_FilenameColumn, i_FilenameColumn ) );
+                            s_arg.append( " " ).append( "\"" + QDir::toNativeSeparators( ImportFile.fileName() ) + "\"" );
 
                             process.start( s_arg );
                             process.waitForFinished( -1 );
