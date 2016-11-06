@@ -22,6 +22,7 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
     int         i_LatitudeColumn  = -1;
     int         i_LongitudeColumn = -1;
     int         i_AltitudeColumn  = -1;
+    int         i_CopyrightColumn = -1;
 
     double      d_Latitude        = 0;
     double      d_Longitude       = 0;
@@ -31,6 +32,7 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
 
     QString     InputStr          = "";
 
+    QString     s_Path            = "";
     QString     s_arg             = "";
 
     QString     s_GPSLatitudeRef  = "";
@@ -53,7 +55,7 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
 
     if ( ( n = readFile( s_FilenameIn, sl_Input, _SYSTEM_ ) ) > 1 )
     {
-        InputStr = sl_Input.at( 0 ); m = NumOfSections( InputStr );
+        InputStr = sl_Input.at( i++ ); m = NumOfSections( InputStr );
 
         for ( int k=m-1; k>-1; k-- )
         {
@@ -83,15 +85,41 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
 
             if ( InputStr.section( "\t", k, k ).toLower().startsWith( "elevation" ) == true )
                 i_AltitudeColumn = k;
+
+            if ( InputStr.section( "\t", k, k ).toLower().startsWith( "copyright" ) == true )
+                i_CopyrightColumn = k;
         }
 
         if ( i_FilenameColumn > -1 )
         {
+            QFileInfo ImportFile( sl_Input.at( 1 ).section( "\t", i_FilenameColumn, i_FilenameColumn ) );
+
+            if ( ImportFile.isRelative() == true )
+            {
+                QFileInfo ImportPath( gs_Path );
+
+                if ( ImportPath.exists() == false )
+                    gs_Path = getDocumentDir();
+
+                #if defined(Q_OS_LINUX)
+                    s_Path = QFileDialog::getExistingDirectory( this, tr( "Choose the folder including images" ), gs_Path, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog );
+                #endif
+
+                #if defined(Q_OS_WIN)
+                    s_Path = QFileDialog::getExistingDirectory( this, tr( "Choose the folder including images" ), gs_Path, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog );
+                #endif
+
+                #if defined(Q_OS_MAC)
+                    s_Path = QFileDialog::getExistingDirectory( this, tr( "Choose the folder including images" ), gs_Path, QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks | QFileDialog::DontUseNativeDialog );
+                #endif
+            }
+
             initProgress( i_NumOfFiles, s_FilenameIn, tr( "Writing exif record to image..." ), sl_Input.count() );
 
             while ( ( i<sl_Input.count() ) && ( stopProgress != _APPBREAK_ ) )
             {
                 s_arg = s_ExifTool;
+
                 s_arg.append( " -overwrite_original" );
 
                 InputStr = sl_Input.at( i );
@@ -154,15 +182,24 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
                     }
                 }
 
+                if ( i_CopyrightColumn > -1 )
+                {
+                    if ( InputStr.section( "\t", i_CopyrightColumn, i_CopyrightColumn ).isEmpty() == false )
+                        s_arg.append( " -exif:Copyright=" ).append( "\"" + InputStr.section( "\t", i_CopyrightColumn, i_CopyrightColumn ) + "\"" );
+                }
+
                 if ( s_arg.section( "-overwrite_original", 1, 1 ).isEmpty() == false )
                 {
                     if ( InputStr.section( "\t", i_FilenameColumn, i_FilenameColumn ).isEmpty() == false )
                     {
                         QFileInfo ImportFile( InputStr.section( "\t", i_FilenameColumn, i_FilenameColumn ) );
 
+                        if ( ImportFile.isRelative() == true )
+                            ImportFile.setFile( s_Path, ImportFile.fileName() );
+
                         if ( ImportFile.exists() == true )
                         {
-                            s_arg.append( " " ).append( "\"" + QDir::toNativeSeparators( ImportFile.fileName() ) + "\"" );
+                            s_arg.append( " " ).append( "\"" + QDir::toNativeSeparators( ImportFile.absoluteFilePath() ) + "\"" );
 
                             process.start( s_arg );
                             process.waitForFinished( -1 );
@@ -187,7 +224,7 @@ int MainWindow::writeExif( const QString &s_ExifTool, const QString &s_FilenameI
 // **********************************************************************************************
 // 2016-08-17
 
-void MainWindow::dowriteExif()
+void MainWindow::doWriteExif()
 {
     int     i               = 0;
     int     err             = 0;

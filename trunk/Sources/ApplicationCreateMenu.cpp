@@ -198,7 +198,7 @@ void MainWindow::createActions()
     connect(extractExifAction, SIGNAL(triggered()), this, SLOT(doExtractExif()));
 
     writeExifAction = new QAction(tr("Write exif record to images..."), this);
-    connect(writeExifAction, SIGNAL(triggered()), this, SLOT(dowriteExif()));
+    connect(writeExifAction, SIGNAL(triggered()), this, SLOT(doWriteExif()));
 
     // Help menu
     aboutAction = new QAction(trUtf8("&About ") + getApplicationName( true ), this);

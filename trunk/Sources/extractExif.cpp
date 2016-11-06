@@ -62,7 +62,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
     initFileProgress( sl_FilenameList.count(), sl_FilenameList.at( 0 ), tr( "Extracting exif record ..." ) );
 
 // **********************************************************************************************
-// ExifTool -n -T -filename -gpsdatetime -gpslatitude -gpslongitude image.jpg >> out.txt
+// ExifTool -n -T -gpsdatetime -gpslatitude -gpslongitude -copyright image.jpg >> out.txt
 
     while ( ( i < sl_FilenameList.count() ) && ( stopProgress != _APPBREAK_ ) )
     {
@@ -70,14 +70,13 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
 
         setStatusBar( tr( "Run exiftool on " ) + QDir::toNativeSeparators( fiIn.fileName() ) + tr( " ..." ) );
 
-        if ( ( fiIn.suffix().toLower() == "jpg" ) || ( fiIn.suffix().toLower() == "tif" ) )
+        if ( ( fiIn.suffix().toLower() == "jpg" ) || ( fiIn.suffix().toLower() == "jpeg" ) || ( fiIn.suffix().toLower() == "tif" ) || ( fiIn.suffix().toLower() == "tiff" ) || ( fiIn.suffix().toLower() == "png" ) )
         {
-            QDir::setCurrent( fiIn.absolutePath() );
-
             s_arg = s_ExifTool;
-            s_arg.append( " -n -T -filename -GPSDateTime -GPSLatitude -GPSLongitude -GPSAltitude" );
+
+            s_arg.append( " -n -T -GPSDateTime -GPSLatitude -GPSLongitude -GPSAltitude -Copyright" );
             s_arg.append( " -w txt" );
-            s_arg.append( " " ).append( "\"" + QDir::toNativeSeparators( fiIn.fileName() ) + "\"" );
+            s_arg.append( " " ).append( "\"" + QDir::toNativeSeparators( fiIn.absoluteFilePath() ) + "\"" );
 
             process.start( s_arg );
             process.waitForFinished( -1 );
@@ -102,45 +101,52 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
 
         QTextStream tout( &fout );
 
-        tout << "Event label" << "\t" << "Date/Time (UTC)" << "\t" << "Date/Time (local)" << "\t";
-        tout << "Latitude" << "\t" << "Longitude" << "\t" << "Altitude [m]" << "\t" << "File name" << endl;
+        tout << "File name" << "\t" << "Date/Time (UTC)" << "\t";
+
+        if ( i_UtcOffset != 0 )
+           tout << "Date/Time (local)" << "\t";
+
+        tout << "Latitude" << "\t" << "Longitude" << "\t" << "Altitude [m]" << "\t" << "Copyright" << endl;
 
         for ( int i=0; i<sl_FilenameList.count(); i++ )
         {
             QFileInfo fiIn( sl_FilenameList.at( i ) );
 
-            if ( ( fiIn.suffix().toLower() == "jpg" ) || ( fiIn.suffix().toLower() == "tif" ) )
+            if ( ( fiIn.suffix().toLower() == "jpg" ) || ( fiIn.suffix().toLower() == "jpeg" ) || ( fiIn.suffix().toLower() == "tif" ) || ( fiIn.suffix().toLower() == "tiff" ) || ( fiIn.suffix().toLower() == "png" ) )
             {
-                QString tempFile = fiIn.absolutePath() + "/" + fiIn.completeBaseName() + ".txt";
-
-                if ( ( n = readFile( tempFile, sl_Input, _SYSTEM_ ) ) < 1 )
+                if ( ( n = readFile( fiIn.absolutePath() + "/" + fiIn.completeBaseName() + ".txt", sl_Input, _SYSTEM_ ) ) < 1 )
                 {
                     tout << fiIn.fileName() << "\t";
                     tout << "no exif data found" << endl;
                 }
                 else
                 {
-                    QString s_EventLabel = sl_Input.at( 0 ).section( "\t", 0, 0 ).section( ".", 0, 0 );
-                    QString s_Date       = sl_Input.at( 0 ).section( "\t", 1, 1 ).section( " ", 0, 0 ).replace( ":", "-" );
-                    QString s_Time       = sl_Input.at( 0 ).section( "\t", 1, 1 ).section( " ", 1, 1 ).section( "Z", 0, 0 ).section( ".", 0, 0 );
-                    QString s_DateTime   = s_Date + "T" + s_Time;
-                    double  d_Latitude   = sl_Input.at( 0 ).section( "\t", 2, 2 ).toDouble();
-                    double  d_Longitude  = sl_Input.at( 0 ).section( "\t", 3, 3 ).toDouble();
-                    double  d_Altitude   = sl_Input.at( 0 ).section( "\t", 4, 4 ).toDouble();
+                    QString s_DateTime   = sl_Input.at( 0 ).section( "\t", 0, 0 ).section( " ", 0, 0 ).replace( ":", "-" ) + "T" + sl_Input.at( 0 ).section( "\t", 0, 0 ).section( " ", 1, 1 ).section( "Z", 0, 0 ).section( ".", 0, 0 );
+                    double  d_Latitude   = sl_Input.at( 0 ).section( "\t", 1, 1 ).toDouble();
+                    double  d_Longitude  = sl_Input.at( 0 ).section( "\t", 2, 2 ).toDouble();
+                    double  d_Altitude   = sl_Input.at( 0 ).section( "\t", 3, 3 ).toDouble();
+                    QString s_Copyright  = sl_Input.at( 0 ).section( "\t", 4, 4 );
 
-                    QDateTime dtUtc   = QDateTime::fromString( s_DateTime, "yyyy-MM-ddThh:mm:ss" );
-                    QDateTime dtLocal = QDateTime::fromString( s_DateTime, "yyyy-MM-ddThh:mm:ss" ).addSecs( i_UtcOffset );
+                    QDateTime dtUtc      = QDateTime::fromString( s_DateTime, "yyyy-MM-ddThh:mm:ss" );
+                    QDateTime dtLocal    = QDateTime::fromString( s_DateTime, "yyyy-MM-ddThh:mm:ss" ).addSecs( i_UtcOffset );
 
-                    tout << s_EventLabel << "\t";
+                    tout << sl_FilenameList.at( i ) << "\t";
                     tout << dtUtc.toString( s_DateTimeFormat ) << "\t";
-                    tout << dtLocal.toString( s_DateTimeFormat ) << "\t";
+
+                    if ( i_UtcOffset != 0 )
+                        tout << dtLocal.toString( s_DateTimeFormat ) << "\t";
+
                     tout << QString( "%1" ).arg( d_Latitude, 0, 'f', 6 ) << "\t";
                     tout << QString( "%1" ).arg( d_Longitude, 0, 'f', 6 ) << "\t";
                     tout << QString( "%1" ).arg( d_Altitude, 0, 'f', 1 ) << "\t";
-                    tout << sl_FilenameList.at( i ) << endl;
+
+                    if ( s_Copyright != "-" )
+                        tout << s_Copyright;
+
+                    tout << endl;
                 }
 
-                removeFile( tempFile );
+                removeFile( fiIn.absolutePath() + "/" + fiIn.completeBaseName() + ".txt" );
             }
         }
 

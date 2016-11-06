@@ -564,7 +564,7 @@ private slots:
     void doBuildAreaDatabase();
     void doCheckTimeSeries();
     void doExtractExif();
-    void dowriteExif();
+    void doWriteExif();
 
 // Dialogs
     int doGeneralOptionsDialog();
