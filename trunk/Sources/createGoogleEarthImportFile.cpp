@@ -192,26 +192,57 @@ QString MainWindow::setIconColor( const int i_IconColor )
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
+/*
+    const int   _FILENAMEPOS                         = 0;
+    const int   _DATETIMEPOS                         = 1;
+    const int   _LATITUDEPOS                         = 2;
+    const int   _LONGITUDEPOS                        = 3;
+    const int   _ALTITUDEPOS                         = 4;
+    const int   _COPYRIGHTPOS                        = 5;
+*/
 
 int MainWindow::writeKMLEntry( QFile& fkml, const QString &InputStr, const bool b_displayEventLabel, const bool b_displayDescription, const float f_IconSize, const int i_IconColor, const int i_IconSymbol )
 {
-    QString s_EventLabel    = InputStr.section( "\t", _EVENTLABELPOS, _EVENTLABELPOS );         // Event label
-    QString s_DateTime      = InputStr.section( "\t", _DATETIMEPOS, _DATETIMEPOS );             // Date/Time
+    QString s_Filename      = "";
+    QString s_DateTime      = "";
+    QString s_Copyright     = "";
 
-    double d_Latitude      = InputStr.section( "\t", _LATITUDEPOS, _LATITUDEPOS ).toDouble();   // Latitude
-    double d_Longitude     = InputStr.section( "\t", _LONGITUDEPOS, _LONGITUDEPOS ).toDouble(); // Longitude
-    double d_Altitude      = InputStr.section( "\t", _ALTITUDEPOS, _ALTITUDEPOS ).toDouble();   // Altitude
+    double d_Latitude      = 0;
+    double d_Longitude     = 0;
+    double d_Altitude      = 0;
 
 // **********************************************************************************************
+
+    s_Filename = InputStr.section( "\t", _FILENAMEPOS, _FILENAMEPOS );
+    s_DateTime = InputStr.section( "\t", _DATETIMEPOS, _DATETIMEPOS );
+
+    if ( InputStr.contains( "Date/Time (local)") == true )
+    {
+        d_Latitude  = InputStr.section( "\t", _LATITUDEPOS+1, _LATITUDEPOS+1 ).toDouble();
+        d_Longitude = InputStr.section( "\t", _LONGITUDEPOS+1, _LONGITUDEPOS+1 ).toDouble();
+        d_Altitude  = InputStr.section( "\t", _ALTITUDEPOS+1, _ALTITUDEPOS+1 ).toDouble();
+
+        s_Copyright = InputStr.section( "\t", _COPYRIGHTPOS+1, _COPYRIGHTPOS+1 );
+    }
+    else
+    {
+        d_Latitude  = InputStr.section( "\t", _LATITUDEPOS, _LATITUDEPOS ).toDouble();
+        d_Longitude = InputStr.section( "\t", _LONGITUDEPOS, _LONGITUDEPOS ).toDouble();
+        d_Altitude  = InputStr.section( "\t", _ALTITUDEPOS, _ALTITUDEPOS ).toDouble();
+
+        s_Copyright = InputStr.section( "\t", _COPYRIGHTPOS, _COPYRIGHTPOS );
+    }
 
     if ( d_Longitude > 180 )
         d_Longitude -= 360;
 
-    QString s_Longitude = QString( "%1" ).arg( d_Longitude, 0, 'f', 5 );
-    QString s_Latitude  = QString( "%1" ).arg( d_Latitude, 0, 'f', 5 );
+    QString s_Longitude = QString( "%1" ).arg( d_Longitude, 0, 'f', 6 );
+    QString s_Latitude  = QString( "%1" ).arg( d_Latitude, 0, 'f', 6 );
     QString s_Altitude  = QString( "%1" ).arg( d_Altitude, 0, 'f', 1 );
 
 // **********************************************************************************************
+
+    QFileInfo fi( s_Filename );
 
     QTextStream tkml( &fkml );
     tkml.setCodec("UTF-8");
@@ -219,22 +250,22 @@ int MainWindow::writeKMLEntry( QFile& fkml, const QString &InputStr, const bool 
     tkml << "  <Placemark>";
 
     if ( b_displayEventLabel == true )
-        tkml << "<name>" << s_EventLabel << "</name>";
+        tkml << "<name>" << fi.baseName() << "</name>";
 
     if ( b_displayDescription == true )
     {
         tkml << "<description>";
-        tkml << "Event: " << s_EventLabel << " * ";
+        tkml << "Event: " << fi.baseName() << " * ";
+
         if ( s_DateTime.contains( ":" ) == true )
-            tkml << "Date/Time: " << s_DateTime << " * ";
+            tkml << "Date/Time (UTC): " << s_DateTime << " * ";
         else
             tkml << "Date: " << s_DateTime << " * ";
+
         tkml << "Latitude: " << s_Latitude << " * ";
         tkml << "Longitude: " << s_Longitude << " * ";
-        tkml << "Altitude: " << s_Altitude;
-        tkml << "<br /><![CDATA[<a href=\"";
-        tkml << "https://pangaea.de/search?q=" << s_EventLabel;
-        tkml << "\">search data</a>]]><br />";
+        tkml << "Altitude: " << s_Altitude << " * ";;
+        tkml << "Copyright: " << s_Copyright << " * ";;
         tkml << "</description>";
     }
 
