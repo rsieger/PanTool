@@ -164,6 +164,10 @@ void MainWindow::createActions()
     connect(getDatasetsAction, SIGNAL(triggered()), this, SLOT(doGetDatasets()));
 
     // Special tools
+
+    convertMetadataXMAction = new QAction(trUtf8("Convert PANGAEA metadata XML"), this);
+    connect(convertMetadataXMAction, SIGNAL(triggered()), this, SLOT(doConvertMetadataXML()));
+
     checkTimeSeriesAction = new QAction(trUtf8("Check time series data"), this);
     connect(checkTimeSeriesAction, SIGNAL(triggered()), this, SLOT(doCheckTimeSeries()));
 
@@ -306,6 +310,7 @@ void MainWindow::createMenus()
 
     specialToolsMenu = menuBar()->addMenu( trUtf8( "Special tools" ) );
 
+    specialToolsMenu->addAction( convertMetadataXMAction );
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( calcDepthAction );
     specialToolsMenu->addAction( calcSalinityAction );

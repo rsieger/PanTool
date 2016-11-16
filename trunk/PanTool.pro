@@ -39,7 +39,7 @@ linux-g++ {
 
 TARGET = PanTool
 TEMPLATE = app
-QT += widgets network
+QT += widgets network xml
 
 INCLUDEPATH += ./Headers
 
@@ -87,6 +87,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/compressFiles.cpp \
     ./Sources/compressFolder.cpp \
     ./Sources/concatenateFiles.cpp \
+    ./Sources/convertMetadataXML.cpp \
     ./Sources/createDateTime.cpp \
     ./Sources/createGoogleEarthImportFile.cpp \
     ./Sources/createODPSampleLabel.cpp \

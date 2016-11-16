@@ -377,6 +377,13 @@ public:
 
 // *********************************************************************************************************************
 
+    int parseMetadataXML( const QString &FilenameIn, const int CodecOutput, const int EOL, const int Extension, const int NumOfFiles );
+    int parseTextEntry(const QDomElement &element, QString &Content );
+    int parseTextEntry( const QDomElement &element, const QString &Attribute, QString &AttributeContent, QString &Content );
+    int parseNumericEntry( const QDomElement &element, int &Content );
+    int parseNumericEntry( const QDomElement &element, const QString &Attribute, QString &AttributeContent, int &Content );
+    int parseValueEntry( const QDomElement &element );
+
     bool LineCanBeWritten( const QString &InputStr, const bool SkipEmptyLines, const bool SkipCommentLines );
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );
     QList<int> scanList( const int mode, const int maxNumOfPositions, const QString &List );
@@ -565,6 +572,7 @@ private slots:
     void doCheckTimeSeries();
     void doExtractExif();
     void doWriteExif();
+    void doConvertMetadataXML();
 
 // Dialogs
     int doGeneralOptionsDialog();
@@ -694,6 +702,7 @@ private:
     QAction *translateCharacterEncodingAction;
     QAction *extractExifAction;
     QAction *writeExifAction;
+    QAction *convertMetadataXMAction;
 
     QAction *aboutAction;
     QAction *aboutQtAction;
