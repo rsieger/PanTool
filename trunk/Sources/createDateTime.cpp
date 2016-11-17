@@ -523,6 +523,7 @@ QTime MainWindow::getTime( const QString s_TimeIn, bool &b_nextDay )
     int     i_offsetHour	= 0;
     int     i_Hour			= 0;
     int     i_Minute		= 0;
+    int     i_Second        = 0;
 
     float   f_Second		= 0.0;
 
@@ -543,9 +544,9 @@ QTime MainWindow::getTime( const QString s_TimeIn, bool &b_nextDay )
     if ( s_Time.count( " " ) == 3 ) // 27 Nov 2004 18:58:34.345
         s_Time = s_Time.section( " ", 3, 3 );
 
-    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) ) // 1800
+    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) ) // 185834
     {
-        while ( s_Time.length() < 4 )
+        while ( s_Time.length() < 6 )
             s_Time.prepend( "0" );
     }
 
@@ -606,7 +607,6 @@ QTime MainWindow::getTime( const QString s_TimeIn, bool &b_nextDay )
     {
         i_Hour	 = s_Time.section( ":", 0, 0 ).toInt() + i_offsetHour;
         i_Minute = s_Time.section( ":", 1, 1 ).toInt();
-//      f_Second = 0.0;
     }
 
     if ( s_Time.count( ":" ) > 1 )
@@ -615,11 +615,11 @@ QTime MainWindow::getTime( const QString s_TimeIn, bool &b_nextDay )
     if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 1 ) )  // 8.5 = 08:30
         f_Second = s_Time.toFloat()*3600.;
 
-    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) )  // 0858 = 08:58
+    if ( ( s_Time.count( ":" ) == 0 ) && ( s_Time.count( "." ) == 0 ) )  // 085834 = 08:58:34
     {
-        i_Hour	 = s_Time.left( 2 ).toInt();
+        i_Hour	 = s_Time.mid( 0, 2 ).toInt();
         i_Minute = s_Time.mid( 2, 2 ).toInt();
-//      f_Second = 0.0;
+        f_Second = s_Time.mid( 4, 2 ).toFloat();
     }
 
     if ( i_Hour == 24 )

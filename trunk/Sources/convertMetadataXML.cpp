@@ -36,18 +36,54 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const int i_Codec
 
         if ( i_error == 0 )
         {
-            QString     s_Content           = "";
-            QString     s_AttributeContent  = "";
+            QDomNode Citation = root.firstChildElement( "citation" );
 
-            QString		s_CampaignID		= "";
-            QString		s_CampaignLabel		= "";
+            for ( int i=0; i<Citation.attributes().count(); i++ )
+                qDebug() << Citation.attributes().item( i ).toAttr().value();
 
-            QDomNode    MetadataObject      = root.firstChild();
+            for ( int i=0; i<Citation.childNodes().count(); i++ )
+            {
+                if ( Citation.childNodes().at( i ).localName() == "author" )
+                {
+                    qDebug() << Citation.childNodes().at( i ).attributes().item( 0 ).toAttr().value();
 
-            QDomElement Campaign            = MetadataObject.firstChildElement( "campaign" );
+                    for( int j=0; j<Citation.childNodes().at( i ).childNodes().count(); j++ )
+                    {
+                        qDebug() << Citation.childNodes().at( i ).childNodes().at( j ).localName() << ": " << Citation.childNodes().at( i ).childNodes().at( j ).toElement().text();
+                    }
+                }
 
-            i_error = parseTextEntry( Campaign.firstChildElement(), "id", s_AttributeContent, s_Content );
-            i_error = parseTextEntry( Campaign.firstChildElement( "name" ), s_CampaignLabel );
+                if ( Citation.childNodes().at( i ).localName() == "year" )
+                    qDebug() << Citation.childNodes().at( i ).localName() << ": " << Citation.childNodes().at( i ).toElement().text();
+
+                if ( Citation.childNodes().at( i ).localName() == "title" )
+                    qDebug() << Citation.childNodes().at( i ).localName() << ": " << Citation.childNodes().at( i ).toElement().text();
+
+                if ( Citation.childNodes().at( i ).localName() == "URI" )
+                    qDebug() << Citation.childNodes().at( i ).localName() << ": " << Citation.childNodes().at( i ).toElement().text();
+
+                if ( Citation.childNodes().at( i ).localName() == "parentURI" )
+                    qDebug() << Citation.childNodes().at( i ).localName() << ": " << Citation.childNodes().at( i ).toElement().text();
+
+                Citation.nextSibling();
+            }
+
+            qDebug() << root.elementsByTagName( "reference" ).count();
+
+            QDomNodeList Reference = root.elementsByTagName( "reference" );
+
+            for ( int i=0; i<Reference.count(); i++ )
+            {
+                for ( int j=0; j<Reference.at( i ).attributes().count(); j++ )
+                    qDebug() << Reference.at( i ).attributes().item( j ).toAttr().value();
+            }
+
+/*
+            i_error = parseTextEntry( MetadataObject.firstChildElement( "citation"), "id", s_AttributeContent, s_Content );
+
+            qDebug() << s_AttributeContent;
+            qDebug() << s_Content;
+*/
         }
     }
 
