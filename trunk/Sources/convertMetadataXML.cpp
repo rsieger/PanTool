@@ -48,9 +48,7 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const int i_Codec
                     qDebug() << Citation.childNodes().at( i ).attributes().item( 0 ).toAttr().value();
 
                     for( int j=0; j<Citation.childNodes().at( i ).childNodes().count(); j++ )
-                    {
                         qDebug() << Citation.childNodes().at( i ).childNodes().at( j ).localName() << ": " << Citation.childNodes().at( i ).childNodes().at( j ).toElement().text();
-                    }
                 }
 
                 if ( Citation.childNodes().at( i ).localName() == "year" )
@@ -64,11 +62,7 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const int i_Codec
 
                 if ( Citation.childNodes().at( i ).localName() == "parentURI" )
                     qDebug() << Citation.childNodes().at( i ).localName() << ": " << Citation.childNodes().at( i ).toElement().text();
-
-                Citation.nextSibling();
             }
-
-            qDebug() << root.elementsByTagName( "reference" ).count();
 
             QDomNodeList Reference = root.elementsByTagName( "reference" );
 
@@ -76,14 +70,54 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const int i_Codec
             {
                 for ( int j=0; j<Reference.at( i ).attributes().count(); j++ )
                     qDebug() << Reference.at( i ).attributes().item( j ).toAttr().value();
+
+                for ( int j=0; j<Reference.at( i ).childNodes().count(); j++ )
+                {
+                    if ( Reference.at( i ).childNodes().at( j ).localName() == "author" )
+                    {
+                        qDebug() << Reference.at( i ).childNodes().at( j ).attributes().item( 0 ).toAttr().value();
+
+                        for( int k=0; k<Reference.at( i ).childNodes().at( j ).childNodes().count(); k++ )
+                            qDebug() << Reference.at( i ).childNodes().at( j ).childNodes().at( k ).localName() << ": " << Reference.at( i ).childNodes().at( j ).childNodes().at( k ).toElement().text();
+                    }
+
+                    if ( Reference.at( i ).childNodes().at( j ).localName() == "year" )
+                        qDebug() << Reference.at( i ).childNodes().at( j ).localName() << ": " << Reference.at( i ).childNodes().at( j ).toElement().text();
+
+                    if ( Reference.at( i ).childNodes().at( j ).localName() == "title" )
+                        qDebug() << Reference.at( i ).childNodes().at( j ).localName() << ": " << Reference.at( i ).childNodes().at( j ).toElement().text();
+
+                    if ( Reference.at( i ).childNodes().at( j ).localName() == "URI" )
+                        qDebug() << Reference.at( i ).childNodes().at( j ).localName() << ": " << Reference.at( i ).childNodes().at( j ).toElement().text();
+                }
             }
 
-/*
-            i_error = parseTextEntry( MetadataObject.firstChildElement( "citation"), "id", s_AttributeContent, s_Content );
+            QDomNode Coverage = root.firstChildElement( "extent" );
 
-            qDebug() << s_AttributeContent;
-            qDebug() << s_Content;
-*/
+            for ( int i=0; i<Coverage.childNodes().count(); i++ )
+            {
+                if ( Coverage.childNodes().at( i ).localName() == "geographic" )
+                {
+                    for( int j=0; j<Coverage.childNodes().at( i ).childNodes().count(); j++ )
+                        qDebug() << Coverage.childNodes().at( i ).childNodes().at( j ).localName() << ": " << Coverage.childNodes().at( i ).childNodes().at( j ).toElement().text();
+                }
+
+                if ( Coverage.childNodes().at( i ).localName() == "temporal" )
+                {
+                    for( int j=0; j<Coverage.childNodes().at( i ).childNodes().count(); j++ )
+                        qDebug() << Coverage.childNodes().at( i ).childNodes().at( j ).localName() << ": " << Coverage.childNodes().at( i ).childNodes().at( j ).toElement().text();
+                }
+
+                if ( Coverage.childNodes().at( i ).localName() == "elevation" )
+                {
+                    for ( int j=0; j<Coverage.childNodes().at( i ).attributes().count(); j++ )
+                        qDebug() << Coverage.childNodes().at( i ).attributes().item( j ).localName() << ": " << Coverage.childNodes().at( i ).attributes().item( j ).toAttr().value();
+
+                    for( int j=0; j<Coverage.childNodes().at( i ).childNodes().count(); j++ )
+                        qDebug() << Coverage.childNodes().at( i ).childNodes().at( j ).localName() << ": " << Coverage.childNodes().at( i ).childNodes().at( j ).toElement().text();
+                }
+            }
+
         }
     }
 

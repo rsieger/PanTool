@@ -310,8 +310,8 @@ void MainWindow::createMenus()
 
     specialToolsMenu = menuBar()->addMenu( trUtf8( "Special tools" ) );
 
-//  specialToolsMenu->addAction( convertMetadataXMAction );
-//  specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( convertMetadataXMAction );
+    specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( calcDepthAction );
     specialToolsMenu->addAction( calcSalinityAction );
     specialToolsMenu->addSeparator();
