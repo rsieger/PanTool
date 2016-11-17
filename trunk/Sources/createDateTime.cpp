@@ -523,7 +523,6 @@ QTime MainWindow::getTime( const QString s_TimeIn, bool &b_nextDay )
     int     i_offsetHour	= 0;
     int     i_Hour			= 0;
     int     i_Minute		= 0;
-    int     i_Second        = 0;
 
     float   f_Second		= 0.0;
 

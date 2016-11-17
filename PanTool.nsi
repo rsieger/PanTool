@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "PanTool"
-!define PRODUCT_VERSION "3.26"
+!define PRODUCT_VERSION "3.27"
 !define PRODUCT_PUBLISHER "PANGAEA"
 !define PRODUCT_WEB_SITE "http://www.pangaea.de"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\PanTool.exe"
@@ -54,6 +54,7 @@ Section "MainSection" SEC01
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Gui.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Network.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Widgets.dll"
+  File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\Qt5Xml.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libgcc_s_dw2-1.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libstdc++-6.dll"
   File "C:\Users\rsieger\Documents\Development\Distribution\PanTool\libwinpthread-1.dll"
@@ -107,6 +108,7 @@ Section Uninstall
   Delete "$INSTDIR\Qt5Gui.dll"
   Delete "$INSTDIR\Qt5Network.dll"
   Delete "$INSTDIR\Qt5Widgets.dll"
+  Delete "$INSTDIR\Qt5Xml.dll"  
   Delete "$INSTDIR\libgcc_s_dw2-1.dll"
   Delete "$INSTDIR\libstdc++-6.dll"
   Delete "$INSTDIR\libwinpthread-1.dll"
