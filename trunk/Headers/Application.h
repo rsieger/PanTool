@@ -377,12 +377,7 @@ public:
 
 // *********************************************************************************************************************
 
-    int parseMetadataXML( const QString &FilenameIn, const int CodecOutput, const int EOL, const int Extension, const int NumOfFiles );
-    int parseTextEntry(const QDomElement &element, QString &Content );
-    int parseTextEntry( const QDomElement &element, const QString &Attribute, QString &AttributeContent, QString &Content );
-    int parseNumericEntry( const QDomElement &element, int &Content );
-    int parseNumericEntry( const QDomElement &element, const QString &Attribute, QString &AttributeContent, int &Content );
-    int parseValueEntry( const QDomElement &element );
+    int parseMetadataXML( const QString &FilenameIn, const QString &FilenameOut, const int CodecOutput, const int EOL, const int NumOfFiles );
 
     bool LineCanBeWritten( const QString &InputStr, const bool SkipEmptyLines, const bool SkipCommentLines );
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );

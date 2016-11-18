@@ -160,11 +160,8 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
         if ( s_ExternalWebPath.contains( "/hs/usero/") == true )
             s_ExternalWebPath = tr( "http://hs.pangaea.de/" ) + s_ExternalWebPath.section( "/hs/usero/", 1, 1 );
 
-        if ( s_ExternalWebPath.contains( "/pangaea-family/store/") == true )
-            s_ExternalWebPath = tr( "http://store.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea-family/store/", 1, 1 );
-
-        if ( s_ExternalWebPath.contains( "/pangaea-family/www/") == true )
-            s_ExternalWebPath = tr( "https://www.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea-family/www/", 1, 1 );
+        if ( s_ExternalWebPath.contains( "/pangaea/store/") == true )
+            s_ExternalWebPath = tr( "http://store.pangaea.de/" ) + s_ExternalWebPath.section( "/pangaea/store/", 1, 1 );
 
         if ( (s_ExternalWebPath.startsWith( "http" ) == true ) && ( s_ExternalWebPath.endsWith( "/" ) == false ) )
             s_ExternalWebPath.append( "/" );
@@ -172,7 +169,6 @@ int MainWindow::doFileListOptionsDialog( QString &s_LocalDataDir, QString &s_Ext
         if (    ( s_ExternalWebPath.isEmpty() == true )
              || ( s_ExternalWebPath.startsWith( "http://hs.pangaea.de/" ) == true )
              || ( s_ExternalWebPath.startsWith( "http://store.pangaea.de/" ) == true )
-             || ( s_ExternalWebPath.startsWith( "https://www.pangaea.de/" ) == true )
              || ( s_ExternalWebPath.startsWith( "doi:" ) == true )
              || ( s_ExternalWebPath.startsWith( "hdl:" ) == true )
            )
