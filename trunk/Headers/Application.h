@@ -377,7 +377,17 @@ public:
 
 // *********************************************************************************************************************
 
-    int parseMetadataXML( const QString &FilenameIn, const QString &FilenameOut, const int CodecOutput, const int EOL, const int NumOfFiles );
+    int parseMetadataXML( const QString &FilenameIn, const QString &FilenameOut, const int CodecOutput, const int EOL );
+
+    QString getAttributeValue( QDomNode Node, const QString &Attribute );
+    QString getNodeValue( QDomNode Node );
+
+    QString getCitationEntry( QDomNode Node );
+    QString getStaffEntry( QDomNode Node );
+    QString getReferenceEntry( QDomNode Node );
+
+    QString createCitationOutputString( const QStringList &sl_Authors, const QString &s_Citation );
+    QString createReferenceOutputString( const QString &DatasetID, const QString &ReferenceNumber, const QStringList &Authors, const QString &Reference );
 
     bool LineCanBeWritten( const QString &InputStr, const bool SkipEmptyLines, const bool SkipCommentLines );
     bool isInColumnList( const QList<int> ColumnList, const int ColumnNo );

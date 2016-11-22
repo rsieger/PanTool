@@ -68,14 +68,29 @@ QString PanGetDialog::getDocumentDir()
 
 void PanGetDialog::enableBuildButton()
 {
-    bool b_OK = true;
+    int i_DatasetID  = 0;
+
+    bool b_OK        = true;
+    bool b_isNumeric = false;
 
     QFileInfo fi( IDListFileLineEdit->text() );
 
+// **********************************************************************************************
+
+    if ( QueryLineEdit->text().toLower().startsWith( "dataset" ) == true )
+        i_DatasetID = QueryLineEdit->text().toLower().section( "dataset", 1, 1 ).toInt( &b_isNumeric, 10 );
+    else
+        i_DatasetID = QueryLineEdit->text().toInt( &b_isNumeric, 10 );
+
+// **********************************************************************************************
+
     if ( ( ( fi.isFile() == false ) || ( fi.exists() == false ) ) &&
-         ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/?q" ) == false ) &&
-         ( QueryLineEdit->text().toLower().startsWith( "https://www.pangaea.de/?q" ) == false ) )
+         ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/?q=" ) == false ) &&
+         ( QueryLineEdit->text().toLower().startsWith( "https://www.pangaea.de/?q=" ) == false ) )
         b_OK = false;
+
+    if ( ( b_isNumeric == true ) && ( i_DatasetID > 50000 ) )
+        b_OK = true;
 
     if ( ( DownloadData_checkBox->isChecked() == false ) && ( DownloadCitation_checkBox->isChecked() == false ) && ( DownloadMetadata_checkBox->isChecked() == false ) )
         b_OK = false;
@@ -254,8 +269,7 @@ int MainWindow::doGetDatasetsDialog( QString &s_Query, QString &s_IDListFile, QS
 // **********************************************************************************************
 // set PANGAEA Query
 
-    if ( s_Query.toLower().startsWith( "https://pangaea.de/?q" ) == true )
-        dialog.QueryLineEdit->setText( s_Query );
+    dialog.QueryLineEdit->setText( s_Query );
 
 // **********************************************************************************************
 // set ID File

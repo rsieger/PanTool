@@ -14,6 +14,8 @@ void MainWindow::getDatasets( const QString &s_Query, const QString &s_IDListFil
     int err                     = _NOERROR_;
 
     int i       				= 0;
+
+    int i_DatasetID             = 0;
     int i_NumOfQueries          = 0;
     int i_NumOfDatasetIDs       = 0;
 
@@ -42,6 +44,7 @@ void MainWindow::getDatasets( const QString &s_Query, const QString &s_IDListFil
 
     bool	b_ExportFileExists	= false;
     bool	b_isURL             = false;
+    bool    b_isNumeric         = false;
 
 // **********************************************************************************************
 // read ID list
@@ -50,11 +53,27 @@ void MainWindow::getDatasets( const QString &s_Query, const QString &s_IDListFil
 
     if ( s_Query.isEmpty() == false )
     {
-        s_tempFile = s_DownloadDirectory + "/" + "Query_result_json.txt";
-        s_Url      = "https://www.pangaea.de/advanced/search.php?" + s_Query.section( "/?", 1, 1 );
+        if ( s_Query.toLower().contains( "pangaea.de/?q" ) == true )
+        {
+            s_Url = "https://www.pangaea.de/advanced/search.php?" + s_Query.section( "/?", 1, 1 );
 
-        if ( s_Url.contains( "&count=" ) == false )
-            s_Url.append( "&count=500" );
+            if ( s_Url.contains( "&count=" ) == false )
+                s_Url.append( "&count=500" );
+        }
+        else
+        {
+            if ( s_Query.toLower().startsWith( "dataset" ) == true )
+                i_DatasetID = s_Query.toLower().section( "dataset", 1, 1 ).toInt( &b_isNumeric, 10 );
+            else
+                i_DatasetID = s_Query.toInt( &b_isNumeric, 10 );
+
+            if ( ( b_isNumeric == true ) && ( i_DatasetID > 50000 ) )
+                s_Url = QString ( "https://www.pangaea.de/advanced/search.php?q=dataset%1" ).arg( i_DatasetID );
+            else
+                return;
+        }
+
+        s_tempFile = s_DownloadDirectory + "/" + "Query_result_json.txt";
 
         downloadFile( s_Curl, s_Url, s_tempFile );
 
