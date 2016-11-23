@@ -383,6 +383,7 @@ public:
     QString getNodeValue( QDomNode Node );
 
     QString getCitationEntry( QDomNode Node );
+    QString getProjectEntry( QDomNode Node );
     QString getStaffEntry( QDomNode Node );
     QString getReferenceEntry( QDomNode Node );
 
