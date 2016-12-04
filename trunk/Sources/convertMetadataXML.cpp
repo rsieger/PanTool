@@ -563,6 +563,92 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
     }
 
 // **********************************************************************************************
+// 2016-11-30 - Schön Klinik Hamburg
+
+    QDomNodeList MatrixColumnList = root.elementsByTagName( "matrixColumn" );
+
+    if ( MatrixColumnList.count() > 0 )
+    {
+        tout << s_EOL;
+
+        if ( MatrixColumnList.count() > 1 )
+            tout << "PARAMETERS" << s_EOL;
+        else
+            tout << "PARAMETER" << s_EOL;
+
+        tout << "Data set ID" << "\t" << "Type" << "\t" << "Column" << "\t" << "Parameter ID" << "\t";
+        tout << "Parameter" << "\t" << "Format" << "\t" << "Method" << "\t" << "Comment" << "\t" << "PI" << s_EOL;
+
+        for ( int i=0; i<MatrixColumnList.count(); i++ )
+        {
+            QDomNode MatrixColumn = MatrixColumnList.at( i );
+
+            tout << s_DatasetID << "\t" << "@parameter@";
+
+            for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+            {
+                if ( MatrixColumn.childNodes().at( j ).localName() == "parameter" )
+                {
+                    QDomNode Parameter = MatrixColumn.childNodes().at( j );
+                    QString  s_ID      = getAttributeValue( Parameter, "id" );
+
+                    tout << "\t" << s_ID.section( ".", 0, 0 ).section( "col", 1, 1 ) << "\t" << s_ID.section( ".", 2, 2 );
+
+                    for ( int k=0; k<Parameter.childNodes().count(); k++ )
+                    {
+                        if ( Parameter.childNodes().at( k ).localName() == "name" )
+                            tout << "\t" << getNodeValue( Parameter.childNodes().at( k ) );
+                    }
+
+                    for ( int k=0; k<Parameter.childNodes().count(); k++ )
+                    {
+                        if ( Parameter.childNodes().at( k ).localName() == "unit" )
+                            tout << " [" << getNodeValue( Parameter.childNodes().at( k ) ) << "]";
+                    }
+
+                    tout << "\t" << getAttributeValue( MatrixColumn, "format" ) << "\t";
+
+                    for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+                    {
+                        if ( MatrixColumn.childNodes().at( j ).localName() == "method" )
+                        {
+                            for ( int k=0; k<MatrixColumn.childNodes().at( j ).childNodes().count(); k++ )
+                            {
+                                if ( MatrixColumn.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
+                                   tout << getNodeValue( MatrixColumn.childNodes().at( j ).childNodes().at( k ) );
+                            }
+                        }
+                    }
+
+                    tout << "\t";
+
+                    for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+                    {
+                        if ( MatrixColumn.childNodes().at( j ).localName() == "comment" )
+                            tout << getNodeValue( MatrixColumn.childNodes().at( j ) );
+                    }
+
+                    tout << "\t";
+
+                    for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+                    {
+                        if ( MatrixColumn.childNodes().at( j ).localName() == "PI" )
+                        {
+                            QString s_PI = getStaffEntry( MatrixColumn.childNodes().at( j ) );
+
+                            tout << s_PI.section( "\t", 1, 1 ) << ", " <<  s_PI.section( "\t", 2, 2 );
+                        }
+                    }
+
+                    tout << s_EOL;
+                }
+            }
+        }
+
+        tout << s_EOL << "********************************************" << s_EOL;
+    }
+
+// **********************************************************************************************
 
     QDomNodeList KeywordList = root.elementsByTagName( "keywords" );
 
