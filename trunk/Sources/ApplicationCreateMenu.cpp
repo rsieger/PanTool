@@ -159,13 +159,13 @@ void MainWindow::createActions()
     saveFilelistAction = new QAction(trUtf8("Save list of files..."), this);
     connect(saveFilelistAction, SIGNAL(triggered()), this, SLOT(doSaveFilelist()));
 
+    // Special tools
+
     getDatasetsAction = new QAction(trUtf8("Download PANGAEA datasets..."), this);
     getDatasetsAction->setShortcut(trUtf8("Ctrl+D"));
     connect(getDatasetsAction, SIGNAL(triggered()), this, SLOT(doGetDatasets()));
 
-    // Special tools
-
-    convertMetadataXMAction = new QAction(trUtf8("Convert PANGAEA metadata XML"), this);
+    convertMetadataXMAction = new QAction(trUtf8("Convert PANGAEA metadata XML..."), this);
     connect(convertMetadataXMAction, SIGNAL(triggered()), this, SLOT(doConvertMetadataXML()));
 
     checkTimeSeriesAction = new QAction(trUtf8("Check time series data"), this);
@@ -303,13 +303,12 @@ void MainWindow::createMenus()
     basicToolsMenu->addAction( compressFilesGZipAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( decompressFilesAction );
-    basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( getDatasetsAction );
 
 // **********************************************************************************************
 
     specialToolsMenu = menuBar()->addMenu( trUtf8( "Special tools" ) );
 
+    specialToolsMenu->addAction( getDatasetsAction );
     specialToolsMenu->addAction( convertMetadataXMAction );
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( calcDepthAction );
@@ -370,7 +369,6 @@ void MainWindow::enableMenuItems( const QStringList &sl_FilenameList )
 
         renameFilesAction->setEnabled( true );
         saveFilelistAction->setEnabled( true );
-        getDatasetsAction->setEnabled( true );
     }
 
 // **********************************************************************************************
@@ -387,6 +385,7 @@ void MainWindow::enableMenuItems( const QStringList &sl_FilenameList )
         for ( int i=0; i<specialToolsMenuActions.count(); ++i )
             specialToolsMenuActions.at( i )->setEnabled( false );
 
+        getDatasetsAction->setEnabled( true );
         extractExifAction->setEnabled( true );
     }
 }

@@ -405,6 +405,19 @@ void MainWindow::savePreferences()
     settings.setValue( "IconSymbol", gi_ge_IconSymbol );
     settings.endGroup();
 
+    // Metadata XML
+    settings.beginGroup( "MetadataXML" );
+    settings.setValue( "Citation", gb_xml_Citation );
+    settings.setValue( "Authors", gb_xml_Authors );
+    settings.setValue( "References", gb_xml_References );
+    settings.setValue( "Projects", gb_xml_Projects );
+    settings.setValue( "Events", gb_xml_Events );
+    settings.setValue( "Parameters", gb_xml_Parameters );
+    settings.setValue( "Coverage", gb_xml_Coverage );
+    settings.setValue( "Keywords", gb_xml_Keywords );
+    settings.setValue( "TechnicalInfo", gb_xml_TechnicalInfo );
+    settings.endGroup();
+
 }
 
 // **********************************************************************************************
@@ -821,6 +834,19 @@ void MainWindow::loadPreferences()
     gi_ge_IconSize                   = settings.value( "IconSize", 40 ).toInt();
     gi_ge_IconColor                  = settings.value( "IconColor", _RED ).toInt();
     gi_ge_IconSymbol                 = settings.value( "IconSymbol", _CIRCLE ).toInt();
+    settings.endGroup();
+
+    // Metadata XML
+    settings.beginGroup( "MetadataXML" );
+    gb_xml_Citation      = settings.value( "Citation", true ).toBool();
+    gb_xml_Authors       = settings.value( "Authors", false ).toBool();
+    gb_xml_References    = settings.value( "References", false ).toBool();
+    gb_xml_Projects      = settings.value( "Projects", false ).toBool();
+    gb_xml_Events        = settings.value( "Events", false ).toBool();
+    gb_xml_Parameters    = settings.value( "Parameters", false ).toBool();
+    gb_xml_Coverage      = settings.value( "Coverage", false ).toBool();
+    gb_xml_Keywords      = settings.value( "Keywords", false ).toBool();
+    gb_xml_TechnicalInfo = settings.value( "TechnicalInfo", false ).toBool();
     settings.endGroup();
 
     settings.endGroup();

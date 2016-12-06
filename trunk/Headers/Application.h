@@ -375,9 +375,20 @@ public:
     bool        gb_ge_displayDescription;
     bool        gb_ge_CreateKmlFile;                   //!< Create KML File
 
+    // Metadata XML
+    bool        gb_xml_Citation;
+    bool        gb_xml_Authors;
+    bool        gb_xml_References;
+    bool        gb_xml_Projects;
+    bool        gb_xml_Events;
+    bool        gb_xml_Parameters;
+    bool        gb_xml_Coverage;
+    bool        gb_xml_Keywords;
+    bool        gb_xml_TechnicalInfo;
+
 // *********************************************************************************************************************
 
-    int parseMetadataXML( const QString &FilenameIn, const QString &FilenameOut, const int CodecOutput, const int EOL );
+    int parseMetadataXML( const QString &FilenameIn, const QString &FilenameOut, const int CodecOutput, const int EOL, const bool Citation, const bool Authors, const bool References, const bool Projects, const bool Events, const bool Parameters, const bool Coverage, const bool Keywords, const bool TechnicalInfo );
 
     QString getAttributeValue( QDomNode Node, const QString &Attribute );
     QString getNodeValue( QDomNode Node );
@@ -499,6 +510,7 @@ public:
     int doTranslateCharacterEncodingDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doGetDatasetsDialog( QString &Query, QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
+    int doMetadataXMLDialog( bool &Citation, bool &Authors, bool &References, bool &Projects, bool &Events, bool &Parameters, bool &Coverage, bool &Keywords, bool &TechnicalInfo );
 
     int writeExif( const QString &ExifTool, const QString &s_FilenameIn, const int NumOfFiles );
     int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );

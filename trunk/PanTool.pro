@@ -71,7 +71,8 @@ HEADERS = ./Headers/Application.h \
     ./Forms/SkipLinesDialog/SkipLinesDialog.h \
     ./Forms/SplitFileDialog/SplitFileDialog.h \
     ./Forms/TranslateCharacterEncodingDialog/TranslateCharacterEncodingDialog.h \
-    ./Forms/TransposeTableOptionsDialog/TransposeTableOptionsDialog.h
+    ./Forms/TransposeTableOptionsDialog/TransposeTableOptionsDialog.h \
+    ./Forms/MetadataXMLDialog/MetadataXMLDialog.h
 
 SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/ApplicationMainWindow.cpp \
@@ -148,7 +149,8 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Forms/SkipLinesDialog/SkipLinesDialog.cpp \
     ./Forms/SplitFileDialog/SplitFileDialog.cpp \
     ./Forms/TranslateCharacterEncodingDialog/TranslateCharacterEncodingDialog.cpp \
-    ./Forms/TransposeTableOptionsDialog/TransposeTableOptionsDialog.cpp
+    ./Forms/TransposeTableOptionsDialog/TransposeTableOptionsDialog.cpp \
+    ./Forms/MetadataXMLDialog/MetadataXMLDialog.cpp
 
 FORMS = ./Forms/AboutDialog/aboutdialog.ui \
     ./Forms/AddDialog/adddialog.ui \
@@ -174,5 +176,6 @@ FORMS = ./Forms/AboutDialog/aboutdialog.ui \
     ./Forms/SkipLinesDialog/skiplinesdialog.ui \
     ./Forms/SplitFileDialog/splitfiledialog.ui \
     ./Forms/TranslateCharacterEncodingDialog/translatecharacterencodingdialog.ui \
-    ./Forms/TransposeTableOptionsDialog/transposetableoptionsdialog.ui
+    ./Forms/TransposeTableOptionsDialog/transposetableoptionsdialog.ui \
+    ./Forms/MetadataXMLDialog/metadataxmldialog.ui
 

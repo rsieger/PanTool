@@ -173,7 +173,9 @@ QString MainWindow::createReferenceOutputString( const QString &s_DatasetID, con
 // **********************************************************************************************
 // 2011-07-12
 
-int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecOutput, const int i_EOL )
+int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecOutput, const int i_EOL,
+                                  const bool b_Citation, const bool b_Authors, const bool b_References, const bool b_Projects, const bool b_Events,
+                                  const bool b_Parameters, const bool b_Coverage, const bool b_Keywords, const bool b_TechnicalInfo)
 {
     QString s_error					= "";
     QString s_EOL                   = setEOLChar( i_EOL );
@@ -232,6 +234,8 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
 
     s_DatasetID = getAttributeValue( Citation, "id" );
 
+    tout << "METADATA of data set https://doi.pangaea.de/10.1594/PANGAEA." << s_DatasetID.section( "dataset", 1, 1 ) << s_EOL;
+
     for ( int i=0; i<Citation.childNodes().count(); i++ )
     {
         if ( Citation.childNodes().at( i ).localName() == "author" )
@@ -242,451 +246,475 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
 
 // **********************************************************************************************
 
-    tout << "CITATION" << s_EOL;
-
-    if ( sl_Authors.count() > 0 )
+    if ( b_Authors == true )
     {
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Author ID" << "\t" << "Name" << "\t" << "Given name" << "\t";
-        tout << "e-Mail" << "\t" << "Phone" << "\t" << "ORCID" << "\t" << "URI" << s_EOL;
+        tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-        for ( int i=0; i<sl_Authors.count(); i++ )
-            tout << s_DatasetID << "\t" << "@author@" << "\t" << sl_Authors.at( i ) << s_EOL;
+        if ( sl_Authors.count() > 1 )
+            tout << "AUTHORS" << s_EOL;
+        else
+            tout << "AUTHOR" << s_EOL;
+
+        if ( sl_Authors.count() > 0 )
+        {
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Author ID" << "\t" << "Name" << "\t" << "Given name" << "\t";
+            tout << "e-Mail" << "\t" << "Phone" << "\t" << "ORCID" << "\t" << "URI" << s_EOL;
+
+            for ( int i=0; i<sl_Authors.count(); i++ )
+                tout << s_DatasetID << "\t" << "@author@" << "\t" << sl_Authors.at( i ) << s_EOL;
+        }
     }
 
 // **********************************************************************************************
 
-    tout << s_EOL;
-    tout << "Data set ID" << "\t" << "Type" << "\t" << "Authors" << "\t" << "Year" << "\t" << "Title" << "\t" << "Source" << "\t" << "URI" << s_EOL;
+    if ( b_Citation == true )
+    {
+        tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-    tout << createCitationOutputString( sl_Authors, s_Citation ) << s_EOL;
+        tout << "CITATION" << s_EOL;
 
-    tout << s_EOL << "********************************************" << s_EOL;
+        tout << "Data set ID" << "\t" << "Type" << "\t" << "Authors" << "\t" << "Year" << "\t" << "Title" << "\t" << "Source" << "\t" << "URI" << s_EOL;
+
+        tout << createCitationOutputString( sl_Authors, s_Citation ) << s_EOL;
+    }
 
 // **********************************************************************************************
 
-    QDomNodeList ReferenceList     = root.elementsByTagName( "reference" );
-
-    QString      s_ReferenceID     = "";
-    QString      s_ReferenceType   = "";
-    QString      s_ReferenceNumber = "";
-
-    if ( ReferenceList.count() > 0 )
+    if ( b_References == true )
     {
-        tout << s_EOL;
+        QDomNodeList ReferenceList     = root.elementsByTagName( "reference" );
 
-        if ( ReferenceList.count() > 1 )
-            tout << "REFERENCES";
-        else
-            tout << "REFERENCE";
+        QString      s_ReferenceID     = "";
+        QString      s_ReferenceType   = "";
+        QString      s_ReferenceNumber = "";
 
-        for ( int i=0; i<ReferenceList.count(); i++ )
+        if ( ReferenceList.count() > 0 )
         {
-            QDomNode Reference = ReferenceList.at( i );
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-            sl_Authors.clear();
+            if ( ReferenceList.count() > 1 )
+                tout << "REFERENCES";
+            else
+                tout << "REFERENCE";
 
-            s_ReferenceNumber = QString( "Reference %1" ).arg( i+1 );
-            s_ReferenceID     = getAttributeValue( Reference, "id" );
-            s_ReferenceType   = getAttributeValue( Reference, "relationType" );
-
-            for ( int j=0; j<Reference.childNodes().count(); j++ )
+            for ( int i=0; i<ReferenceList.count(); i++ )
             {
-                if ( Reference.childNodes().at( j ).localName() == "author" )
-                    sl_Authors.append( getStaffEntry( Reference.childNodes().at( j ) ) );
-            }
+                QDomNode Reference = ReferenceList.at( i );
 
-            s_Reference = getReferenceEntry( Reference );
+                sl_Authors.clear();
 
-            if ( sl_Authors.count() > 0 )
-            {
+                s_ReferenceNumber = QString( "Reference %1" ).arg( i+1 );
+                s_ReferenceID     = getAttributeValue( Reference, "id" );
+                s_ReferenceType   = getAttributeValue( Reference, "relationType" );
+
+                for ( int j=0; j<Reference.childNodes().count(); j++ )
+                {
+                    if ( Reference.childNodes().at( j ).localName() == "author" )
+                        sl_Authors.append( getStaffEntry( Reference.childNodes().at( j ) ) );
+                }
+
+                s_Reference = getReferenceEntry( Reference );
+
+                if ( sl_Authors.count() > 0 )
+                {
+                    tout << s_EOL;
+                    tout << "Data set ID" << "\t" << "Type" << "\t" << "Reference number" << "\t" << "Reference ID" << "\t";
+                    tout << "Author ID" << "\t" << "Name" << "\t" << "Given name" << "\t";
+                    tout << "e-Mail" << "\t" << "Phone" << "\t" << "ORCID" << "\t" << "URI" << s_EOL;
+
+                    for ( int i=0; i<sl_Authors.count(); i++ )
+                        tout << s_DatasetID << "\t" << "@author@" << "\t" << s_ReferenceNumber << "\t" << s_ReferenceID << "\t" << sl_Authors.at( i ) << s_EOL;
+                }
+
                 tout << s_EOL;
                 tout << "Data set ID" << "\t" << "Type" << "\t" << "Reference number" << "\t" << "Reference ID" << "\t";
-                tout << "Author ID" << "\t" << "Name" << "\t" << "Given name" << "\t";
-                tout << "e-Mail" << "\t" << "Phone" << "\t" << "ORCID" << "\t" << "URI" << s_EOL;
+                tout << "Reference type" << "\t" << "Authors" << "\t" << "Year" << "\t" << "Title" << "\t" << "Journal or source" << "\t" << "URI" << s_EOL;
 
-                for ( int i=0; i<sl_Authors.count(); i++ )
-                    tout << s_DatasetID << "\t" << "@author@" << "\t" << s_ReferenceNumber << "\t" << s_ReferenceID << "\t" << sl_Authors.at( i ) << s_EOL;
+                tout << createReferenceOutputString( s_DatasetID, s_ReferenceNumber, sl_Authors, s_Reference ) << s_EOL;
+
+                if ( ( ReferenceList.count() > 1 ) && ( i < ReferenceList.count() - 1 ) )
+                    tout << s_EOL << "--------------------------------------------" << s_EOL;
             }
-
-            tout << s_EOL;
-            tout << "Data set ID" << "\t" << "Type" << "\t" << "Reference number" << "\t" << "Reference ID" << "\t";
-            tout << "Reference type" << "\t" << "Authors" << "\t" << "Year" << "\t" << "Title" << "\t" << "Journal or source" << "\t" << "URI" << s_EOL;
-
-            tout << createReferenceOutputString( s_DatasetID, s_ReferenceNumber, sl_Authors, s_Reference ) << s_EOL;
-
-            if ( ( ReferenceList.count() > 1 ) && ( i < ReferenceList.count() - 1 ) )
-                tout << s_EOL << "--------------------------------------------" << s_EOL;
         }
-
-        tout << s_EOL << "********************************************" << s_EOL;
     }
 
 // **********************************************************************************************
 
-    QDomNodeList ProjectList = root.elementsByTagName( "project" );
-
-    if ( ProjectList.count() > 0 )
+    if ( b_Projects == true )
     {
-        tout << s_EOL;
+        QDomNodeList ProjectList = root.elementsByTagName( "project" );
 
-        if ( ProjectList.count() > 1 )
-            tout << "PROJECTS" << s_EOL;
-        else
-            tout << "PROJECT" << s_EOL;
+        if ( ProjectList.count() > 0 )
+        {
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Project ID" << "\t" << "Project label" << "\t";
-        tout << "Project name" << "\t" << "URI" << s_EOL;
+            if ( ProjectList.count() > 1 )
+                tout << "PROJECTS" << s_EOL;
+            else
+                tout << "PROJECT" << s_EOL;
 
-        for ( int i=0; i<ProjectList.count(); i++ )
-            tout << s_DatasetID << "\t" << "@project@" << "\t" << getProjectEntry( ProjectList.at( i ) ) << s_EOL;
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Project ID" << "\t" << "Project label" << "\t";
+            tout << "Project name" << "\t" << "URI" << s_EOL;
 
-        tout << s_EOL << "********************************************" << s_EOL;
+            for ( int i=0; i<ProjectList.count(); i++ )
+                tout << s_DatasetID << "\t" << "@project@" << "\t" << getProjectEntry( ProjectList.at( i ) ) << s_EOL;
+        }
     }
 
 // **********************************************************************************************
 
-    QDomNodeList CoverageList = root.elementsByTagName( "extent" );
-
-    if ( CoverageList.count() > 0 )
+    if ( b_Coverage == true )
     {
-        QDomNode Coverage = CoverageList.at( 0 );
+        QDomNodeList CoverageList = root.elementsByTagName( "extent" );
 
-        tout << s_EOL;
-        tout << "COVERAGE" << s_EOL;
-
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Geocode ID" << "\t" << "Local node name" << "\t" << "Content" << s_EOL;
-
-        if ( Coverage.firstChildElement( "topoType" ).isNull() == false )
-            tout << s_DatasetID << "\t" << "@coverage@" << "\t" << "\t" << "topoType" << "\t" << getNodeValue( Coverage.firstChildElement( "topoType" ) ) << s_EOL;
-
-        if ( Coverage.firstChildElement( "geographic" ).isNull() == false )
+        if ( CoverageList.count() > 0 )
         {
-            QDomNode Geographic = Coverage.firstChildElement( "geographic" );
+            QDomNode Coverage = CoverageList.at( 0 );
 
-            for( int j=0; j<Geographic.childNodes().count(); j++ )
-                tout << s_DatasetID << "\t" << "@coverage@" << "\t" << "\t" << Geographic.childNodes().at( j ).localName() << "\t" << QString( "%1" ).arg( getNodeValue( Geographic.childNodes().at( j ) ).toDouble(), 0, 'f', 5 ) << s_EOL;
-        }
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-        for ( int i=0; i<Coverage.childNodes().count(); i++ )
-        {
-            if ( Coverage.childNodes().at( i ).localName() == "temporal" )
+            tout << "COVERAGE" << s_EOL;
+
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Geocode ID" << "\t" << "Local node name" << "\t" << "Content" << s_EOL;
+
+            if ( Coverage.firstChildElement( "topoType" ).isNull() == false )
+                tout << s_DatasetID << "\t" << "@coverage@" << "\t" << "\t" << "topoType" << "\t" << getNodeValue( Coverage.firstChildElement( "topoType" ) ) << s_EOL;
+
+            if ( Coverage.firstChildElement( "geographic" ).isNull() == false )
             {
-                QDomNode Temporal = Coverage.childNodes().at( i );
+                QDomNode Geographic = Coverage.firstChildElement( "geographic" );
 
-                for( int j=0; j<Temporal.childNodes().count(); j++ )
-                    tout << s_DatasetID << "\t" << "@coverage@" << "\t" << "\t" << Temporal.childNodes().at( j ).localName() << "\t" << getNodeValue( Temporal.childNodes().at( j ) ) << s_EOL;
+                for( int j=0; j<Geographic.childNodes().count(); j++ )
+                    tout << s_DatasetID << "\t" << "@coverage@" << "\t" << "\t" << Geographic.childNodes().at( j ).localName() << "\t" << QString( "%1" ).arg( getNodeValue( Geographic.childNodes().at( j ) ).toDouble(), 0, 'f', 5 ) << s_EOL;
             }
-        }
 
-        for ( int i=0; i<Coverage.childNodes().count(); i++ )
-        {
-            if ( Coverage.childNodes().at( i ).localName() == "elevation" )
+            for ( int i=0; i<Coverage.childNodes().count(); i++ )
             {
-                QDomNode Elevation = Coverage.childNodes().at( i );
-
-                QString s_GeocodeID = getAttributeValue( Elevation, "geocodeId" );
-                QString s_Parameter = getAttributeValue( Elevation, "name" );
-                QString s_Unit      = getAttributeValue( Elevation, "unit" );;
-
-                if ( s_Unit.isEmpty() == false )
-                    s_Unit = " [" + s_Unit + "]";
-
-                for( int j=0; j<Elevation.childNodes().count(); j++ )
+                if ( Coverage.childNodes().at( i ).localName() == "temporal" )
                 {
+                    QDomNode Temporal = Coverage.childNodes().at( i );
+
+                    for( int j=0; j<Temporal.childNodes().count(); j++ )
+                        tout << s_DatasetID << "\t" << "@coverage@" << "\t" << "\t" << Temporal.childNodes().at( j ).localName() << "\t" << getNodeValue( Temporal.childNodes().at( j ) ) << s_EOL;
+                }
+            }
+
+            for ( int i=0; i<Coverage.childNodes().count(); i++ )
+            {
+                if ( Coverage.childNodes().at( i ).localName() == "elevation" )
+                {
+                    QDomNode Elevation = Coverage.childNodes().at( i );
+
+                    QString s_GeocodeID = getAttributeValue( Elevation, "geocodeId" );
+                    QString s_Parameter = getAttributeValue( Elevation, "name" );
+                    QString s_Unit      = getAttributeValue( Elevation, "unit" );;
+
                     if ( s_Unit.isEmpty() == false )
-                        tout << s_DatasetID << "\t" << "@coverage@" << "\t" << s_GeocodeID << "\t" << s_Parameter << ", " << Elevation.childNodes().at( j ).localName() << s_Unit << "\t" << getNodeValue( Elevation.childNodes().at( j ) ) << s_EOL;
-                    else
-                        tout << s_DatasetID << "\t" << "@coverage@" << "\t" << s_GeocodeID << "\t" << s_Parameter << ", " << Elevation.childNodes().at( j ).localName() << "\t" << getNodeValue( Elevation.childNodes().at( j ) ) << s_EOL;
+                        s_Unit = " [" + s_Unit + "]";
+
+                    for( int j=0; j<Elevation.childNodes().count(); j++ )
+                    {
+                        if ( s_Unit.isEmpty() == false )
+                            tout << s_DatasetID << "\t" << "@coverage@" << "\t" << s_GeocodeID << "\t" << s_Parameter << ", " << Elevation.childNodes().at( j ).localName() << s_Unit << "\t" << getNodeValue( Elevation.childNodes().at( j ) ) << s_EOL;
+                        else
+                            tout << s_DatasetID << "\t" << "@coverage@" << "\t" << s_GeocodeID << "\t" << s_Parameter << ", " << Elevation.childNodes().at( j ).localName() << "\t" << getNodeValue( Elevation.childNodes().at( j ) ) << s_EOL;
+                    }
                 }
             }
         }
-
-        tout << s_EOL << "********************************************" << s_EOL;
     }
 
 // **********************************************************************************************
 
-    QString s_EventID = "";
-
-    QDomNodeList EventList = root.elementsByTagName( "event" );
-
-    if ( EventList.count() > 0 )
+    if ( b_Events == true )
     {
-        tout << s_EOL;
+        QString s_EventID = "";
 
-        if ( EventList.count() > 1 )
-            tout << "EVENTS" << s_EOL;
-        else
-            tout << "EVENT" << s_EOL;
+        QDomNodeList EventList = root.elementsByTagName( "event" );
 
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Event ID" << "\t" << "Event label" << "\t";
-        tout << "Device" << "\t" << "Device" << "\t" << "Date/Time" << "\t";
-        tout << "Latitude" << "\t" << "Longitude" << "\t" << "Elevation";
-        tout << "\t" << "Location" << "\t";
-        tout << "Campaign" << "\t" << "Optional label" << "\t" << "URI campaign" << "\t";
-        tout << "Basis" << "\t" << "URI basis" << s_EOL;
-
-        for ( int i=0; i<EventList.count(); i++ )
+        if ( EventList.count() > 0 )
         {
-            QDomNode Event           = EventList.at( i );
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-            bool     b_hasCampaign   = false;
-            bool     b_hasBasis      = false;
+            if ( EventList.count() > 1 )
+                tout << "EVENTS" << s_EOL;
+            else
+                tout << "EVENT" << s_EOL;
 
-            s_EventID = getAttributeValue( Event, "id" ).replace( "event", "" );
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Event ID" << "\t" << "Event label" << "\t";
+            tout << "Device" << "\t" << "Device" << "\t" << "Date/Time" << "\t";
+            tout << "Latitude" << "\t" << "Longitude" << "\t" << "Elevation";
+            tout << "\t" << "Location" << "\t";
+            tout << "Campaign" << "\t" << "Optional label" << "\t" << "URI campaign" << "\t";
+            tout << "Basis" << "\t" << "URI basis" << s_EOL;
 
-            tout << s_DatasetID << "\t" << "@event@" << "\t" << s_EventID << "\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
+            for ( int i=0; i<EventList.count(); i++ )
             {
-                if ( Event.childNodes().at( j ).localName() == "label" )
-                    tout << getNodeValue( Event.childNodes().at( j ) );
-            }
+                QDomNode Event           = EventList.at( i );
 
-            tout << "\t";
+                bool     b_hasCampaign   = false;
+                bool     b_hasBasis      = false;
 
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "device" )
+                s_EventID = getAttributeValue( Event, "id" ).replace( "event", "" );
+
+                tout << s_DatasetID << "\t" << "@event@" << "\t" << s_EventID << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
-                    for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
-                        tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) ) << "\t";
+                    if ( Event.childNodes().at( j ).localName() == "label" )
+                        tout << getNodeValue( Event.childNodes().at( j ) );
                 }
-            }
 
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "dateTime" )
-                    tout << getNodeValue( Event.childNodes().at( j ) );
-            }
+                tout << "\t";
 
-            tout << "\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "latitude" )
-                    tout << getNodeValue( Event.childNodes().at( j ) );
-            }
-
-            tout << "\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "longitude" )
-                    tout << getNodeValue( Event.childNodes().at( j ) );
-            }
-
-            tout << "\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "elevation" )
-                    tout << getNodeValue( Event.childNodes().at( j ) );
-            }
-
-            tout << "\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "location" )
-                    tout << getNodeValue( Event.childNodes().at( j ) );
-            }
-
-            tout << "\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "campaign" )
+                for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
-                    b_hasCampaign = true;
-
-                    for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                    if ( Event.childNodes().at( j ).localName() == "device" )
                     {
-                        if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
-                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) ) << "\t";
                     }
-
-                    tout << "\t";
-
-                    for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
-                    {
-                        if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "optionalName" )
-                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
-                    }
-
-                    tout << "\t";
-
-                    for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
-                    {
-                        if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "URI" )
-                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
-                    }
-
-                    tout << "\t";
                 }
-            }
 
-            if ( b_hasCampaign == false )
-                tout << "\t\t\t";
-
-            for ( int j=0; j<Event.childNodes().count(); j++ )
-            {
-                if ( Event.childNodes().at( j ).localName() == "basis" )
+                for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
-                    b_hasBasis = true;
-
-                    for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
-                    {
-                        if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
-                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
-                    }
-
-                    tout << "\t";
-
-                    for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
-                    {
-                        if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "URI" )
-                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
-                    }
-
-                    tout << "\t";
+                    if ( Event.childNodes().at( j ).localName() == "dateTime" )
+                        tout << getNodeValue( Event.childNodes().at( j ) );
                 }
+
+                tout << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "latitude" )
+                        tout << getNodeValue( Event.childNodes().at( j ) );
+                }
+
+                tout << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "longitude" )
+                        tout << getNodeValue( Event.childNodes().at( j ) );
+                }
+
+                tout << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "elevation" )
+                        tout << getNodeValue( Event.childNodes().at( j ) );
+                }
+
+                tout << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "location" )
+                        tout << getNodeValue( Event.childNodes().at( j ) );
+                }
+
+                tout << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "campaign" )
+                    {
+                        b_hasCampaign = true;
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "optionalName" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "URI" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+                    }
+                }
+
+                if ( b_hasCampaign == false )
+                    tout << "\t\t\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "basis" )
+                    {
+                        b_hasBasis = true;
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "URI" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+                    }
+                }
+
+                if ( b_hasBasis == false )
+                    tout << "\t\t";
+
+                tout << s_EOL;
             }
-
-            if ( b_hasBasis == false )
-                tout << "\t\t";
-
-            tout << s_EOL;
         }
-
-        tout << s_EOL << "********************************************" << s_EOL;
     }
 
 // **********************************************************************************************
 // 2016-11-30 - Schön Klinik Hamburg
 
-    QDomNodeList MatrixColumnList = root.elementsByTagName( "matrixColumn" );
-
-    if ( MatrixColumnList.count() > 0 )
+    if ( b_Parameters == true )
     {
-        tout << s_EOL;
+        QDomNodeList MatrixColumnList = root.elementsByTagName( "matrixColumn" );
 
-        if ( MatrixColumnList.count() > 1 )
-            tout << "PARAMETERS" << s_EOL;
-        else
-            tout << "PARAMETER" << s_EOL;
-
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Column" << "\t" << "Parameter ID" << "\t";
-        tout << "Parameter" << "\t" << "Format" << "\t" << "Method" << "\t" << "Comment" << "\t" << "PI" << s_EOL;
-
-        for ( int i=0; i<MatrixColumnList.count(); i++ )
+        if ( MatrixColumnList.count() > 0 )
         {
-            QDomNode MatrixColumn = MatrixColumnList.at( i );
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
 
-            tout << s_DatasetID << "\t" << "@parameter@";
+            if ( MatrixColumnList.count() > 1 )
+                tout << "PARAMETERS" << s_EOL;
+            else
+                tout << "PARAMETER" << s_EOL;
 
-            for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Column" << "\t" << "Parameter ID" << "\t";
+            tout << "Parameter" << "\t" << "Format" << "\t" << "Method" << "\t" << "Comment" << "\t" << "PI" << s_EOL;
+
+            for ( int i=0; i<MatrixColumnList.count(); i++ )
             {
-                if ( MatrixColumn.childNodes().at( j ).localName() == "parameter" )
+                QDomNode MatrixColumn = MatrixColumnList.at( i );
+
+                tout << s_DatasetID << "\t" << "@parameter@";
+
+                for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
                 {
-                    QDomNode Parameter = MatrixColumn.childNodes().at( j );
-                    QString  s_ID      = getAttributeValue( Parameter, "id" );
-
-                    tout << "\t" << s_ID.section( ".", 0, 0 ).section( "col", 1, 1 ) << "\t" << s_ID.section( ".", 2, 2 );
-
-                    for ( int k=0; k<Parameter.childNodes().count(); k++ )
+                    if ( MatrixColumn.childNodes().at( j ).localName() == "parameter" )
                     {
-                        if ( Parameter.childNodes().at( k ).localName() == "name" )
-                            tout << "\t" << getNodeValue( Parameter.childNodes().at( k ) );
-                    }
+                        QDomNode Parameter = MatrixColumn.childNodes().at( j );
+                        QString  s_ID      = getAttributeValue( Parameter, "id" );
 
-                    for ( int k=0; k<Parameter.childNodes().count(); k++ )
-                    {
-                        if ( Parameter.childNodes().at( k ).localName() == "unit" )
-                            tout << " [" << getNodeValue( Parameter.childNodes().at( k ) ) << "]";
-                    }
+                        tout << "\t" << s_ID.section( ".", 0, 0 ).section( "col", 1, 1 ) << "\t" << s_ID.section( ".", 2, 2 );
 
-                    tout << "\t" << getAttributeValue( MatrixColumn, "format" ) << "\t";
-
-                    for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
-                    {
-                        if ( MatrixColumn.childNodes().at( j ).localName() == "method" )
+                        for ( int k=0; k<Parameter.childNodes().count(); k++ )
                         {
-                            for ( int k=0; k<MatrixColumn.childNodes().at( j ).childNodes().count(); k++ )
+                            if ( Parameter.childNodes().at( k ).localName() == "name" )
+                                tout << "\t" << getNodeValue( Parameter.childNodes().at( k ) );
+                        }
+
+                        for ( int k=0; k<Parameter.childNodes().count(); k++ )
+                        {
+                            if ( Parameter.childNodes().at( k ).localName() == "unit" )
+                                tout << " [" << getNodeValue( Parameter.childNodes().at( k ) ) << "]";
+                        }
+
+                        tout << "\t" << getAttributeValue( MatrixColumn, "format" ) << "\t";
+
+                        for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+                        {
+                            if ( MatrixColumn.childNodes().at( j ).localName() == "method" )
                             {
-                                if ( MatrixColumn.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
-                                   tout << getNodeValue( MatrixColumn.childNodes().at( j ).childNodes().at( k ) );
+                                for ( int k=0; k<MatrixColumn.childNodes().at( j ).childNodes().count(); k++ )
+                                {
+                                    if ( MatrixColumn.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
+                                       tout << getNodeValue( MatrixColumn.childNodes().at( j ).childNodes().at( k ) );
+                                }
                             }
                         }
-                    }
 
-                    tout << "\t";
+                        tout << "\t";
 
-                    for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
-                    {
-                        if ( MatrixColumn.childNodes().at( j ).localName() == "comment" )
-                            tout << getNodeValue( MatrixColumn.childNodes().at( j ) );
-                    }
-
-                    tout << "\t";
-
-                    for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
-                    {
-                        if ( MatrixColumn.childNodes().at( j ).localName() == "PI" )
+                        for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
                         {
-                            QString s_PI = getStaffEntry( MatrixColumn.childNodes().at( j ) );
-
-                            tout << s_PI.section( "\t", 1, 1 ) << ", " <<  s_PI.section( "\t", 2, 2 );
+                            if ( MatrixColumn.childNodes().at( j ).localName() == "comment" )
+                                tout << getNodeValue( MatrixColumn.childNodes().at( j ) );
                         }
-                    }
 
-                    tout << s_EOL;
+                        tout << "\t";
+
+                        for ( int j=0; j<MatrixColumn.childNodes().count(); j++ )
+                        {
+                            if ( MatrixColumn.childNodes().at( j ).localName() == "PI" )
+                            {
+                                QString s_PI = getStaffEntry( MatrixColumn.childNodes().at( j ) );
+
+                                tout << s_PI.section( "\t", 1, 1 ) << ", " <<  s_PI.section( "\t", 2, 2 );
+                            }
+                        }
+
+                        tout << s_EOL;
+                    }
                 }
             }
         }
-
-        tout << s_EOL << "********************************************" << s_EOL;
     }
 
 // **********************************************************************************************
 
-    QDomNodeList KeywordList = root.elementsByTagName( "keywords" );
-
-    if ( KeywordList.count() > 0 )
+    if ( b_Keywords == true )
     {
-        tout << s_EOL;
-        tout << "KEYWORDS" << s_EOL;
+        QDomNodeList KeywordList = root.elementsByTagName( "keywords" );
 
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Keyword type" << "\t" << "Value" << s_EOL;
-
-        QDomNode Keyword = KeywordList.at( 0 );
-
-        for ( int i=0; i<Keyword.childNodes().count(); i++ )
+        if ( KeywordList.count() > 0 )
         {
-            if ( Keyword.childNodes().at( i ).localName() == "techKeyword" )
-                tout << s_DatasetID << "\t" << "@keyword@" << "\t" << getAttributeValue( Keyword.childNodes().at( i ), "type" ) << "\t" << getNodeValue( Keyword.childNodes().at( i ) ) << s_EOL;
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
+
+            tout << "KEYWORDS" << s_EOL;
+
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Keyword type" << "\t" << "Value" << s_EOL;
+
+            QDomNode Keyword = KeywordList.at( 0 );
+
+            for ( int i=0; i<Keyword.childNodes().count(); i++ )
+            {
+                if ( Keyword.childNodes().at( i ).localName() == "techKeyword" )
+                    tout << s_DatasetID << "\t" << "@keyword@" << "\t" << getAttributeValue( Keyword.childNodes().at( i ), "type" ) << "\t" << getNodeValue( Keyword.childNodes().at( i ) ) << s_EOL;
+            }
         }
-
-        tout << s_EOL << "********************************************" << s_EOL;
     }
 
 // **********************************************************************************************
 
-    QDomNodeList technicalInfoList = root.elementsByTagName( "technicalInfo" );
-
-    if ( technicalInfoList.count() > 0 )
+    if ( b_TechnicalInfo == true )
     {
-        tout << s_EOL;
-        tout << "TECHNICAL INFO" << s_EOL;
+        QDomNodeList technicalInfoList = root.elementsByTagName( "technicalInfo" );
 
-        tout << "Data set ID" << "\t" << "Type" << "\t" << "Technical info type" << "\t" << "Value" << s_EOL;
-
-        QDomNode technicalInfo = technicalInfoList.at( 0 );
-
-        for ( int i=0; i<technicalInfo.childNodes().count(); i++ )
+        if ( technicalInfoList.count() > 0 )
         {
-            if ( technicalInfo.childNodes().at( i ).localName() == "entry" )
-                tout << s_DatasetID << "\t" << "@technicalInfo@" << "\t" << getAttributeValue( technicalInfo.childNodes().at( i ), "key" ) << "\t" << getAttributeValue( technicalInfo.childNodes().at( i ), "value" ) << s_EOL;
+            tout << s_EOL << "********************************************" << s_EOL << s_EOL;
+
+            tout << "TECHNICAL INFO" << s_EOL;
+
+            tout << "Data set ID" << "\t" << "Type" << "\t" << "Technical info type" << "\t" << "Value" << s_EOL;
+
+            QDomNode technicalInfo = technicalInfoList.at( 0 );
+
+            for ( int i=0; i<technicalInfo.childNodes().count(); i++ )
+            {
+                if ( technicalInfo.childNodes().at( i ).localName() == "entry" )
+                    tout << s_DatasetID << "\t" << "@technicalInfo@" << "\t" << getAttributeValue( technicalInfo.childNodes().at( i ), "key" ) << "\t" << getAttributeValue( technicalInfo.childNodes().at( i ), "value" ) << s_EOL;
+            }
         }
     }
 
@@ -715,27 +743,34 @@ void MainWindow::doConvertMetadataXML()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-        setWaitCursor();
-
-        initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Convert PANGAEA metadata XML files..." ) );
-
-        while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
+        if ( doMetadataXMLDialog( gb_xml_Citation, gb_xml_Authors, gb_xml_References, gb_xml_Projects, gb_xml_Events, gb_xml_Parameters, gb_xml_Coverage, gb_xml_Keywords, gb_xml_TechnicalInfo ) == QDialog::Accepted )
         {
-            if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
-            {
-                err = parseMetadataXML( s_FilenameIn, s_FilenameOut, gi_CodecOutput, gi_EOL );
+            setWaitCursor();
 
-                stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
-            }
-            else
+            initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Convert PANGAEA metadata XML files..." ) );
+
+            while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
             {
-                err = _FILENOTEXISTS_;
+                if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
+                {
+                    err = parseMetadataXML( s_FilenameIn, s_FilenameOut, gi_CodecOutput, gi_EOL, gb_xml_Citation, gb_xml_Authors, gb_xml_References, gb_xml_Projects, gb_xml_Events, gb_xml_Parameters, gb_xml_Coverage, gb_xml_Keywords, gb_xml_TechnicalInfo );
+
+                    stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
+                }
+                else
+                {
+                    err = _FILENOTEXISTS_;
+                }
             }
+
+            resetFileProgress( gsl_FilenameList.count() );
+
+            setNormalCursor();
         }
-
-        resetFileProgress( gsl_FilenameList.count() );
-
-        setNormalCursor();
+        else
+        {
+            err = _CHOOSEABORTED_;
+        }
     }
     else
     {
