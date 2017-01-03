@@ -17,6 +17,7 @@ int MainWindow::extract10minLines( const QString &s_FilenameIn, const QString &s
     int         i_err               = _NOERROR_;
 
     int         i_DateTimeColumn    = 0;
+    int         i_Duration          = 600; // in seconds
 
     QString     s_EOL               = setEOLChar( i_EOL );
 
@@ -94,7 +95,7 @@ int MainWindow::extract10minLines( const QString &s_FilenameIn, const QString &s
             break;
         }
 
-        if ( ( i_err == _NOERROR_ ) && ( DateTime1.secsTo( DateTime2 ) >= 10*60 ) ) // = 10 min
+        if ( ( i_err == _NOERROR_ ) && ( DateTime1.secsTo( DateTime2 ) >= i_Duration ) ) // duration in seconds
         {
             DateTime1 = DateTime2;
 
