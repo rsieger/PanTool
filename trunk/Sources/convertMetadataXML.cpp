@@ -90,6 +90,8 @@ QString MainWindow::getReferenceEntry( QDomNode Node )
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "year" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "title" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "source" ) ) );
+    sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "volume" ) ) );
+    sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "pages" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "URI" ) ) );
 
     return( sl_ReferenceEntry.join( "\t" ) );
@@ -143,7 +145,7 @@ QString MainWindow::createCitationOutputString( const QStringList &sl_Authors, c
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2011-07-12
+// 2017-01-21
 
 QString MainWindow::createReferenceOutputString( const QString &s_DatasetID, const QString &s_ReferenceNumber, const QStringList &sl_Authors, const QString &s_Reference )
 {
@@ -162,7 +164,9 @@ QString MainWindow::createReferenceOutputString( const QString &s_DatasetID, con
         OutputStr.append( "\t" + s_Reference.section( "\t", 2, 2 ) ); // year
         OutputStr.append( "\t" + s_Reference.section( "\t", 3, 3 ) ); // title
         OutputStr.append( "\t" + s_Reference.section( "\t", 4, 4 ) ); // source
-        OutputStr.append( "\t" + s_Reference.section( "\t", 5, 5 ) ); // URI
+        OutputStr.append( "\t" + s_Reference.section( "\t", 5, 5 ) ); // volume
+        OutputStr.append( "\t" + s_Reference.section( "\t", 6, 6 ) ); // pages
+        OutputStr.append( "\t" + s_Reference.section( "\t", 7, 7 ) ); // URI
     }
 
     return( OutputStr );
@@ -328,7 +332,8 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
 
                 tout << s_EOL;
                 tout << "Data set ID" << "\t" << "Type" << "\t" << "Reference number" << "\t" << "Reference ID" << "\t";
-                tout << "Reference type" << "\t" << "Authors" << "\t" << "Year" << "\t" << "Title" << "\t" << "Journal or source" << "\t" << "URI" << s_EOL;
+                tout << "Reference type" << "\t" << "Authors" << "\t" << "Year" << "\t" << "Title" << "\t";
+                tout << "Journal or source" << "\t" << "Volume" << "\t" << "Pages" << "\t" << "URI" << s_EOL;
 
                 tout << createReferenceOutputString( s_DatasetID, s_ReferenceNumber, sl_Authors, s_Reference ) << s_EOL;
 
