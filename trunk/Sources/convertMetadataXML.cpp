@@ -193,6 +193,7 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
     int		i_errorColumn			= 0;
 
     QFile           fin( s_FilenameIn );
+    QFileInfo       fi( s_FilenameIn );
 
     QDomDocument    doc;
 
@@ -204,6 +205,9 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
 
 // **********************************************************************************************
 // read file
+
+    if ( fi.suffix().toLower() != "xml" )
+        return( 0 );
 
     if ( doc.setContent( &fin, true, &s_error, &i_errorLine, &i_errorColumn ) == false )
         return( -1 );
