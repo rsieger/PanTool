@@ -93,7 +93,6 @@ QString MainWindow::getReferenceEntry( QDomNode Node )
     else
         sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "year" ) ) );
 
-    sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "year" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "title" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "source" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "volume" ) ) );
