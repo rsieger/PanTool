@@ -87,6 +87,12 @@ QString MainWindow::getReferenceEntry( QDomNode Node )
 
     sl_ReferenceEntry.append( getAttributeValue( Node, "id" ) );
     sl_ReferenceEntry.append( getAttributeValue( Node, "relationType" ) );
+
+    if ( getNodeValue( Node.firstChildElement( "prepubStatus" ) ).isEmpty() == false )
+        sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "prepubStatus" ) ) );
+    else
+        sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "year" ) ) );
+
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "year" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "title" ) ) );
     sl_ReferenceEntry.append( getNodeValue( Node.firstChildElement( "source" ) ) );
