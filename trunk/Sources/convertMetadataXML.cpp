@@ -753,6 +753,8 @@ void MainWindow::doConvertMetadataXML()
     QString     s_FilenameIn    = "";
     QString     s_FilenameOut   = "";
 
+    QStringList sl_FilenameList;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -765,9 +767,17 @@ void MainWindow::doConvertMetadataXML()
 
             while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
             {
-                if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
+                QFileInfo fi( gsl_FilenameList.at( i ) );
+
+                if ( fi.suffix().toLower() == "xml" )
                 {
+                    s_FilenameIn  = fi.absoluteFilePath();
+                    s_FilenameOut = fi.absolutePath() + "/" + fi.completeBaseName() + setExtension( gi_Extension );
+
                     err = parseMetadataXML( s_FilenameIn, s_FilenameOut, gi_CodecOutput, gi_EOL, gb_xml_Citation, gb_xml_Authors, gb_xml_References, gb_xml_Projects, gb_xml_Events, gb_xml_Parameters, gb_xml_Coverage, gb_xml_Keywords, gb_xml_TechnicalInfo );
+
+                    if ( err == _NOERROR_ )
+                        sl_FilenameList.append( s_FilenameOut );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -793,7 +803,10 @@ void MainWindow::doConvertMetadataXML()
 
 // **********************************************************************************************
 
-    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Converting PANGAEA metadata XML was canceled" ), false, false );
+    gsl_FilenameList = sl_FilenameList;
+    gi_ActionNumber  = 0;
+
+    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Converting PANGAEA metadata XML was canceled" ), false, true );
 
     onError( err );
 }
