@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Recalculation options</string>
+   <string>extract metadata XML options</string>
   </property>
   <property name="sizeGripEnabled">
    <bool>true</bool>

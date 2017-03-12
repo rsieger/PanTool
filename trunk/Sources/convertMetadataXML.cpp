@@ -460,18 +460,37 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
             tout << "Latitude" << "\t" << "Longitude" << "\t" << "Elevation";
             tout << "\t" << "Location" << "\t";
             tout << "Campaign" << "\t" << "Optional label" << "\t" << "URI campaign" << "\t";
-            tout << "Basis" << "\t" << "URI basis" << s_EOL;
+            tout << "Basis" << "\t" << "URI basis" << "\t";
+            tout << "Penetration" << "\t" << "Recovery" << s_EOL;
 
             for ( int i=0; i<EventList.count(); i++ )
             {
-                QDomNode Event           = EventList.at( i );
+                QDomNode Event            = EventList.at( i );
 
-                bool     b_hasCampaign   = false;
-                bool     b_hasBasis      = false;
+                QString  s_AttributeValue = "";
+                QString  s_Penetration    = "";
+                QString  s_Recovery       = "";
+
+                bool     b_hasCampaign    = false;
+                bool     b_hasBasis       = false;
 
                 s_EventID = getAttributeValue( Event, "id" ).replace( "event", "" );
 
                 tout << s_DatasetID << "\t" << "@event@" << "\t" << s_EventID << "\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "attribute" )
+                    {
+                        s_AttributeValue = getAttributeValue( Event.childNodes().at( j ), "name" );
+
+                        if ( s_AttributeValue == "Penetration" )
+                            s_Penetration = getNodeValue( Event.childNodes().at( j ) );
+
+                        if ( s_AttributeValue == "Recovery" )
+                            s_Recovery = getNodeValue( Event.childNodes().at( j ) );
+                    }
+                }
 
                 for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
@@ -591,6 +610,14 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
 
                 if ( b_hasBasis == false )
                     tout << "\t\t";
+
+                if ( s_Penetration.isEmpty() == false )
+                    tout << s_Penetration;
+
+                tout << "\t";
+
+                if ( s_Recovery.isEmpty() == false )
+                    tout << s_Recovery;
 
                 tout << s_EOL;
             }
