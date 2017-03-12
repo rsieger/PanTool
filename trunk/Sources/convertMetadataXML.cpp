@@ -456,12 +456,11 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
                 tout << "EVENT" << s_EOL;
 
             tout << "Data set ID" << "\t" << "Type" << "\t" << "Event ID" << "\t" << "Event label" << "\t";
-            tout << "Device" << "\t" << "Device" << "\t" << "Date/Time" << "\t";
-            tout << "Latitude" << "\t" << "Longitude" << "\t" << "Elevation";
-            tout << "\t" << "Location" << "\t";
-            tout << "Campaign" << "\t" << "Optional label" << "\t" << "URI campaign" << "\t";
-            tout << "Basis" << "\t" << "URI basis" << "\t";
-            tout << "Penetration" << "\t" << "Recovery" << s_EOL;
+            tout << "Device" << "\t" << "Device" << "\t" << "URI device" << "\t" << "Penetration [m]" << "\t";
+            tout << "Recovery [m]" << "\t" << "Date/Time" << "\t" << "Latitude" << "\t" << "Longitude" << "\t" ;
+            tout << "Elevation" << "\t" << "Lake water depth [m]" << "\t";
+            tout << "Location" << "\t" << "Campaign" << "\t" << "Optional label" << "\t" << "URI campaign" << "\t";
+            tout << "Basis" << "\t" << "URI basis" << s_EOL;
 
             for ( int i=0; i<EventList.count(); i++ )
             {
@@ -470,27 +469,15 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
                 QString  s_AttributeValue = "";
                 QString  s_Penetration    = "";
                 QString  s_Recovery       = "";
+                QString  s_LakeWaterDepth = "";
 
+                bool     b_hasDevice      = false;
                 bool     b_hasCampaign    = false;
                 bool     b_hasBasis       = false;
 
                 s_EventID = getAttributeValue( Event, "id" ).replace( "event", "" );
 
                 tout << s_DatasetID << "\t" << "@event@" << "\t" << s_EventID << "\t";
-
-                for ( int j=0; j<Event.childNodes().count(); j++ )
-                {
-                    if ( Event.childNodes().at( j ).localName() == "attribute" )
-                    {
-                        s_AttributeValue = getAttributeValue( Event.childNodes().at( j ), "name" );
-
-                        if ( s_AttributeValue == "Penetration" )
-                            s_Penetration = getNodeValue( Event.childNodes().at( j ) );
-
-                        if ( s_AttributeValue == "Recovery" )
-                            s_Recovery = getNodeValue( Event.childNodes().at( j ) );
-                    }
-                }
 
                 for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
@@ -504,10 +491,63 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
                 {
                     if ( Event.childNodes().at( j ).localName() == "device" )
                     {
+                        b_hasDevice = true;
+
                         for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
-                            tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) ) << "\t";
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "optionalName" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "URI" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
                     }
                 }
+
+                if ( b_hasDevice == false )
+                    tout << "\t\t\t";
+
+                for ( int j=0; j<Event.childNodes().count(); j++ )
+                {
+                    if ( Event.childNodes().at( j ).localName() == "attribute" )
+                    {
+                        s_AttributeValue = getAttributeValue( Event.childNodes().at( j ), "name" );
+
+                        if ( s_AttributeValue == "Penetration" )
+                            s_Penetration = getNodeValue( Event.childNodes().at( j ) ).replace( " m", "" );
+
+                        if ( s_AttributeValue == "Recovery" )
+                            s_Recovery = getNodeValue( Event.childNodes().at( j ) ).replace( " m", "" );
+
+                        if ( s_AttributeValue == "Lake water depth" )
+                            s_LakeWaterDepth = getNodeValue( Event.childNodes().at( j ) ).replace( " m", "" );
+                    }
+                }
+
+                if ( s_Penetration.isEmpty() == false )
+                    tout << s_Penetration;
+
+                tout << "\t";
+
+                if ( s_Recovery.isEmpty() == false )
+                    tout << s_Recovery;
+
+                tout << "\t";
 
                 for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
@@ -538,6 +578,11 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
                     if ( Event.childNodes().at( j ).localName() == "elevation" )
                         tout << getNodeValue( Event.childNodes().at( j ) );
                 }
+
+                tout << "\t";
+
+                if ( s_LakeWaterDepth.isEmpty() == false )
+                    tout << s_LakeWaterDepth;
 
                 tout << "\t";
 
@@ -610,14 +655,6 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
 
                 if ( b_hasBasis == false )
                     tout << "\t\t";
-
-                if ( s_Penetration.isEmpty() == false )
-                    tout << s_Penetration;
-
-                tout << "\t";
-
-                if ( s_Recovery.isEmpty() == false )
-                    tout << s_Recovery;
 
                 tout << s_EOL;
             }
