@@ -459,8 +459,8 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
             tout << "Device" << "\t" << "Device" << "\t" << "URI device" << "\t" << "Penetration [m]" << "\t";
             tout << "Recovery [m]" << "\t" << "Date/Time" << "\t" << "Latitude" << "\t" << "Longitude" << "\t" ;
             tout << "Elevation" << "\t" << "Lake water depth [m]" << "\t";
-            tout << "Location" << "\t" << "Campaign" << "\t" << "Optional label" << "\t" << "URI campaign" << "\t";
-            tout << "Basis" << "\t" << "URI basis" << s_EOL;
+            tout << "Location" << "\t" << "URI location" << "\t" << "Campaign" << "\t" << "Optional label" << "\t";
+            tout << "URI campaign" << "\t" << "Basis" << "\t" << "URI basis" << s_EOL;
 
             for ( int i=0; i<EventList.count(); i++ )
             {
@@ -474,6 +474,7 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
                 bool     b_hasDevice      = false;
                 bool     b_hasCampaign    = false;
                 bool     b_hasBasis       = false;
+                bool     b_hasLocation    = false;
 
                 s_EventID = getAttributeValue( Event, "id" ).replace( "event", "" );
 
@@ -589,10 +590,29 @@ int MainWindow::parseMetadataXML( const QString &s_FilenameIn, const QString &s_
                 for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
                     if ( Event.childNodes().at( j ).localName() == "location" )
-                        tout << getNodeValue( Event.childNodes().at( j ) );
+                    {
+                        b_hasLocation = true;
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "name" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+
+                        for ( int k=0; k<Event.childNodes().at( j ).childNodes().count(); k++ )
+                        {
+                            if ( Event.childNodes().at( j ).childNodes().at( k ).localName() == "URI" )
+                                tout << getNodeValue( Event.childNodes().at( j ).childNodes().at( k ) );
+                        }
+
+                        tout << "\t";
+                    }
                 }
 
-                tout << "\t";
+                if ( b_hasLocation == false )
+                    tout << "\t\t";
 
                 for ( int j=0; j<Event.childNodes().count(); j++ )
                 {
