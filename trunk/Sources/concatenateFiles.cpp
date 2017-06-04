@@ -18,6 +18,7 @@ int MainWindow::concatenateFilesByLines( const int i_ActionNumber, const QString
     QString     s_EOL           = setEOLChar( i_EOL );
 
     QStringList sl_Input;
+    QStringList sl_FilenameListIn;
 
 // **********************************************************************************************
 
@@ -54,8 +55,10 @@ int MainWindow::concatenateFilesByLines( const int i_ActionNumber, const QString
 
     if ( buildFilename( i_ActionNumber, s_FilenameFormat, i_Extension, sl_FilenameList.at( i ), s_FilenameIn, s_Dummy ) == true )
     {
-        if ( ( n = readFile( s_FilenameIn, sl_Input, i_CodecInput ) ) > 0)
+        if ( ( n = readFile( s_FilenameIn, sl_Input, i_CodecInput ) ) > 0 )
         {
+            sl_FilenameListIn.append( s_FilenameIn );
+
             if ( b_IncludeFilename == true )
             {
                 QFileInfo fi( s_FilenameIn );
@@ -78,9 +81,6 @@ int MainWindow::concatenateFilesByLines( const int i_ActionNumber, const QString
             }
 
             resetProgress( sl_FilenameList.count() );
-
-            if ( b_DeleteInputFile == true )
-                removeFile( s_FilenameIn );
         }
     }
 
@@ -93,6 +93,8 @@ int MainWindow::concatenateFilesByLines( const int i_ActionNumber, const QString
     {
         if ( buildFilename( i_ActionNumber, s_FilenameFormat, i_Extension, sl_FilenameList.at( i ), s_FilenameIn, s_Dummy ) == true )
         {
+            sl_FilenameListIn.append( s_FilenameIn );
+
             if ( ( n = readFile( s_FilenameIn, sl_Input, i_CodecInput ) ) > 0 )
             {
                 if ( b_IncludeFilename == true )
@@ -113,8 +115,6 @@ int MainWindow::concatenateFilesByLines( const int i_ActionNumber, const QString
 
                 resetProgress( sl_FilenameList.count() );
 
-                if ( b_DeleteInputFile == true )
-                    removeFile( s_FilenameIn );
             }
         }
 
@@ -126,7 +126,17 @@ int MainWindow::concatenateFilesByLines( const int i_ActionNumber, const QString
     fout.close();
 
     if ( stopProgress == _APPBREAK_ )
+    {
         fout.remove();
+    }
+    else
+    {
+        if ( b_DeleteInputFile == true )
+        {
+            for ( int i=0; i<sl_FilenameListIn.count(); i++ )
+                QFile::remove( sl_FilenameListIn.at( i ) );
+        }
+    }
 
     resetFileProgress( sl_FilenameList.count() );
 
