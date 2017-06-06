@@ -9,7 +9,7 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::extractLines( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const int i_StartLine, const int i_Increment, const int i_NumberOfLines, const bool b_ExtractFristLineLastLine, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::extractLines( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const int i_StartLine, const int i_Increment, const int i_NumberOfLines, const bool b_ExtractFristLineLastLine, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i               = i_StartLine + i_Increment - 1;
     int         n               = 0;
@@ -97,9 +97,6 @@ int MainWindow::extractLines( const QString &s_FilenameIn, const QString &s_File
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -117,6 +114,8 @@ void MainWindow::doExtractLines()
     QString s_FilenameIn    = "";
     QString s_FilenameOut   = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -129,7 +128,9 @@ void MainWindow::doExtractLines()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = extractLines( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_el_StartLine, gi_el_Increment, gi_el_NumberOfLines, gb_el_ExtractFristLineLastLine, gb_el_SkipEmptyLines, gb_el_SkipCommentLines, gb_el_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = extractLines( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_el_StartLine, gi_el_Increment, gi_el_NumberOfLines, gb_el_ExtractFristLineLastLine, gb_el_SkipEmptyLines, gb_el_SkipCommentLines, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -149,6 +150,14 @@ void MainWindow::doExtractLines()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_el_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************
@@ -172,6 +181,8 @@ void MainWindow::doTranslateCharacterEncoding()
     QString s_FilenameIn    = "";
     QString s_FilenameOut   = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -184,7 +195,9 @@ void MainWindow::doTranslateCharacterEncoding()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = extractLines( s_FilenameIn, s_FilenameOut, gi_tce_CodecInput, gi_tce_CodecOutput, gi_tce_EOL, 1, 1, 0, false, false, false, gb_tce_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = extractLines( s_FilenameIn, s_FilenameOut, gi_tce_CodecInput, gi_tce_CodecOutput, gi_tce_EOL, 1, 1, 0, false, false, false, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -204,6 +217,14 @@ void MainWindow::doTranslateCharacterEncoding()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_tce_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

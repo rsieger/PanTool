@@ -304,6 +304,11 @@ void MainWindow::savePreferences()
     settings.setValue( "DeleteInputFile", gb_fa_DeleteInputFile );
     settings.endGroup();
 
+    // polyCentroid
+    settings.beginGroup( "polyCentroid" );
+    settings.setValue( "DeleteInputFile", gb_pc_DeleteInputFile );
+    settings.endGroup();
+
     // table to columns
     settings.beginGroup( "TableToColumns" );
     settings.setValue( "NumberOfGeocodes", gi_tcf_NumOfGeocodes );
@@ -733,6 +738,11 @@ void MainWindow::loadPreferences()
     settings.beginGroup( "FindArea" );
     gs_AreaDatabaseFilename = settings.value( "AreaDatabaseFilename", "Browse through the area database with \"Browse ...\"" ).toString();
     gb_fa_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
+    settings.endGroup();
+
+    // polyCentroid
+    settings.beginGroup( "polyCentroid" );
+    gb_pc_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 
     // table to columns

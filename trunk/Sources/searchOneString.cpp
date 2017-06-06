@@ -11,7 +11,7 @@
 int MainWindow::searchOneString( const int i_ActionNumber, const QString &s_FilenameFormat, const int i_Extension, const QStringList &sl_FilenameList,
                                  const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &SearchStr,
                                  const int i_StartLine, const int i_NumberOfLines, const bool b_SkipEmptyLines, const bool b_SkipCommentLines,
-                                 const bool b_DeleteInputFile, const bool b_DeleteEmptyOutputFile )
+                                 const bool b_DeleteEmptyOutputFile )
 {
     int         j               = 0;
 
@@ -93,9 +93,6 @@ int MainWindow::searchOneString( const int i_ActionNumber, const QString &s_File
                 }
 
                 resetProgress( sl_FilenameList.count() );
-
-                if ( b_DeleteInputFile == true )
-                    removeFile( s_FilenameIn );
             }
         }
 
@@ -110,6 +107,8 @@ int MainWindow::searchOneString( const int i_ActionNumber, const QString &s_File
     resetFileProgress( sl_FilenameList.count() );
 
     setNormalCursor();
+
+// **********************************************************************************************
 
     if ( stopProgress == _APPBREAK_ )
         fout.remove();
@@ -146,6 +145,7 @@ void MainWindow::doSearchOneString()
     bool    b_dummy_SaveFirstLine           = false;  // not used
     bool    b_dummy_SaveNoMatch             = false;  // not used
 
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -157,7 +157,7 @@ void MainWindow::doSearchOneString()
             s_FilenameOut = fi.absolutePath() + "/" + fi.absolutePath().section( "/", -1, -1 ) + "_ResultOfSearch" + setExtension( gi_Extension );
 
             if ( doSearchDialog( _SEARCHONESTRING, gs_sos_SearchString, s_dummy_ReplaceString, s_dummy_DatabaseName, gi_sos_StartLine, gi_sos_NumberOfLines, i_dummy_SearchAndReplaceMode, b_dummy_SaveFirstLine, b_dummy_SaveNoMatch, gb_sos_SkipEmptyLines, gb_sos_SkipCommentLines, gb_sos_DeleteEmptyOutputFile, gb_sos_DeleteInputFile ) == QDialog::Accepted )
-                stopProgress = searchOneString( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_sos_SearchString, gi_sos_StartLine, gi_sos_NumberOfLines, gb_sos_SkipEmptyLines, gb_sos_SkipCommentLines, gb_sos_DeleteInputFile, gb_sos_DeleteEmptyOutputFile );
+                stopProgress = searchOneString( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_sos_SearchString, gi_sos_StartLine, gi_sos_NumberOfLines, gb_sos_SkipEmptyLines, gb_sos_SkipCommentLines, gb_sos_DeleteEmptyOutputFile );
             else
                 stopProgress = _CHOOSEABORTED_;
         }
@@ -176,6 +176,8 @@ void MainWindow::doSearchOneString()
     if ( ( stopProgress < 0 ) || ( stopProgress == _CHOOSEABORTED_ ) )
         err = stopProgress;
 
+// **********************************************************************************************
+/*
     if ( err == _NOERROR_ )
     {
         clearFilenameList( gi_ActionNumber, gsl_FilenameList );
@@ -184,6 +186,8 @@ void MainWindow::doSearchOneString()
         if ( ( fi.exists() == true ) && ( fi.isFile() == true ) )
             gsl_FilenameList.append( s_FilenameOut );
     }
+*/
+// **********************************************************************************************
 
     endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Searching one string was canceled" ), false, false );
 

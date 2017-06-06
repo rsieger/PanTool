@@ -8,7 +8,7 @@
 // **********************************************************************************************
 // 2013-11-29
 
-int MainWindow::extractMatchedColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &SearchString, const bool b_SaveNoMatch, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteEmptyOutputFile, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::extractMatchedColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &SearchString, const bool b_SaveNoMatch, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteEmptyOutputFile, const int i_NumOfFiles )
 {
     int         i                       = 0;
     int         j                       = 0;
@@ -52,8 +52,8 @@ int MainWindow::extractMatchedColumns( const QString &s_FilenameIn, const QStrin
 // **********************************************************************************************
 // open output file
 
-    removeFile( s_FilenameOut ); // if exists from older run
-    removeFile( s_FilenameNoMatch ); // if exists from older run
+    QFile::remove( s_FilenameOut ); // if exists from older run
+    QFile::remove( s_FilenameNoMatch ); // if exists from older run
 
     QFile fout( s_FilenameOut );
 
@@ -158,13 +158,10 @@ int MainWindow::extractMatchedColumns( const QString &s_FilenameIn, const QStrin
         return( _APPBREAK_ );
 
     if ( ( il_ColumnList.count() < 1 ) && ( b_DeleteEmptyOutputFile == true ) )
-        removeFile( s_FilenameOut );
+        QFile::remove( s_FilenameOut );
 
     if ( b_SaveNoMatch == false )
-        removeFile( s_FilenameNoMatch );
-
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
+        QFile::remove( s_FilenameNoMatch );
 
     return( _NOERROR_ );
 }
@@ -193,6 +190,8 @@ void MainWindow::doExtractMatchedColumns()
     QString     s_FilenameIn                 = "";
     QString     s_FilenameOut                = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -207,7 +206,9 @@ void MainWindow::doExtractMatchedColumns()
                 {
                     if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                     {
-                        err = extractMatchedColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_emc_ExtractColumnsSearchString, gb_emc_SaveNoMatch, gb_emc_SkipEmptyLines, gb_emc_SkipCommentLines, gb_emc_DeleteEmptyOutputFile, gb_emc_DeleteInputFile, gsl_FilenameList.count() );
+                        sl_FilenameListDelete.append( s_FilenameIn );
+
+                        err = extractMatchedColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_emc_ExtractColumnsSearchString, gb_emc_SaveNoMatch, gb_emc_SkipEmptyLines, gb_emc_SkipCommentLines, gb_emc_DeleteEmptyOutputFile, gsl_FilenameList.count() );
 
                         stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                     }
@@ -232,6 +233,14 @@ void MainWindow::doExtractMatchedColumns()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_emc_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

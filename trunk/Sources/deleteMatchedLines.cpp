@@ -8,7 +8,7 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::deleteMatchedLines( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &s_SearchString, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::deleteMatchedLines( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &s_SearchString, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i                   = 0;
     int         n                   = 0;
@@ -74,9 +74,6 @@ int MainWindow::deleteMatchedLines( const QString &s_FilenameIn, const QString &
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -105,6 +102,8 @@ void MainWindow::doDeleteMatchedLines()
     QString     s_FilenameIn                    = "";
     QString     s_FilenameOut                   = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -117,7 +116,9 @@ void MainWindow::doDeleteMatchedLines()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = deleteMatchedLines( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_dml_DeleteLinesSearchString, gb_dml_SkipEmptyLines, gb_dml_SkipCommentLines, gb_dml_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = deleteMatchedLines( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_dml_DeleteLinesSearchString, gb_dml_SkipEmptyLines, gb_dml_SkipCommentLines, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -137,6 +138,14 @@ void MainWindow::doDeleteMatchedLines()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_dml_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

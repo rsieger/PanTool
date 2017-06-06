@@ -60,7 +60,7 @@ int MainWindow::PtInPolygon( double d_Lat, double d_Long, int i_StartPosition, i
 // **********************************************************************************************
 // **********************************************************************************************
 
-int MainWindow::findArea( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, QVector<AreaItem> &v_Area, QVector<PositionItem> &v_Position, const bool b_DeleteInputFile, const int i_NumOfFiles)
+int MainWindow::findArea( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, QVector<AreaItem> &v_Area, QVector<PositionItem> &v_Position, const int i_NumOfFiles)
 {
     int             i                   = 1;
     int             j                   = 0;
@@ -210,9 +210,6 @@ int MainWindow::findArea( const QString &s_FilenameIn, const QString &s_Filename
 
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
-
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
 
     return( _NOERROR_ );
 }
@@ -486,6 +483,8 @@ void MainWindow::doFindArea()
     QVector<AreaItem>       v_Area;
     QVector<PositionItem>   v_Position;
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -503,7 +502,9 @@ void MainWindow::doFindArea()
 
                     if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( 0 ), s_FilenameIn, s_FilenameOut ) == true )
                     {
-                        err = findArea( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, v_Area, v_Position, gb_fa_DeleteInputFile, gsl_FilenameList.count()+1 );
+                        sl_FilenameListDelete.append( s_FilenameIn );
+
+                        err = findArea( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, v_Area, v_Position, gsl_FilenameList.count()+1 );
 
                         stopProgress = incFileProgress( gsl_FilenameList.count()+1, ++i+1 );
                     }
@@ -528,6 +529,14 @@ void MainWindow::doFindArea()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_fa_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

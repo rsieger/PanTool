@@ -8,7 +8,7 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::deleteMatchedColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &SearchString, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::deleteMatchedColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &SearchString, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i                       = 0;
     int         j                       = 0;
@@ -40,8 +40,7 @@ int MainWindow::deleteMatchedColumns( const QString &s_FilenameIn, const QString
 
     if ( il_ColumnList.count() < 1 )
     {
-        removeFile( s_FilenameOut ); // if exists from older run
-
+        QFile::remove( s_FilenameOut ); // if exists from older run
         return( -81 );
     }
 
@@ -77,7 +76,7 @@ int MainWindow::deleteMatchedColumns( const QString &s_FilenameIn, const QString
     while ( ( i < n )  && ( stopProgress != _APPBREAK_ ) )
     {
         m			= NumOfSections( sl_Input.at( i ) );
-        s_Output		= "";
+        s_Output	= "";
 
         if ( il_ColumnList.count() > 0 )
         {
@@ -109,9 +108,6 @@ int MainWindow::deleteMatchedColumns( const QString &s_FilenameIn, const QString
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -140,6 +136,8 @@ void MainWindow::doDeleteMatchedColumns()
     QString     s_FilenameIn                    = "";
     QString     s_FilenameOut                   = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -154,7 +152,9 @@ void MainWindow::doDeleteMatchedColumns()
                 {
                     if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                     {
-                        err = deleteMatchedColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_dmc_DeleteColumnsSearchString, gb_dmc_SkipEmptyLines, gb_dmc_SkipCommentLines, gb_dmc_DeleteInputFile, gsl_FilenameList.count() );
+                        sl_FilenameListDelete.append( s_FilenameIn );
+
+                        err = deleteMatchedColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_dmc_DeleteColumnsSearchString, gb_dmc_SkipEmptyLines, gb_dmc_SkipCommentLines, gsl_FilenameList.count() );
 
                         stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                     }
@@ -179,6 +179,14 @@ void MainWindow::doDeleteMatchedColumns()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_dmc_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

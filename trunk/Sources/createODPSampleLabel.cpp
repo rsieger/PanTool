@@ -24,7 +24,7 @@
 
 int MainWindow::createODPSampleLabel( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL,
                                       const int i_LegColumn, const int i_SiteColumn, const int i_HoleColumn, const int i_CoreColumn, const int i_CoreTypeColumn,
-                                      const int i_SectionColumn, const int i_TopColumn, const int i_BottomColumn, const bool b_DeleteInputFile, const int i_NumOfFiles )
+                                      const int i_SectionColumn, const int i_TopColumn, const int i_BottomColumn, const int i_NumOfFiles )
 {
     int         i                 = 0;
     int         n                 = 0;
@@ -133,9 +133,6 @@ int MainWindow::createODPSampleLabel( const QString &s_FilenameIn, const QString
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -153,6 +150,8 @@ void MainWindow::doCreateODPSampleLabel()
     QString s_FilenameIn    = "";
     QString s_FilenameOut   = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -165,7 +164,9 @@ void MainWindow::doCreateODPSampleLabel()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = createODPSampleLabel( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_odp_LegColumn, gi_odp_SiteColumn, gi_odp_HoleColumn, gi_odp_CoreColumn, gi_odp_CoreTypeColumn, gi_odp_SectionColumn, gi_odp_TopColumn, gi_odp_BottomColumn, gb_odp_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = createODPSampleLabel( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_odp_LegColumn, gi_odp_SiteColumn, gi_odp_HoleColumn, gi_odp_CoreColumn, gi_odp_CoreTypeColumn, gi_odp_SectionColumn, gi_odp_TopColumn, gi_odp_BottomColumn, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -185,6 +186,14 @@ void MainWindow::doCreateODPSampleLabel()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_odp_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

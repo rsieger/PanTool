@@ -8,7 +8,7 @@
 // **********************************************************************************************
 // 2012-02-02
 
-int MainWindow::convertColumns2TableFormat( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const int i_FieldDelimiter, const QString &s_MissingValue, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::convertColumns2TableFormat( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const int i_FieldDelimiter, const QString &s_MissingValue, const int i_NumOfFiles )
 {
     int         i                   = 1;
     int         n                   = 0;
@@ -175,9 +175,6 @@ int MainWindow::convertColumns2TableFormat( const QString &s_FilenameIn, const Q
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -186,7 +183,7 @@ int MainWindow::convertColumns2TableFormat( const QString &s_FilenameIn, const Q
 // **********************************************************************************************
 // 2012-02-02
 
-int MainWindow::convertTable2ColumnsFormat( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const int i_NumOfGeocodes, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::convertTable2ColumnsFormat( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const int i_NumOfGeocodes, const int i_NumOfFiles )
 {
     int         i               = 1;
     int         n               = 0;
@@ -304,9 +301,6 @@ int MainWindow::convertTable2ColumnsFormat( const QString &s_FilenameIn, const Q
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -326,6 +320,8 @@ void MainWindow::doColumns2TableFormat()
     QString s_FilenameIn            = "";
     QString s_FilenameOut           = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -338,7 +334,9 @@ void MainWindow::doColumns2TableFormat()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = convertColumns2TableFormat( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_cft_FieldDelimiter, gs_cft_MissingValue, gb_cft_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = convertColumns2TableFormat( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_cft_FieldDelimiter, gs_cft_MissingValue, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -358,6 +356,14 @@ void MainWindow::doColumns2TableFormat()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_cft_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************
@@ -384,6 +390,8 @@ void MainWindow::doTable2ColumnsFormat()
     QString s_FilenameIn            = "";
     QString s_FilenameOut           = "";
 
+    QStringList sl_FilenameListDelete;
+
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
@@ -396,7 +404,9 @@ void MainWindow::doTable2ColumnsFormat()
             {
                 if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                 {
-                    err = convertTable2ColumnsFormat( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_tcf_NumOfGeocodes, gb_tcf_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = convertTable2ColumnsFormat( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gi_tcf_NumOfGeocodes, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -416,6 +426,14 @@ void MainWindow::doTable2ColumnsFormat()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_tcf_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

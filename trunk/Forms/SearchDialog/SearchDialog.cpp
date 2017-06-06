@@ -426,6 +426,7 @@ int MainWindow::doSearchDialog( const int mode, QString &s_SearchString, QString
         dialog.SkipEmptyLines_checkBox->setEnabled( false );
         dialog.SaveFirstLine_checkBox->setEnabled( false );
         dialog.SaveNoMatch_checkBox->setEnabled( false );
+        dialog.DeleteInputFile_checkBox->hide();
         break;
 
     case _SEARCHANDREPLACEONESTRING:

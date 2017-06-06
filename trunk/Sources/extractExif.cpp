@@ -146,7 +146,7 @@ int MainWindow::extractExif( const QString &s_ExifTool, const QStringList &sl_Fi
                     tout << endl;
                 }
 
-                removeFile( fiIn.absolutePath() + "/" + fiIn.completeBaseName() + ".txt" );
+                QFile::remove( fiIn.absolutePath() + "/" + fiIn.completeBaseName() + ".txt" );
             }
         }
 

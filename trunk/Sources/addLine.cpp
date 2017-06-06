@@ -10,7 +10,7 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::addLine( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QStringList &sl_Text, const int i_LineNo,  const bool b_AddFilename, const bool b_AddFullPath, const bool b_AddOrdinalNumber, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteInputFile, const int i_NumOfFiles )
+int MainWindow::addLine( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QStringList &sl_Text, const int i_LineNo,  const bool b_AddFilename, const bool b_AddFullPath, const bool b_AddOrdinalNumber, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i               = 0;
     int         k               = 0;
@@ -107,9 +107,6 @@ int MainWindow::addLine( const QString &s_FilenameIn, const QString &s_FilenameO
     if ( stopProgress == _APPBREAK_ )
         return( _APPBREAK_ );
 
-    if ( b_DeleteInputFile == true )
-        removeFile( s_FilenameIn );
-
     return( _NOERROR_ );
 }
 
@@ -131,6 +128,7 @@ void MainWindow::doAddLine()
     QString     s_FilenameOut       = "";
 
     QStringList sl_Text;
+    QStringList sl_FilenameListDelete;
 
 // **********************************************************************************************
 
@@ -148,7 +146,9 @@ void MainWindow::doAddLine()
                     s_dummy_Text.replace( "^t", "\t" );
                     sl_Text = s_dummy_Text.split( "^n" );
 
-                    err = addLine( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_Text, gi_al_LineNo, gb_al_AddFilename, gb_al_AddFullPath, gb_al_AddOrdinalNumber, gb_al_SkipEmptyLines, gb_al_SkipCommentLines, gb_al_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = addLine( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_Text, gi_al_LineNo, gb_al_AddFilename, gb_al_AddFullPath, gb_al_AddOrdinalNumber, gb_al_SkipEmptyLines, gb_al_SkipCommentLines, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -168,6 +168,14 @@ void MainWindow::doAddLine()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_al_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************
@@ -195,6 +203,7 @@ void MainWindow::doAddBlock()
     QString     s_FilenameOut       = "";
 
     QStringList sl_Text;
+    QStringList sl_FilenameListDelete;
 
 // **********************************************************************************************
 
@@ -212,7 +221,9 @@ void MainWindow::doAddBlock()
                     s_dummy_Text.replace( "^t", "\t" );
                     sl_Text = s_dummy_Text.split( "^n" );
 
-                    err = addLine( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_Text, gi_ab_LineNo, gb_ab_AddFilename, gb_ab_AddFullPath, gb_ab_AddOrdinalNumber, gb_ab_SkipEmptyLines, gb_ab_SkipCommentLines, gb_ab_DeleteInputFile, gsl_FilenameList.count() );
+                    sl_FilenameListDelete.append( s_FilenameIn );
+
+                    err = addLine( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_Text, gi_ab_LineNo, gb_ab_AddFilename, gb_ab_AddFullPath, gb_ab_AddOrdinalNumber, gb_ab_SkipEmptyLines, gb_ab_SkipCommentLines, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }
@@ -232,6 +243,14 @@ void MainWindow::doAddBlock()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_ab_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************

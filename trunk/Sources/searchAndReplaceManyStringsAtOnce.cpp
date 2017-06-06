@@ -10,8 +10,7 @@
 
 int MainWindow::searchAndReplaceManyStringsAtOnce( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL,
                                                    const QStringList &sl_SearchStings, const QStringList &sl_ReplaceStings, const int i_StartLine, const int i_NumberOfLines,
-                                                   const int i_SearchAndReplaceMode, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const bool b_DeleteInputFile,
-                                                   const int i_NumOfFiles )
+                                                   const int i_SearchAndReplaceMode, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i               = 0;
     int         n               = 0;
@@ -156,12 +155,9 @@ int MainWindow::searchAndReplaceManyStringsAtOnce( const QString &s_FilenameIn, 
 // **********************************************************************************************
 
     if ( stopProgress == _APPBREAK_ )
-        fout.remove();
-
-    if ( ( b_DeleteInputFile == true ) && ( stopProgress != _APPBREAK_ ) )
     {
-        QFile fin( s_FilenameIn );
-        fin.remove();
+        fout.remove();
+        return( _APPBREAK_ );
     }
 
     return( stopProgress );
@@ -192,6 +188,7 @@ void MainWindow::doSearchAndReplaceManyStringsAtOnce()
     QStringList sl_Input;
     QStringList sl_SearchStrings;
     QStringList sl_ReplaceStrings;
+    QStringList sl_FilenameListDelete;
 
 // **********************************************************************************************
 
@@ -236,7 +233,9 @@ void MainWindow::doSearchAndReplaceManyStringsAtOnce()
                     {
                         if ( buildFilename( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList.at( i ), s_FilenameIn, s_FilenameOut ) == true )
                         {
-                            stopProgress = searchAndReplaceManyStringsAtOnce( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_SearchStrings, sl_ReplaceStrings, gi_srm_StartLine, gi_srm_NumberOfLines, gi_srm_SearchAndReplaceMode, gb_srm_SkipEmptyLines, gb_srm_SkipCommentLines, gb_srm_DeleteInputFile, gsl_FilenameList.count() );
+                            sl_FilenameListDelete.append( s_FilenameIn );
+
+                            err = searchAndReplaceManyStringsAtOnce( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_SearchStrings, sl_ReplaceStrings, gi_srm_StartLine, gi_srm_NumberOfLines, gi_srm_SearchAndReplaceMode, gb_srm_SkipEmptyLines, gb_srm_SkipCommentLines, gsl_FilenameList.count() );
 
                             stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                         }
@@ -266,6 +265,14 @@ void MainWindow::doSearchAndReplaceManyStringsAtOnce()
     else
     {
         err = _CHOOSEABORTED_;
+    }
+
+// **********************************************************************************************
+
+    if ( ( stopProgress != _APPBREAK_ ) && ( err == _NOERROR_ ) && ( gb_srm_DeleteInputFile == true ) )
+    {
+        for ( int i=0; i<sl_FilenameListDelete.count(); i++ )
+            QFile::remove( sl_FilenameListDelete.at( i ) );
     }
 
 // **********************************************************************************************
