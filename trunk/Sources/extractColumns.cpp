@@ -6,9 +6,9 @@
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
-// 2008-04-07
+// 2017-07-11
 
-int MainWindow::extractColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &s_ExtractColumnsList, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
+int MainWindow::extractColumns( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QStringList &sl_allLines, const QString &s_ExtractColumnsList, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i               = 0;
     int         j               = 0;
@@ -19,15 +19,21 @@ int MainWindow::extractColumns( const QString &s_FilenameIn, const QString &s_Fi
     QString     s_Output        = "";
     QString     s_EOL           = setEOLChar( i_EOL );
 
-    QStringList sl_Input;
+    QStringList sl_Input        = sl_allLines;
 
     QList<int>  il_ColumnList;
 
 // **********************************************************************************************
 // read file
 
-    if ( ( n = readFile( s_FilenameIn, sl_Input, i_CodecInput ) ) < 1 )
-        return( n );
+    if ( ( n = sl_Input.count() ) < 1 )
+    {
+        if ( ( n = readFile( s_FilenameIn, sl_Input, i_CodecInput ) ) < 1 )
+            return( n );
+    }
+
+    if ( sl_Input.count() < 1 )
+        return( -80 );
 
     if ( ( m = NumOfSections( sl_Input.at( 0 ) ) ) < 1 )
         return( -80 );
@@ -118,6 +124,7 @@ void MainWindow::doExtractColumns()
     QString     s_FilenameIn    = "";
     QString     s_FilenameOut   = "";
 
+    QStringList sl_temp;
     QStringList sl_FilenameListDelete;
 
 // **********************************************************************************************
@@ -134,7 +141,7 @@ void MainWindow::doExtractColumns()
                 {
                     sl_FilenameListDelete.append( s_FilenameIn );
 
-                    err = extractColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, gs_ec_ExtractColumnsList, gb_ec_SkipEmptyLines, gb_ec_SkipCommentLines, gsl_FilenameList.count() );
+                    err = extractColumns( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, sl_temp, gs_ec_ExtractColumnsList, gb_ec_SkipEmptyLines, gb_ec_SkipCommentLines, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }

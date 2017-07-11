@@ -39,6 +39,9 @@ void MainWindow::onError( const int err )
     case -40:
         QMessageBox::information( this, getApplicationName( true ), tr( "Wrong format" ) );
         break ;
+    case -41:
+        QMessageBox::information( this, getApplicationName( true ), tr( "Wrong format of fixed columns list" ) );
+        break ;
     case -50:
         QMessageBox::information( this, getApplicationName( true ), tr( "Only one file selected" ) );
         break ;
@@ -49,7 +52,7 @@ void MainWindow::onError( const int err )
         QMessageBox::information( this, getApplicationName( true ), tr( "Number of lines is different.\nConcatenating files was canceled" ) );
         break ;
     case -80:
-        QMessageBox::information( this, getApplicationName( true ), tr( "First line is empty. Can't find a column." ) );
+        QMessageBox::information( this, getApplicationName( true ), tr( "File or first line is empty. Can't find a column." ) );
         break ;
     case -82:
         QMessageBox::information( this, getApplicationName( true ), tr( "No match!\nEmpty output file deleted." ) );

@@ -11,6 +11,7 @@
 // ******************************************************************************************************
 // ******************************************************************************************************
 // ******************************************************************************************************
+// 2017-07-11
 
 QList<int> MainWindow::scanList( const int mode, const int i_maxNumOfPositions, const QString &s_List )
 {
@@ -28,7 +29,10 @@ QList<int> MainWindow::scanList( const int mode, const int i_maxNumOfPositions, 
 
     s_tempList = s_List;
 
-    if ( s_tempList.startsWith( "-" ) == true )
+    if ( s_tempList.startsWith( "-" ) == true ) // -5
+        s_tempList = s_List.section( ",", 1 );
+
+    if ( s_tempList.startsWith( "0" ) == true ) // 0
         s_tempList = s_List.section( ",", 1 );
 
     if ( s_tempList.endsWith( "-" ) == true )

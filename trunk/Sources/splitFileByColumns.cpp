@@ -36,26 +36,45 @@ int MainWindow::splitFileByColumns( const QString &s_FilenameIn, const int i_Cod
 
     il_ColumnList = scanList( _EXTRACTCOLUMNS, n, s_FixedColumnsList );
 
-    s = il_ColumnList.last() + 2;
+    if ( il_ColumnList.count() > 0 )
+        s = il_ColumnList.last() + 2;
+    else
+        s = 1;
 
     for ( int i=1; i<n; i++ )
     {
-        if ( ( s < n ) && ( e < n ) )
+        if ( s <= n )
         {
-            s_ExtractColumnsList = s_FixedColumnsList;
-
             s_FilenameOut = fi.absolutePath() + "/" + fi.completeBaseName() + QString( "_%1" ).arg( i, 4, 10, QLatin1Char( '0' ) ) + setExtension( i_Extension );
 
             e = s + i_NumberOfColumns - 1;
 
-            if ( e >= n )
+            if ( e > n )
                 e = n;
 
-            s_ExtractColumnsList.append( QString( ",%1-%2").arg( s ).arg( e ) );
+            if ( il_ColumnList.count() > 0 )
+            {
+                s_ExtractColumnsList = s_FixedColumnsList;
+                s_ExtractColumnsList.append( QString( ",%1-%2").arg( s ).arg( e ) );
+            }
+            else
+            {
+                s_ExtractColumnsList.clear();
+                s_ExtractColumnsList.append( QString( "%1-%2").arg( s ).arg( e ) );
+            }
 
-            err = extractColumns( s_FilenameIn, s_FilenameOut, i_CodecInput, i_CodecOutput, i_EOL, s_ExtractColumnsList, false, false, i_NumOfFiles );
+            err = extractColumns( s_FilenameIn, s_FilenameOut, i_CodecInput, i_CodecOutput, i_EOL, sl_Input, s_ExtractColumnsList, false, false, i_NumOfFiles );
 
             s = e + 1;
+        }
+        else
+        {
+            if ( i == 1 )
+                err = -41;
+            else
+                err = _NOERROR_;
+
+            break;
         }
     }
 

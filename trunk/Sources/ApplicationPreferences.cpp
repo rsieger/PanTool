@@ -675,7 +675,7 @@ void MainWindow::loadPreferences()
     // split files by columns
     settings.beginGroup( "SplitColumns" );
     gi_sfc_NumberOfColumns  = settings.value( "NumberOfColumns", 0 ).toInt();
-    gs_sfc_FixedColumnsList = settings.value( "FixedColumnsList", 0 ).toString();
+    gs_sfc_FixedColumnsList = settings.value( "FixedColumnsList", "1-4" ).toString();
     gb_sfc_DeleteInputFile  = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 

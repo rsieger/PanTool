@@ -20,13 +20,13 @@ SplitFileDialog::SplitFileDialog( QWidget *parent ) : QDialog( parent )
 
     NumberOfHeaderLines_lineEdit_2->setValidator( new QIntValidator( 0, 9999999, this ) );
 
-    QRegExp regExp( "[0-9,-end]{1024}" );
+    QRegExp regExp( "[0-9,-]{1024}" );
     ColumnList_lineEdit_3->setValidator( new QRegExpValidator( regExp, this ) );
     NumberOfColumns_lineEdit_3->setValidator( new QIntValidator( 1, 9999999, this ) );
 
-    connect(ClearAll_pushButton, SIGNAL(clicked()), this, SLOT(clearAll()));
-    connect(OK_pushButton, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(Cancel_pushButton, SIGNAL(clicked()), this, SLOT(reject()));
+    connect( ClearAll_pushButton, SIGNAL( clicked() ), this, SLOT( clearAll() ) );
+    connect( OK_pushButton, SIGNAL( clicked() ), this, SLOT( accept() ) );
+    connect( Cancel_pushButton, SIGNAL( clicked() ), this, SLOT( reject() ) );
 
     connect( NumberOfLines_lineEdit_1, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
     connect( NumberOfHeaderLines_lineEdit_1, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
