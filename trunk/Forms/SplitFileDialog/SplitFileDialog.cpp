@@ -20,8 +20,9 @@ SplitFileDialog::SplitFileDialog( QWidget *parent ) : QDialog( parent )
 
     NumberOfHeaderLines_lineEdit_2->setValidator( new QIntValidator( 0, 9999999, this ) );
 
+    QRegExp regExp( "[0-9,-end]{1024}" );
+    ColumnList_lineEdit_3->setValidator( new QRegExpValidator( regExp, this ) );
     NumberOfColumns_lineEdit_3->setValidator( new QIntValidator( 1, 9999999, this ) );
-    NumberOfMetadataColumns_lineEdit_3->setValidator( new QIntValidator( 0, 9999999, this ) );
 
     connect(ClearAll_pushButton, SIGNAL(clicked()), this, SLOT(clearAll()));
     connect(OK_pushButton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -33,7 +34,7 @@ SplitFileDialog::SplitFileDialog( QWidget *parent ) : QDialog( parent )
     connect( NumberOfHeaderLines_lineEdit_2, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
 
     connect( NumberOfColumns_lineEdit_3, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
-    connect( NumberOfMetadataColumns_lineEdit_3, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
+    connect( ColumnList_lineEdit_3, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
 }
 
 // ***********************************************************************************************************************
@@ -72,7 +73,7 @@ void SplitFileDialog::clearAll()
 
     case _SPLITBYCOLUMNS:
         NumberOfColumns_lineEdit_3->setText( QString( "%1" ).arg( 0 ) );
-        NumberOfMetadataColumns_lineEdit_3->setText( QString( "%1" ).arg( 0 ) );
+        ColumnList_lineEdit_3->setText( "" );
         SkipCommentLines_checkBox->setChecked( false );
         SkipEmptyLines_checkBox->setChecked( false );
         DeleteInputFile_checkBox->setChecked( false );
@@ -121,7 +122,7 @@ void SplitFileDialog::enableOKButton()
     case _SPLITBYCOLUMNS:
         if ( NumberOfColumns_lineEdit_3->text().toInt() < 1 )
             b_OK = false;
-        if ( NumberOfMetadataColumns_lineEdit_3->text().toInt() < 0 )
+        if ( ColumnList_lineEdit_3->text().isEmpty() == true )
             b_OK = false;
         break;
 
@@ -145,7 +146,7 @@ void SplitFileDialog::enableOKButton()
 // ***********************************************************************************************************************
 // ***********************************************************************************************************************
 
-int MainWindow::doSplitFileDialog( const int mode, int &i_NumberOfLines, int &i_NumberOfHeaderLines, int &i_NumberOfColumns, int &i_NumberOfMetadataColumns, bool &b_SkipEmptyLines, bool &b_SkipCommentLines, bool &b_DeleteInputFile )
+int MainWindow::doSplitFileDialog( const int mode, int &i_NumberOfLines, int &i_NumberOfHeaderLines, int &i_NumberOfColumns, QString &s_ColumnList, bool &b_SkipEmptyLines, bool &b_SkipCommentLines, bool &b_DeleteInputFile )
 {
     int i_DialogResult = QDialog::Rejected;
 
@@ -159,7 +160,7 @@ int MainWindow::doSplitFileDialog( const int mode, int &i_NumberOfLines, int &i_
     dialog.NumberOfHeaderLines_lineEdit_2->setText( QString( "%1" ).arg( i_NumberOfHeaderLines ) );
 
     dialog.NumberOfColumns_lineEdit_3->setText( QString( "%1" ).arg( i_NumberOfColumns ) );
-    dialog.NumberOfMetadataColumns_lineEdit_3->setText( QString( "%1" ).arg( i_NumberOfMetadataColumns ) );
+    dialog.ColumnList_lineEdit_3->setText( s_ColumnList );
 
     dialog.SkipEmptyLines_checkBox->setChecked( b_SkipEmptyLines );
     dialog.SkipCommentLines_checkBox->setChecked( b_SkipCommentLines );
@@ -211,15 +212,15 @@ int MainWindow::doSplitFileDialog( const int mode, int &i_NumberOfLines, int &i_
          switch ( mode )
         {
         case _SPLITBYLINES:
-            i_NumberOfLines           = dialog.NumberOfLines_lineEdit_1->text().toInt();
-            i_NumberOfHeaderLines     = dialog.NumberOfHeaderLines_lineEdit_1->text().toInt();
+            i_NumberOfLines         = dialog.NumberOfLines_lineEdit_1->text().toInt();
+            i_NumberOfHeaderLines   = dialog.NumberOfHeaderLines_lineEdit_1->text().toInt();
             break;
         case _SPLITLARGE:
-            i_NumberOfHeaderLines     = dialog.NumberOfHeaderLines_lineEdit_2->text().toInt();
+            i_NumberOfHeaderLines   = dialog.NumberOfHeaderLines_lineEdit_2->text().toInt();
             break;
         case _SPLITBYCOLUMNS:
-            i_NumberOfColumns         = dialog.NumberOfColumns_lineEdit_3->text().toInt();
-            i_NumberOfMetadataColumns = dialog.NumberOfMetadataColumns_lineEdit_3->text().toInt();
+            i_NumberOfColumns       = dialog.NumberOfColumns_lineEdit_3->text().toInt();
+            s_ColumnList            = dialog.ColumnList_lineEdit_3->text().toLower();
         break;
         }
 

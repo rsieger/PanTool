@@ -286,7 +286,8 @@ void MainWindow::doSplitFilesByLines()
     int     stopProgress                    = 0;
 
     int     i_dummy_NumberOfColumns         = 0;
-    int     i_dummy_NumberOfMetadataColumns = 0;
+
+    QString s_dummy_FixedColumnsList        = "";
 
     QString s_FilenameIn                    = "";
     QString s_FilenameOut                   = "";
@@ -297,7 +298,7 @@ void MainWindow::doSplitFilesByLines()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-        if ( doSplitFileDialog( _SPLITBYLINES, gi_sfl_NumberOfLines, gi_sfl_NumberOfHeaderLines, i_dummy_NumberOfColumns, i_dummy_NumberOfMetadataColumns, gb_sfl_SkipEmptyLines, gb_sfl_SkipCommentLines, gb_sfl_DeleteInputFile ) == QDialog::Accepted )
+        if ( doSplitFileDialog( _SPLITBYLINES, gi_sfl_NumberOfLines, gi_sfl_NumberOfHeaderLines, i_dummy_NumberOfColumns, s_dummy_FixedColumnsList, gb_sfl_SkipEmptyLines, gb_sfl_SkipCommentLines, gb_sfl_DeleteInputFile ) == QDialog::Accepted )
         {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Split files..." ) );
 
@@ -357,7 +358,8 @@ void MainWindow::doSplitLargeFiles()
 
     int     i_dummy_NumberOfLines           = 0;
     int     i_dummy_NumberOfColumns         = 0;
-    int     i_dummy_NumberOfMetadataColumns = 0;
+
+    QString s_dummy_FixedColumnsList        = "";
 
     QString s_FilenameIn                    = "";
     QString s_FilenameOut                   = "";
@@ -368,7 +370,7 @@ void MainWindow::doSplitLargeFiles()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-        if ( doSplitFileDialog( _SPLITLARGE, i_dummy_NumberOfLines, gi_sfl_NumberOfHeaderLines, i_dummy_NumberOfColumns, i_dummy_NumberOfMetadataColumns, gb_sfl_SkipEmptyLines, gb_sfl_SkipCommentLines, gb_sfl_DeleteInputFile ) == QDialog::Accepted )
+        if ( doSplitFileDialog( _SPLITLARGE, i_dummy_NumberOfLines, gi_sfl_NumberOfHeaderLines, i_dummy_NumberOfColumns, s_dummy_FixedColumnsList, gb_sfl_SkipEmptyLines, gb_sfl_SkipCommentLines, gb_sfl_DeleteInputFile ) == QDialog::Accepted )
         {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Split large files..." ) );
 

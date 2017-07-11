@@ -7,7 +7,7 @@
     const QString _PROGRAMDOI_                       = "doi:10.1594/PANGAEA.787549";
     const QString _PROGRAMREADME_                    = "https://wiki.pangaea.de/wiki/PanTool";
 
-    const QString _VERSION_                          = "3.30";	// Version number, 2017-06-06
+    const QString _VERSION_                          = "3.31";	// Version number, 2017-07-10
     const QChar   _PSEPARATOR_                       = '|';
 
     const int   _NOERROR_                            = 0;
@@ -64,6 +64,7 @@
     const int   _ALTITUDEPOS                         = 4;
     const int   _COPYRIGHTPOS                        = 5;
 
+    const int   _MAX_NUM_COLUMNS                     = 1024;    // maximum number of columns in data file
     const int   _MAX_NUM_OF_AREAS					 = 5000;	// maximum number of areas, used in find areas tool
     const int   _MAX_NUM_OF_LOCATIONS				 = 500000;	// maximum number of locations, used in find areas tool
 

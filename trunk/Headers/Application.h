@@ -226,7 +226,7 @@ public:
 
     // split files by columns
     int         gi_sfc_NumberOfColumns;              //!< max. Anzahl von Spalten
-    int         gi_sfc_NumberOfMetadataColumns;      //!< Anzahl der Spalten, die in jeder Datei auftauchen sollen
+    QString     gs_sfc_FixedColumnsList;             //!< Liste der Spalten, die in jeder Datei auftauchen sollen
     bool        gb_sfc_DeleteInputFile;              //!< loesche Inputdatei.
 
     // split files by line
@@ -450,7 +450,7 @@ public:
 
     int createODPSampleLabel( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int Leg, const int Site, const int Hole, const int Core, const int CoreType, const int Section, const int Top, const int Bottom, const int NumOfFiles );
 
-    int splitFileByColumns( const QString &FilenameIn, const int CodecInput, const int CodecOutput, const int EOL, const int Extension, const int NumberOfColumns = 1, const int NumberOfMetadataColumns = 0, const int NumOfFiles = 0 );
+    int splitFileByColumns( const QString &FilenameIn, const int CodecInput, const int CodecOutput, const int EOL, const int Extension, const int NumberOfColumns = 1, const QString &FixedColumnsList = "", const int NumOfFiles = 0 );
     int splitFileByLines( const QString &FilenameIn, const int CodecInput, const int CodecOutput, const int EOL, const int Extension, const int NumberOfLines = 1, const int NumberOfHeaderLines = 0, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
     int splitLargeFile( const QString &FilenameIn, const int CodecInput, const int CodecOutput, const int EOL, const int Extension, const int NumberOfHeaderLines = 0, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
 
@@ -510,7 +510,7 @@ public:
     int doRenameFilesDialog( QString &SearchString, QString &ReplaceString );
     int doSearchDialog( const int mode, QString &SearchString, QString &ReplaceString, QString &s_DatabaseName, int &StartLine, int &BreakAfterNLines, int &SearchAndReplaceMode, bool &SaveFirstLine, bool &SaveNoMatch, bool &SkipEmptyLines, bool &SkipCommentLines,  bool &NoEmptyOutputFile, bool &DeleteInputFile );
     int doSkipLinesDialog( const int mode, bool &SaveHeader, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
-    int doSplitFileDialog( const int mode, int &NumberOfLines, int &NumberOfHeaderLines, int &NumberOfColumns, int &NumberOfMetadataColumns, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
+    int doSplitFileDialog( const int mode, int &NumberOfLines, int &NumberOfHeaderLines, int &NumberOfColumns, QString &FixedColumnsList, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doODPSampleLabelDialog( int &LegColumn, int &SiteColumn, int &HoleColumn, int &CoreColumn, int &CoreTypeColumn, int &SectionColumn, int &TopColumn, int &BottomColumn, bool &DeleteInputFile );
     int doTranslateCharacterEncodingDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );

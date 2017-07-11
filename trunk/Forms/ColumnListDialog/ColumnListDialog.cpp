@@ -23,7 +23,6 @@ ColumnListDialog::ColumnListDialog( QWidget *parent ) : QDialog( parent )
     connect(Cancel_pushButton, SIGNAL(clicked()), this, SLOT(reject()));
 
     connect( ColumnList_lineEdit, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
-
 }
 
 // ***********************************************************************************************************************

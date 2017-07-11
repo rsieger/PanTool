@@ -239,7 +239,7 @@ void MainWindow::savePreferences()
     // split files by columns
     settings.beginGroup( "SplitColumns" );
     settings.setValue( "NumberOfColumns", gi_sfc_NumberOfColumns );
-    settings.setValue( "NumberOfMeatadataColumns", gi_sfc_NumberOfMetadataColumns );
+    settings.setValue( "FixedColumnsList", gs_sfc_FixedColumnsList );
     settings.setValue( "DeleteInputFile", gb_sfc_DeleteInputFile );
     settings.endGroup();
 
@@ -674,9 +674,9 @@ void MainWindow::loadPreferences()
 
     // split files by columns
     settings.beginGroup( "SplitColumns" );
-    gi_sfc_NumberOfColumns         = settings.value( "NumberOfColumns", 0 ).toInt();
-    gi_sfc_NumberOfMetadataColumns = settings.value( "NumberOfMeatadataColumns", 0 ).toInt();
-    gb_sfc_DeleteInputFile         = settings.value( "DeleteInputFile", false ).toBool();
+    gi_sfc_NumberOfColumns  = settings.value( "NumberOfColumns", 0 ).toInt();
+    gs_sfc_FixedColumnsList = settings.value( "FixedColumnsList", 0 ).toString();
+    gb_sfc_DeleteInputFile  = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 
     // concatenate files by lines
