@@ -128,7 +128,7 @@ int MainWindow::convertColumns2TableFormat( const QString &s_FilenameIn, const Q
             break;
         }
 
-        if ( ( s_EventLabel != InputStr.section( "\t", 0, 0 ) ) || ( s_Geocode != s_newGeocode ) )
+        if ( ( ( InputStr.section( "\t", 0, 0 ).isEmpty() == false ) && ( s_EventLabel != InputStr.section( "\t", 0, 0 ) ) ) || ( s_Geocode != s_newGeocode ) )
         {
             if ( sl_Output.count() > 0 )
             {
