@@ -15,7 +15,7 @@ CharactersAtPositionDialog::CharactersAtPositionDialog( QWidget *parent ) : QDia
 {
     setupUi( this );
 
-    QRegExp regExp( "[0-9,]{1024}" );
+    QRegExp regExp( "[0-9,]{2500}" );
     PositionList_lineEdit->setValidator( new QRegExpValidator( regExp, this ) );
 
     connect(ClearAll_pushButton, SIGNAL(clicked()), this, SLOT(clearAll()));
