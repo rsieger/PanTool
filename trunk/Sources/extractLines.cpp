@@ -18,6 +18,7 @@ int MainWindow::extractLines( const QString &s_FilenameIn, const QString &s_File
     int         stopProgress    = 0;
 
     QString     s_EOL           = setEOLChar( i_EOL );
+    QString     s_Output        = "";
 
     QStringList sl_Input;
 
@@ -90,6 +91,33 @@ int MainWindow::extractLines( const QString &s_FilenameIn, const QString &s_File
         tout << sl_Input.last() << s_EOL;
     }
 
+// **********************************************************************************************
+// Join lines (Bracher, PDI-15573)
+/*
+    initProgress( i_NumOfFiles, s_FilenameIn, tr( "Join lines..." ), e );
+
+    i = 0;
+
+    while ( ( i<e ) && ( stopProgress != _APPBREAK_ ) )
+    {
+        if ( sl_Input.at( i ).section( ",", 1, 1 ).contains( ":" ) == false )
+            s_Output.append( sl_Input.at( i ) + "\t" );
+        else
+        {
+            s_Output.replace( ",", "\t" );
+            tout << s_Output << s_EOL;
+            s_Output = sl_Input.at( i ) + "\t";
+            s_Output.replace( "/", "." );
+        }
+
+        s_Output.replace( ",", "\t" );
+        stopProgress = incProgress( i_NumOfFiles, ++i );
+    }
+
+    tout << s_Output << s_EOL;
+
+    resetProgress( i_NumOfFiles );
+*/
 // **********************************************************************************************
 
     fout.close();
