@@ -15,7 +15,7 @@ CharactersAtPositionDialog::CharactersAtPositionDialog( QWidget *parent ) : QDia
 {
     setupUi( this );
 
-    QRegExp regExp( "[0-9,]{2500}" );
+    QRegExp regExp( "[0-9,]{1024}" ); // 1024 is the limit of characters in regExp
     PositionList_lineEdit->setValidator( new QRegExpValidator( regExp, this ) );
 
     connect(ClearAll_pushButton, SIGNAL(clicked()), this, SLOT(clearAll()));
