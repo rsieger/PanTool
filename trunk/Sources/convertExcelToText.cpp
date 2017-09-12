@@ -29,7 +29,7 @@ int MainWindow::convertExcelToText( const QString &s_FilenameIn, const QString &
     QTextStream tout( &fRScript );
 
     tout << "library( openxlsx )" << endl;
-    tout << "loadWorkbook( \"" + QDir::toNativeSeparators( fiFilenameIn.absoluteFilePath() ) + "\" )->wb" << endl;
+    tout << "loadWorkbook( \"" + fiFilenameIn.absoluteFilePath() + "\" )->wb" << endl;
 
     tout << "L=list()" << endl;
 
