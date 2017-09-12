@@ -37,7 +37,7 @@ int MainWindow::startProgram( const QString &s_Program, const QString &s_Filenam
 
         #if defined(Q_OS_MAC)
             s_ProgramFilePath = QDir::toNativeSeparators( fi.absoluteFilePath() );
-            s_ProgramFilePath.append( "/Contents/MacOS/odv4" );
+//          s_ProgramFilePath.append( "/Contents/MacOS/xxx" );
         #endif
 
         sl_args.append( QDir::toNativeSeparators( s_Filename ) );

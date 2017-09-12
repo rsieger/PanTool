@@ -423,6 +423,10 @@ void MainWindow::savePreferences()
     settings.setValue( "TechnicalInfo", gb_xml_TechnicalInfo );
     settings.endGroup();
 
+    // RScript
+    settings.beginGroup( "RScript" );
+    settings.setValue( "FilenameRScriptProgram", gs_rs_FilenameRScriptProgram );
+    settings.endGroup();
 }
 
 // **********************************************************************************************
@@ -859,6 +863,8 @@ void MainWindow::loadPreferences()
     gb_xml_TechnicalInfo = settings.value( "TechnicalInfo", false ).toBool();
     settings.endGroup();
 
+    settings.beginGroup( "RScript" );
+    gs_rs_FilenameRScriptProgram = settings.value( "FilenameRScriptProgram", "Browse through the Rscript program file with \"Browse ...\"" ).toString();
     settings.endGroup();
 }
 

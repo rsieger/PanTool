@@ -23,7 +23,7 @@ void MainWindow::onError( const int err )
     case _CHOOSEABORTED_: // Choose aborted
         break;
     case _FILENOTEXISTS_: // File not exists
-        QMessageBox::information( this, getApplicationName( true ), tr( "Import file not exists." ) );
+        QMessageBox::information( this, getApplicationName( true ), tr( "File not exists." ) );
         break;
     case -3: // Progress aborted
         break;

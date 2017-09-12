@@ -67,6 +67,7 @@ HEADERS = ./Headers/Application.h \
     ./Forms/PanGetDialog/PanGetDialog.h \
     ./Forms/RecalcDialog/RecalcDialog.h \
     ./Forms/RenameFilesDialog/RenameFilesDialog.h \
+    ./Forms/RScriptOptionsDialog/RScriptOptionsDialog.h \
     ./Forms/SearchDialog/SearchDialog.h \
     ./Forms/SkipLinesDialog/SkipLinesDialog.h \
     ./Forms/SplitFileDialog/SplitFileDialog.h \
@@ -89,6 +90,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Sources/compressFolder.cpp \
     ./Sources/concatenateFiles.cpp \
     ./Sources/convertMetadataXML.cpp \
+    ./Sources/convertExcelToText.cpp \
     ./Sources/createDateTime.cpp \
     ./Sources/createGoogleEarthImportFile.cpp \
     ./Sources/createODPSampleLabel.cpp \
@@ -145,6 +147,7 @@ SOURCES = ./Sources/ApplicationInit.cpp \
     ./Forms/PanGetDialog/PanGetDialog.cpp \
     ./Forms/RecalcDialog/RecalcDialog.cpp \
     ./Forms/RenameFilesDialog/RenameFilesDialog.cpp \
+    ./Forms/RScriptOptionsDialog/RScriptOptionsDialog.cpp \
     ./Forms/SearchDialog/SearchDialog.cpp \
     ./Forms/SkipLinesDialog/SkipLinesDialog.cpp \
     ./Forms/SplitFileDialog/SplitFileDialog.cpp \
@@ -172,6 +175,7 @@ FORMS = ./Forms/AboutDialog/aboutdialog.ui \
     ./Forms/PanGetDialog/pangetdialog.ui \
     ./Forms/RecalcDialog/recalcdialog.ui \
     ./Forms/RenameFilesDialog/renamefilesdialog.ui \
+    ./Forms/RScriptOptionsDialog/rscriptoptionsdialog.ui \
     ./Forms/SearchDialog/searchdialog.ui \
     ./Forms/SkipLinesDialog/skiplinesdialog.ui \
     ./Forms/SplitFileDialog/splitfiledialog.ui \

@@ -92,9 +92,6 @@ void MainWindow::createActions()
     searchAndReplaceManyStringsAtOnceAction = new QAction(trUtf8("Search and replace many strings at once..."), this);
     connect(searchAndReplaceManyStringsAtOnceAction, SIGNAL(triggered()), this, SLOT(doSearchAndReplaceManyStringsAtOnce()));
 
-    buildSearchAndReplaceDatabaseAction = new QAction(trUtf8("Build search and replace database"), this);
-    connect(buildSearchAndReplaceDatabaseAction, SIGNAL(triggered()), this, SLOT(doBuildSearchAndReplaceDatabase()));
-
     insertCharactersAtPositionAction = new QAction(trUtf8("Insert characters at given positions..."), this);
     connect(insertCharactersAtPositionAction, SIGNAL(triggered()), this, SLOT(doInsertCharactersAtPosition()));
 
@@ -116,9 +113,6 @@ void MainWindow::createActions()
     splitLargeFilesAction = new QAction(trUtf8("Split large file (> 100 MB) by lines..."), this);
     connect(splitLargeFilesAction, SIGNAL(triggered()), this, SLOT(doSplitLargeFiles()));
 
-    recalcColumnsAction = new QAction(trUtf8("Recalculation of columns..."), this);
-    connect(recalcColumnsAction, SIGNAL(triggered()), this, SLOT(doRecalcColumns()));
-
     addColumnAction = new QAction(trUtf8("Add column..."), this);
     connect(addColumnAction, SIGNAL(triggered()), this, SLOT(doAddColumn()));
 
@@ -128,29 +122,8 @@ void MainWindow::createActions()
     addBlockAction = new QAction(trUtf8("Add text block..."), this);
     connect(addBlockAction, SIGNAL(triggered()), this, SLOT(doAddBlock()));
 
-    translateCharacterEncodingAction = new QAction(trUtf8("Character encoding translation..."), this);
-    connect(translateCharacterEncodingAction, SIGNAL(triggered()), this, SLOT(doTranslateCharacterEncoding()));
-
-    transposeTableAction = new QAction(trUtf8("Transpose table..."), this);
-    connect(transposeTableAction, SIGNAL(triggered()), this, SLOT(doTransposeTable()));
-
-    createScriptAction = new QAction(trUtf8("Create script files"), this);
-    connect(createScriptAction, SIGNAL(triggered()), this, SLOT(doCreateScript()));
-
-    compressFolderZipAction = new QAction(trUtf8("Compress folder with zip"), this);
-    connect(compressFolderZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderZip()));
-
-    compressFolderGZipAction = new QAction(trUtf8("Compress folder with gz"), this);
-    connect(compressFolderGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderGZip()));
-
-    compressFilesZipAction = new QAction(trUtf8("Compress files with zip"), this);
-    connect(compressFilesZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesZip()));
-
-    compressFilesGZipAction = new QAction(trUtf8("Compress files with gz"), this);
-    connect(compressFilesGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesGZip()));
-
-    decompressFilesAction = new QAction(trUtf8("Decompress files"), this);
-    connect(decompressFilesAction, SIGNAL(triggered()), this, SLOT(doDecompressFiles()));
+    recalcColumnsAction = new QAction(trUtf8("Recalculation of columns..."), this);
+    connect(recalcColumnsAction, SIGNAL(triggered()), this, SLOT(doRecalcColumns()));
 
     renameFilesAction = new QAction(trUtf8("Rename files..."), this);
     renameFilesAction->setShortcut(tr("Ctrl+R"));
@@ -158,6 +131,21 @@ void MainWindow::createActions()
 
     saveFilelistAction = new QAction(trUtf8("Save list of files..."), this);
     connect(saveFilelistAction, SIGNAL(triggered()), this, SLOT(doSaveFilelist()));
+
+    compressFilesZipAction = new QAction(trUtf8("Compress files with zip"), this);
+    connect(compressFilesZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesZip()));
+
+    compressFolderZipAction = new QAction(trUtf8("Compress folder with zip..."), this);
+    connect(compressFolderZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderZip()));
+
+    compressFilesGZipAction = new QAction(trUtf8("Compress files with gz"), this);
+    connect(compressFilesGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFilesGZip()));
+
+    compressFolderGZipAction = new QAction(trUtf8("Compress folder with gz..."), this);
+    connect(compressFolderGZipAction, SIGNAL(triggered()), this, SLOT(doCompressFolderGZip()));
+
+    decompressFilesAction = new QAction(trUtf8("Decompress files"), this);
+    connect(decompressFilesAction, SIGNAL(triggered()), this, SLOT(doDecompressFiles()));
 
     // Special tools
 
@@ -168,41 +156,57 @@ void MainWindow::createActions()
     convertMetadataXMAction = new QAction(trUtf8("Convert PANGAEA metadata XML..."), this);
     connect(convertMetadataXMAction, SIGNAL(triggered()), this, SLOT(doConvertMetadataXML()));
 
-    checkTimeSeriesAction = new QAction(trUtf8("Check time series data"), this);
-    connect(checkTimeSeriesAction, SIGNAL(triggered()), this, SLOT(doCheckTimeSeries()));
+    createScriptAction = new QAction(trUtf8("Create script"), this);
+    connect(createScriptAction, SIGNAL(triggered()), this, SLOT(doCreateScript()));
 
-    calcDepthAction = new QAction(trUtf8("Pressure -> Depth"), this);
+    calcDepthAction = new QAction(trUtf8("Pressure -> Depth..."), this);
     connect(calcDepthAction, SIGNAL(triggered()), this, SLOT(doCalcDepthFromPressure()));
 
-    calcSalinityAction = new QAction(trUtf8("Conductivity, temperature, pressure -> salinity"), this);
+    calcSalinityAction = new QAction(trUtf8("Conductivity, temperature, pressure -> salinity..."
+                                            ""), this);
     connect(calcSalinityAction, SIGNAL(triggered()), this, SLOT(doCalcSalinityFromCondTempPress()));
 
     createDateTimeAction = new QAction(trUtf8("Create date/time..."), this);
     connect(createDateTimeAction, SIGNAL(triggered()), this, SLOT(doCreateDateTime()));
 
+    checkTimeSeriesAction = new QAction(trUtf8("Check time series data"), this);
+    connect(checkTimeSeriesAction, SIGNAL(triggered()), this, SLOT(doCheckTimeSeries()));
+
     createODPSampleLabelAction = new QAction(trUtf8("Create ODP sample label..."), this);
     connect(createODPSampleLabelAction, SIGNAL(triggered()), this, SLOT(doCreateODPSampleLabel()));
-
-    findPolygonCentroidAction = new QAction(trUtf8("Find area centroid"), this);
-    connect(findPolygonCentroidAction, SIGNAL(triggered()), this, SLOT(doFindPolygonCentroid()));
 
     findAreaAction = new QAction(trUtf8("Find area"), this);
     connect(findAreaAction, SIGNAL(triggered()), this, SLOT(doFindArea()));
 
-    buildAreaDatabaseAction = new QAction(trUtf8("Build area database"), this);
-    connect(buildAreaDatabaseAction, SIGNAL(triggered()), this, SLOT(doBuildAreaDatabase()));
+    findPolygonCentroidAction = new QAction(trUtf8("Find area centroid"), this);
+    connect(findPolygonCentroidAction, SIGNAL(triggered()), this, SLOT(doFindPolygonCentroid()));
 
-    Table2ColumnsFormatAction = new QAction(trUtf8("Table -> columns"), this);
+    translateCharacterEncodingAction = new QAction(trUtf8("Character encoding translation..."), this);
+    connect(translateCharacterEncodingAction, SIGNAL(triggered()), this, SLOT(doTranslateCharacterEncoding()));
+
+    transposeTableAction = new QAction(trUtf8("Transpose table..."), this);
+    connect(transposeTableAction, SIGNAL(triggered()), this, SLOT(doTransposeTable()));
+
+    Table2ColumnsFormatAction = new QAction(trUtf8("Table -> columns..."), this);
     connect(Table2ColumnsFormatAction, SIGNAL(triggered()), this, SLOT(doTable2ColumnsFormat()));
 
     Columns2TableFormatAction = new QAction(trUtf8("Columns -> table"), this);
     connect(Columns2TableFormatAction, SIGNAL(triggered()), this, SLOT(doColumns2TableFormat()));
+
+    buildAreaDatabaseAction = new QAction(trUtf8("Build area database"), this);
+    connect(buildAreaDatabaseAction, SIGNAL(triggered()), this, SLOT(doBuildAreaDatabase()));
+
+    buildSearchAndReplaceDatabaseAction = new QAction(trUtf8("Build search and replace database"), this);
+    connect(buildSearchAndReplaceDatabaseAction, SIGNAL(triggered()), this, SLOT(doBuildSearchAndReplaceDatabase()));
 
     extractExifAction = new QAction(tr("Extract exif record from images..."), this);
     connect(extractExifAction, SIGNAL(triggered()), this, SLOT(doExtractExif()));
 
     writeExifAction = new QAction(tr("Write exif record to images..."), this);
     connect(writeExifAction, SIGNAL(triggered()), this, SLOT(doWriteExif()));
+
+    convertExcelToTextAction = new QAction(trUtf8("Excel -> Text (Tab-separated values)"), this);
+    connect(convertExcelToTextAction, SIGNAL(triggered()), this, SLOT(doConvertExcelToText()));
 
     // Help menu
     aboutAction = new QAction(trUtf8("&About ") + getApplicationName( true ), this);
@@ -288,13 +292,8 @@ void MainWindow::createMenus()
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( recalcColumnsAction );
     basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( transposeTableAction );
-    basicToolsMenu->addSeparator();
-    basicToolsMenu->addAction( translateCharacterEncodingAction );
     basicToolsMenu->addAction( renameFilesAction );
-    basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( saveFilelistAction );
-    basicToolsMenu->addAction( createScriptAction );
     basicToolsMenu->addSeparator();
     basicToolsMenu->addAction( compressFolderZipAction );
     basicToolsMenu->addAction( compressFilesZipAction );
@@ -311,15 +310,22 @@ void MainWindow::createMenus()
     specialToolsMenu->addAction( getDatasetsAction );
     specialToolsMenu->addAction( convertMetadataXMAction );
     specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( createScriptAction );
+    specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( calcDepthAction );
     specialToolsMenu->addAction( calcSalinityAction );
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( createDateTimeAction );
-    specialToolsMenu->addAction( createODPSampleLabelAction );
     specialToolsMenu->addAction( checkTimeSeriesAction );
+    specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( createODPSampleLabelAction );
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( findAreaAction );
     specialToolsMenu->addAction( findPolygonCentroidAction );
+    specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( translateCharacterEncodingAction );
+    specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( transposeTableAction );
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( Table2ColumnsFormatAction );
     specialToolsMenu->addAction( Columns2TableFormatAction );
@@ -329,6 +335,8 @@ void MainWindow::createMenus()
     specialToolsMenu->addSeparator();
     specialToolsMenu->addAction( extractExifAction );
     specialToolsMenu->addAction( writeExifAction );
+    specialToolsMenu->addSeparator();
+    specialToolsMenu->addAction( convertExcelToTextAction );
 
 // **********************************************************************************************
 
@@ -387,5 +395,18 @@ void MainWindow::enableMenuItems( const QStringList &sl_FilenameList )
 
         getDatasetsAction->setEnabled( true );
         extractExifAction->setEnabled( true );
+    }
+
+// **********************************************************************************************
+
+    if ( b_containsBinaryFile == true )
+    {
+        if ( sl_FilenameList.first().toLower().endsWith( ".xlsx" ) == true )
+        {
+            convertExcelToTextAction->setEnabled( true );
+            decompressFilesAction->setEnabled( false );
+            extractExifAction->setEnabled( false );
+            writeExifAction->setEnabled( false );
+        }
     }
 }

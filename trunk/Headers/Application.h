@@ -389,6 +389,9 @@ public:
     bool        gb_xml_Keywords;
     bool        gb_xml_TechnicalInfo;
 
+    // RScript (Excel to Text)
+    QString     gs_rs_FilenameRScriptProgram;      //!< Pfad und Name des RScript Programmes.
+
 // *********************************************************************************************************************
 
     int parseMetadataXML( const QString &FilenameIn, const QString &FilenameOut, const int CodecOutput, const int EOL, const bool Citation, const bool Authors, const bool References, const bool Projects, const bool Events, const bool Parameters, const bool Coverage, const bool Keywords, const bool TechnicalInfo );
@@ -459,7 +462,7 @@ public:
 
     int recalcColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnsList = "", const float MulX = 1., const float AddX = 0., const int NumOfDigits = 5, const bool OnlyIfEmpty = false, const int NumOfFiles = 0 );
     int transposeTable( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles = 0 );
-    int createScript(const QString &FilenameIn, const int CodecInput , const int NumOfFiles);
+    int createScript(const QString &FilenameIn, const int CodecInput );
     int saveFilelist( const QString &FilenameOut, const QStringList &FilenameList, const int CodecOutput, const QString &LocalDataDir, const QString &ExternalWebPath, const int EOL );
 
     int calcDepthFromPressure( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int LatitudeColumn, const int PressureColumn, const int NumOfDigits, const int NumOfFiles );
@@ -495,6 +498,12 @@ public:
     int convertColumns2TableFormat( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int FieldDelimiter, const QString &MissingValue, const int NumOfFiles );
     int convertTable2ColumnsFormat( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfGeocodes, const int NumOfFiles );
 
+    int convertExcelToText( const QString &FilenameIn, const QString &Program, const int Extension );
+
+    int writeExif( const QString &ExifTool, const QString &s_FilenameIn, const int NumOfFiles );
+    int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );
+    QString findExifTool();
+
     int doAddDialog( const int mode, QString &HeaderText, QString &ColumnText, int &LineNo, bool &AddFilename, bool &AddFullPath, bool &AddOrdinalNumber, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doColumnListDialog( const int mode, QString &ColumnList, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doConcatenateFilesOptionsDialog( const int mode, int &SkipNStartLines, bool &IncludeFilename, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
@@ -516,10 +525,6 @@ public:
     int doTransposeTableOptionsDialog( int &CodecInput, int &CodecOutput, int &EOL, bool &DeleteInputFile );
     int doGetDatasetsDialog( QString &Query, QString &IDListFile, QString &DownloadDirectory, bool &DownloadData, bool &DownloadCitation, bool &DownloadMetadata, int &CodecDownload, int &Extension );
     int doMetadataXMLDialog( bool &Citation, bool &Authors, bool &References, bool &Projects, bool &Events, bool &Parameters, bool &Coverage, bool &Keywords, bool &TechnicalInfo );
-
-    int writeExif( const QString &ExifTool, const QString &s_FilenameIn, const int NumOfFiles );
-    int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );
-    QString findExifTool();
 
 protected:
     void dragEnterEvent( QDragEnterEvent *event );
@@ -596,11 +601,13 @@ private slots:
     void doExtractExif();
     void doWriteExif();
     void doConvertMetadataXML();
+    void doConvertExcelToText();
 
 // Dialogs
     int doGeneralOptionsDialog();
     int doExifToolOptionsDialog();
     int doGoogleEarthOptionsDialog();
+    int doRScriptOptionsDialog();
 
 private:
     QStringList expandCommandline();
@@ -726,6 +733,7 @@ private:
     QAction *extractExifAction;
     QAction *writeExifAction;
     QAction *convertMetadataXMAction;
+    QAction *convertExcelToTextAction;
 
     QAction *aboutAction;
     QAction *aboutQtAction;

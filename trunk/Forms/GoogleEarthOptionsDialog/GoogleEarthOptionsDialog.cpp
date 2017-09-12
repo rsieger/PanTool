@@ -106,7 +106,9 @@ void GoogleEarthOptionsDialog::browseFilenameDialog()
 
     fileStart.replace( "://", ":/" );
 
-    if ( ( file.startsWith( "Browse" ) == false ) && ( file.isEmpty() == false ) )
+    QFileInfo fi( file );
+
+    if ( fi.exists() == true )
         fileStart = file;
 
     #if defined(Q_OS_WIN)
@@ -190,7 +192,7 @@ QString GoogleEarthOptionsDialog::getProgramDir()
     #endif
 
     #if defined(Q_OS_WIN)
-        return( QDir::rootPath() + QLatin1String( "Program Files (x86)") );
+        return( QDir::rootPath() + QLatin1String( "Program Files (x86)" ) );
     #endif
 }
 

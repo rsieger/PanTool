@@ -12,7 +12,7 @@
 *          Schreibe den Shebang in die erste Zeile und macht ein ausführbare Datei draus.
 */
 
-int MainWindow::createScript( const QString &s_FilenameIn, const int i_CodecInput, const int i_NumOfFiles )
+int MainWindow::createScript( const QString &s_FilenameIn, const int i_CodecInput )
 {
     int         i               = 0;
     int         n               = 0;
@@ -72,18 +72,12 @@ int MainWindow::createScript( const QString &s_FilenameIn, const int i_CodecInpu
 
 // **********************************************************************************************
 
-    initProgress( i_NumOfFiles, s_FilenameIn, tr( "Creating scripts..." ), sl_Input.count() );
-
     while ( ( i < n )  && ( stopProgress != _APPBREAK_ ) )
     {
-        s_Output = sl_Input.at( i );
+        s_Output = sl_Input.at( i++ );
 
         tout << s_Output.replace( "\t", " " ) << endl;
-
-        stopProgress = incProgress( i_NumOfFiles, ++i );
     }
-
-    resetProgress( i_NumOfFiles );
 
 // **********************************************************************************************
 
@@ -117,41 +111,22 @@ int MainWindow::createScript( const QString &s_FilenameIn, const int i_CodecInpu
 
 void MainWindow::doCreateScript()
 {
-    int		i                   = 0;
     int		err                 = 0;
     int		stopProgress        = 0;
 
 // **********************************************************************************************
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
-    {
-        initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Create script files ..." ) );
-
-        while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
-        {
-            createScript( gsl_FilenameList.at( i ), gi_CodecInput, gsl_FilenameList.count() );
-
-            stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
-        }
-
-        resetFileProgress( gsl_FilenameList.count() );
-    }
+        createScript( gsl_FilenameList.first(), gi_CodecInput );
     else
-    {
         err = _CHOOSEABORTED_;
-    }
 
 // **********************************************************************************************
 
     if ( ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
-    {
-        if ( gsl_FilenameList.count() == 1 )
-            QMessageBox::information( this, getApplicationName( true ), tr( "Script has been created." ) );
-        else
-            QMessageBox::information( this, getApplicationName( true ), tr( "Scripts have been created." ) );
-    }
+        QMessageBox::information( this, getApplicationName( true ), tr( "Script has been created." ) );
 
-    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Creating script files was canceled" ), true );
+    endTool( err, stopProgress, gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList, tr( "Done" ), tr( "Creating script was canceled" ), true );
 
     onError( err );
 }

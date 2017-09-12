@@ -65,40 +65,63 @@ QString PanGetDialog::getDocumentDir()
 // **********************************************************************************************
 // **********************************************************************************************
 // **********************************************************************************************
+// 2017-09-12
 
 void PanGetDialog::enableBuildButton()
 {
-    int i_DatasetID  = 0;
+    int i_DatasetID    = 0;
 
-    bool b_OK        = true;
-    bool b_isNumeric = false;
-
-    QFileInfo fi( IDListFileLineEdit->text() );
+    bool b_OK          = true;
+    bool b_OK_ID       = true;
+    bool b_OK_IDList   = true;
+    bool b_OK_Query    = true;
+    bool b_isNumeric   = false;
 
 // **********************************************************************************************
+// ID
 
     if ( QueryLineEdit->text().toLower().startsWith( "dataset" ) == true )
         i_DatasetID = QueryLineEdit->text().toLower().section( "dataset", 1, 1 ).toInt( &b_isNumeric, 10 );
     else
         i_DatasetID = QueryLineEdit->text().toInt( &b_isNumeric, 10 );
 
+    if ( ( b_isNumeric == false ) || ( i_DatasetID < 50001 ) )
+        b_OK_ID = false;
+
+// **********************************************************************************************
+// Dataset ID list
+
+    QFileInfo fi( IDListFileLineEdit->text() );
+
+    if ( ( fi.isFile() == false ) || ( fi.exists() == false ) )
+        b_OK_IDList = false;
+
+// **********************************************************************************************
+// Query
+
+    if ( ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/" ) == false ) || ( QueryLineEdit->text().toLower().contains( "?q=" ) == false ) )
+        b_OK_Query = false;
+
 // **********************************************************************************************
 
-    if ( ( ( fi.isFile() == false ) || ( fi.exists() == false ) ) &&
-         ( QueryLineEdit->text().toLower().startsWith( "https://pangaea.de/?q=" ) == false ) &&
-         ( QueryLineEdit->text().toLower().startsWith( "https://www.pangaea.de/?q=" ) == false ) )
+    if ( ( b_OK_ID == false ) && ( b_OK_IDList == false ) && ( b_OK_Query == false ) )
         b_OK = false;
 
-    if ( ( b_isNumeric == true ) && ( i_DatasetID > 50000 ) )
-        b_OK = true;
+// **********************************************************************************************
+// Check boxes
 
     if ( ( DownloadData_checkBox->isChecked() == false ) && ( DownloadCitation_checkBox->isChecked() == false ) && ( DownloadMetadata_checkBox->isChecked() == false ) )
         b_OK = false;
+
+// **********************************************************************************************
+// Download directory
 
     QFileInfo di( DownloadDirectoryLineEdit->text() );
 
     if ( di.isDir() == false )
         b_OK = false;
+
+// **********************************************************************************************
 
     if ( b_OK == true )
     {
