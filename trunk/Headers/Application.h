@@ -498,7 +498,7 @@ public:
     int convertColumns2TableFormat( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int FieldDelimiter, const QString &MissingValue, const int NumOfFiles );
     int convertTable2ColumnsFormat( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfGeocodes, const int NumOfFiles );
 
-    int convertExcelToText( const QString &FilenameIn, const QString &Program, const int Extension );
+    int createConvertExcelToTextScript( const QString &Rscript, const int Extension );
 
     int writeExif( const QString &ExifTool, const QString &s_FilenameIn, const int NumOfFiles );
     int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );

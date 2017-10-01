@@ -8,58 +8,38 @@
 // **********************************************************************************************
 // 2017-09-06
 
-int MainWindow::convertExcelToText( const QString &s_FilenameIn, const QString &s_Program, const int i_Extension )
+int MainWindow::createConvertExcelToTextScript( const QString &s_Rscript, const int i_Extension )
 {
-    QProcess    process;
-
-    QStringList sl_args;
-    QStringList sl_Message;
-
-    QFileInfo   fiFilenameIn( s_FilenameIn );
-    QFile       fRScript( fiFilenameIn.absolutePath() + "/convertExcelToText.R" );
+    QFile       fRscript( s_Rscript );
 
 // **********************************************************************************************
 
-    if ( fiFilenameIn.exists() == false )
-        return( _FILENOTEXISTS_ );
-
-    if ( fRScript.open( QIODevice::WriteOnly | QIODevice::Text) == false )
+    if ( fRscript.open( QIODevice::WriteOnly | QIODevice::Text) == false )
         return( -20 );
 
-    QTextStream tout( &fRScript );
+    QTextStream tout( &fRscript );
 
     tout << "library( openxlsx )" << endl;
-    tout << "loadWorkbook( \"" + fiFilenameIn.absoluteFilePath() + "\" )->wb" << endl;
+    tout << "library( tools )" << endl;
+
+    tout << "filePath = commandArgs()[7]" << endl;
+    tout << "fileName = file_path_sans_ext( basename( filePath ) )" << endl;
+
+    tout << "loadWorkbook( filePath )->wb" << endl;
 
     tout << "L=list()" << endl;
 
     tout << "for ( s in sheets( wb ) )";
     tout << "{" << endl;
     tout << " read.xlsx( wb, sheet=s )->L[[s]]" << endl;
+    tout << " names( L[[s]] )<-gsub( \"\\\\.\", \" \", names( L[[s]] ) )" << endl;
+
     tout << " write.table( L[[s]],";
-    tout << " file=paste(\"" << fiFilenameIn.baseName() << "_\", s, \"" << setExtension( i_Extension ) << "\", sep=\"\" ),";
-    tout << " dec=\".\", sep=\"\t\", quote=FALSE, row.names=FALSE )" << endl;
+    tout << " file=paste( fileName, \"_\", s, \"" << setExtension( i_Extension ) << "\", sep=\"\" ),";
+    tout << " dec=\".\", sep=\"\\t\", quote=FALSE, row.names=FALSE, fileEncoding=\"UTF-8\" )" << endl;
     tout << "}" << endl;
 
-    fRScript.close();
-
-// **********************************************************************************************
-
-    sl_Message.clear();
-
-    showMessage( tr( "Converting " ) + QDir::toNativeSeparators( fiFilenameIn.absoluteFilePath() ) + tr( " ..." ), sl_Message );
-
-    sl_args.append( "--vanilla" );
-    sl_args.append( "convertExcelToText.R" );
-
-    process.setWorkingDirectory( fiFilenameIn.absolutePath() );
-    process.setProgram( s_Program );
-    process.setArguments( sl_args );
-
-    process.start();
-    process.waitForFinished( -1 );
-
-    removeFile( fRScript.fileName() );
+    fRscript.close();
 
     return( _NOERROR_ );
 }
@@ -71,16 +51,23 @@ int MainWindow::convertExcelToText( const QString &s_FilenameIn, const QString &
 
 void MainWindow::doConvertExcelToText()
 {
-    int		  i                 = 0;
-    int		  err               = 0;
-    int       stopProgress      = 0;
-    int       i_DialogResult    = QDialog::Accepted;
+    int		   i                = 0;
+    int		    err             = 0;
+    int         stopProgress    = 0;
+    int         i_DialogResult  = QDialog::Accepted;
+
+    QString     s_Rscript       = "";
+
+    QStringList sl_args;
+    QStringList sl_Message;
+
+    QProcess    process;
 
 // **********************************************************************************************
 
-    QFileInfo fi( gs_rs_FilenameRScriptProgram );
+    QFileInfo fiRscriptProgram( gs_rs_FilenameRScriptProgram );
 
-    if ( fi.exists() == false )
+    if ( fiRscriptProgram.exists() == false )
         i_DialogResult = doRScriptOptionsDialog();
 
     if ( i_DialogResult == QDialog::Accepted )
@@ -89,19 +76,42 @@ void MainWindow::doConvertExcelToText()
 
         if ( gsl_FilenameList.count() > 0 )
         {
+            QFileInfo fiFilenameIn( gsl_FilenameList.at( 0 ) );
+
+            s_Rscript = fiFilenameIn.absolutePath() + "/convertExcelToText.R";
+
+            err = createConvertExcelToTextScript( s_Rscript, gi_Extension );
+
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Converting files ..." ) );
 
             while ( ( i < gsl_FilenameList.count() ) && ( err == _NOERROR_ ) && ( stopProgress != _APPBREAK_ ) )
             {
                 setStatusBar( tr( "Convert " ) + QDir::toNativeSeparators( gsl_FilenameList.at( i ) ) + tr( " ..." ) );
 
-                fi.setFile( gsl_FilenameList.at( i ) );
+                fiFilenameIn.setFile( gsl_FilenameList.at( i ) );
 
-                if ( fi.suffix().toLower() == "xlsx" )
-                    err = convertExcelToText( gsl_FilenameList.at( i ), gs_rs_FilenameRScriptProgram, gi_Extension );
+                if ( fiFilenameIn.suffix().toLower() == "xlsx" )
+                {
+                    sl_Message.clear();
+                    showMessage( tr( "Converting " ) + QDir::toNativeSeparators( fiFilenameIn.absoluteFilePath() ) + tr( " ..." ), sl_Message );
+
+                    sl_args.clear();
+                    sl_args.append( "--vanilla" );
+                    sl_args.append( s_Rscript );
+                    sl_args.append( fiFilenameIn.fileName() );
+
+                    process.setWorkingDirectory( fiFilenameIn.absolutePath() );
+                    process.setProgram( fiRscriptProgram.absoluteFilePath() );
+                    process.setArguments( sl_args );
+
+                    process.start();
+                    process.waitForFinished( -1 );
+                }
 
                 stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
             }
+
+            removeFile( s_Rscript );
 
             resetFileProgress( gsl_FilenameList.count() );
         }
