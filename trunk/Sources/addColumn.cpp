@@ -8,14 +8,15 @@
 // **********************************************************************************************
 // 2008-04-07
 
-int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL, const QString &s_HeaderText, const QString &s_ColumnText, const bool b_AddFilename, const bool b_AddFullPath, const bool b_AddOrdinalNumber, const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
+int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_FilenameOut, const int i_CodecInput, const int i_CodecOutput, const int i_EOL,
+                           const QString &s_HeaderText, const QString &s_ColumnText, const bool b_PrependColumn, const bool b_AppendColumn,
+                           const bool b_AddFilename, const bool b_AddFullPath, const bool b_AddOrdinalNumber, const bool b_PrependMetadataColumn, const bool b_AppendMetadataColumn,
+                           const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
     int         i               = 0;
     int         k               = 0;
     int         n               = 0;
     int         stopProgress    = 0;
-
-    bool        b_AddColumn     = true;
 
     QString     s_EOL           = setEOLChar( i_EOL );
 
@@ -58,10 +59,7 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
 
     initProgress( i_NumOfFiles, s_FilenameIn, tr( "Adding column..." ), sl_Input.count() );
 
-    if ( ( s_HeaderText.isEmpty() == true ) && ( s_ColumnText.isEmpty() == true ) )
-        b_AddColumn = false;
-
-    if ( LineCanBeWritten( sl_Input.at( i ), b_SkipEmptyLines, b_SkipCommentLines ) == true )
+    if ( b_PrependMetadataColumn == true )
     {
         if ( b_AddFilename == true )
             tout << "Event label" << "\t";
@@ -71,12 +69,29 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
 
         if ( b_AddOrdinalNumber == true )
             tout << "No" << "\t";
-
-        if ( b_AddColumn == true )
-            tout << s_HeaderText << "\t";
-
-        tout << sl_Input.at( i ) << s_EOL;
     }
+
+    if ( b_PrependColumn == true )
+        tout << s_HeaderText << "\t";
+
+    tout << sl_Input.at( 0 );
+
+    if ( b_AppendMetadataColumn == true )
+    {
+        if ( b_AddFilename == true )
+            tout << "\t" << "Event label";
+
+        if ( b_AddFullPath == true )
+            tout << "\t"<< "Filename";
+
+        if ( b_AddOrdinalNumber == true )
+            tout << "\t" << "No";
+    }
+
+    if ( b_AppendColumn == true )
+        tout << "\t" << s_HeaderText;
+
+    tout << s_EOL;
 
     stopProgress = incProgress( i_NumOfFiles, ++i );
 
@@ -84,19 +99,44 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
     {
         if ( LineCanBeWritten( sl_Input.at( i ), b_SkipEmptyLines, b_SkipCommentLines ) == true )
         {
-            if ( b_AddFilename == true )
-                tout << fi.baseName() << "\t";
+            if ( b_PrependMetadataColumn == true )
+            {
+                if ( b_AddFilename == true )
+                    tout << fi.baseName() << "\t";
 
-            if ( b_AddFullPath == true )
-                tout << fi.absoluteFilePath() << "\t";
+                if ( b_AddFullPath == true )
+                    tout << fi.absoluteFilePath() << "\t";
 
-            if ( b_AddOrdinalNumber == true )
-                tout << QString( "%1" ).arg( ++k ) << "\t";
+                if ( b_AddOrdinalNumber == true )
+                    tout << QString( "%1" ).arg( ++k ) << "\t";
+            }
 
-            if ( b_AddColumn == true )
+            if ( b_PrependColumn == true )
                 tout << s_ColumnText << "\t";
 
-            tout << sl_Input.at( i ) << s_EOL;
+            tout << sl_Input.at( i );
+
+            if ( b_AppendMetadataColumn == true )
+            {
+                if ( b_AddFilename == true )
+                    tout << "\t" << fi.baseName();
+
+                if ( b_AddFullPath == true )
+                    tout << "\t" << fi.absoluteFilePath();
+
+                if ( b_AddOrdinalNumber == true )
+                {
+                    if ( b_PrependMetadataColumn == false )
+                        tout << "\t" << QString( "%1" ).arg( ++k );
+                    else
+                        tout << "\t" << QString( "%1" ).arg( k );
+                }
+            }
+
+            if ( b_AppendColumn == true )
+                tout << "\t" << s_ColumnText;
+
+            tout << s_EOL;
         }
 
         stopProgress = incProgress( i_NumOfFiles, ++i );
@@ -139,7 +179,7 @@ void MainWindow::doAddColumn()
 
     if ( existsFirstFile( gi_ActionNumber, gs_FilenameFormat, gi_Extension, gsl_FilenameList ) == true )
     {
-        if ( doAddDialog( _ADDCOLUMN, gs_ac_HeaderText, gs_ac_ColumnText, i_dummy_LineNo, gb_ac_AddFilename, gb_ac_AddFullPath, gb_ac_AddOrdinalNumber, gb_ac_SkipEmptyLines, gb_ac_SkipCommentLines, gb_ac_DeleteInputFile ) == QDialog::Accepted )
+        if ( doAddDialog( _ADDCOLUMN, gs_ac_HeaderText, gs_ac_ColumnText, i_dummy_LineNo, gb_ac_PrependColumn, gb_ac_AppendColumn, gb_ac_AddFilename, gb_ac_AddFullPath, gb_ac_AddOrdinalNumber, gb_ac_PrependMetadataColumn, gb_ac_AppendMetadataColumn, gb_ac_SkipEmptyLines, gb_ac_SkipCommentLines, gb_ac_DeleteInputFile ) == QDialog::Accepted )
         {
             initFileProgress( gsl_FilenameList.count(), gsl_FilenameList.at( 0 ), tr( "Adding column..." ) );
 
@@ -154,7 +194,7 @@ void MainWindow::doAddColumn()
 
                     sl_FilenameListDelete.append( s_FilenameIn );
 
-                    err = addColumn( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, s_HeaderText, s_ColumnText, gb_ac_AddFilename, gb_ac_AddFullPath, gb_ac_AddOrdinalNumber, gb_ac_SkipEmptyLines, gb_ac_SkipCommentLines, gsl_FilenameList.count() );
+                    err = addColumn( s_FilenameIn, s_FilenameOut, gi_CodecInput, gi_CodecOutput, gi_EOL, s_HeaderText, s_ColumnText, gb_ac_PrependColumn, gb_ac_AppendColumn, gb_ac_AddFilename, gb_ac_AddFullPath, gb_ac_AddOrdinalNumber, gb_ac_PrependMetadataColumn, gb_ac_AppendMetadataColumn, gb_ac_SkipEmptyLines, gb_ac_SkipCommentLines, gsl_FilenameList.count() );
 
                     stopProgress = incFileProgress( gsl_FilenameList.count(), ++i );
                 }

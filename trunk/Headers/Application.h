@@ -242,6 +242,8 @@ public:
     bool        gb_al_AddFilename;                   //!< fuege Dateinamen ein
     bool        gb_al_AddFullPath;                   //!< fuege Pfad und Dateinamen ein
     bool        gb_al_AddOrdinalNumber;              //!< fuege fortlaufende Nummer ein
+    bool        gb_al_PrependMetadataColumn;         //!< fuege vorne ein
+    bool        gb_al_AppendMetadataColumn;          //!< fuege hinten ein
     bool        gb_al_SkipEmptyLines;                //!< Ueberspringe leere Zeilen
     bool        gb_al_SkipCommentLines;              //!< Ueberspringe Comment Zeilen
     bool        gb_al_DeleteInputFile;               //!< loesche Inputdatei.
@@ -252,6 +254,8 @@ public:
     bool        gb_ab_AddFilename;                   //!< fuege Dateinamen ein
     bool        gb_ab_AddFullPath;                   //!< fuege Pfad und Dateinamen ein
     bool        gb_ab_AddOrdinalNumber;              //!< fuege fortlaufende Nummer ein
+    bool        gb_ab_PrependMetadataColumn;         //!< fuege vorne ein
+    bool        gb_ab_AppendMetadataColumn;          //!< fuege hinten ein
     bool        gb_ab_SkipEmptyLines;                //!< Ueberspringe leere Zeilen
     bool        gb_ab_SkipCommentLines;              //!< Ueberspringe Comment Zeilen
     bool        gb_ab_DeleteInputFile;               //!< loesche Inputdatei.
@@ -262,6 +266,10 @@ public:
     bool        gb_ac_AddFilename;                   //!< fuege Dateinamen ein
     bool        gb_ac_AddFullPath;                   //!< fuege Pfad und Dateinamen ein
     bool        gb_ac_AddOrdinalNumber;              //!< fuege fortlaufende Nummer ein
+    bool        gb_ac_PrependColumn;                 //!< fuege vorne ein
+    bool        gb_ac_AppendColumn;                  //!< fuege hinten ein
+    bool        gb_ac_PrependMetadataColumn;         //!< fuege vorne ein
+    bool        gb_ac_AppendMetadataColumn;          //!< fuege hinten ein
     bool        gb_ac_SkipEmptyLines;                //!< Ueberspringe leere Zeilen
     bool        gb_ac_SkipCommentLines;              //!< Ueberspringe Comment Zeilen
     bool        gb_ac_DeleteInputFile;               //!< loesche Inputdatei.
@@ -362,7 +370,6 @@ public:
     int         gi_et_UtcOffset;                     //!< Offset to UTC
     bool        gb_et_CreateKmlFile;                 //!< Create KML File
 
-
     // Google Earth
     QString     gs_ge_FilenameGoogleEarthProgram;      //!< Pfad und Name des Google Earth Programmes.
     QString     gs_ge_FilenameGoogleEarth;             //!< Pfad und Name der KML-Datei
@@ -457,8 +464,8 @@ public:
     int splitFileByLines( const QString &FilenameIn, const int CodecInput, const int CodecOutput, const int EOL, const int Extension, const int NumberOfLines = 1, const int NumberOfHeaderLines = 0, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
     int splitLargeFile( const QString &FilenameIn, const int CodecInput, const int CodecOutput, const int EOL, const int Extension, const int NumberOfHeaderLines = 0, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
 
-    int addColumn( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &HeaderText, const QString &ColumnText, const bool AddFilename = false, const bool AddFullPath = false, const bool AddOrdinalNumber = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
-    int addLine( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QStringList &Text, const int LineNo = 1, const bool AddFilename = false, const bool AddFullPath = false, const bool AddOrdinalNumber = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
+    int addColumn( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &HeaderText, const QString &ColumnText, const bool PrependColumn = true, const bool AppendColumn = false, const bool AddFilename = false, const bool AddFullPath = false, const bool AddOrdinalNumber = false, const bool PrependMetadataColumn = false, const bool AppendMetadataColumn = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
+    int addLine( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QStringList &Text, const int LineNo = 1, const bool AddFilename = false, const bool AddFullPath = false, const bool AddOrdinalNumber = false, const bool PrependMetadataColumn = true, const bool AppendMetadataColumn = false, const bool SkipEmptyLines = false, const bool SkipCommentLines = false, const int NumOfFiles = 0 );
 
     int recalcColumns( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const QString &ColumnsList = "", const float MulX = 1., const float AddX = 0., const int NumOfDigits = 5, const bool OnlyIfEmpty = false, const int NumOfFiles = 0 );
     int transposeTable( const QString &FilenameIn, const QString &FilenameOut, const int CodecInput, const int CodecOutput, const int EOL, const int NumOfFiles = 0 );
@@ -504,7 +511,7 @@ public:
     int extractExif( const QString &ExifTool, const QStringList &FilenameList, const QString &FilenameOut, const int DateTimeFormat, const int UtcOffset );
     QString findExifTool();
 
-    int doAddDialog( const int mode, QString &HeaderText, QString &ColumnText, int &LineNo, bool &AddFilename, bool &AddFullPath, bool &AddOrdinalNumber, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
+    int doAddDialog( const int mode, QString &HeaderText, QString &ColumnText, int &LineNo, bool &PrependColumn, bool &AppendColumn, bool &AddFilename, bool &AddFullPath, bool &AddOrdinalNumber, bool &PrependMetadataColumn, bool &AppendMetadataColumn, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doColumnListDialog( const int mode, QString &ColumnList, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doConcatenateFilesOptionsDialog( const int mode, int &SkipNStartLines, bool &IncludeFilename, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );
     int doCharactersAtPositionDialog( const int mode, QString &PositionList, QString &Text, bool &SkipEmptyLines, bool &SkipCommentLines, bool &DeleteInputFile );

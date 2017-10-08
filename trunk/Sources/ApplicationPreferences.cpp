@@ -259,6 +259,8 @@ void MainWindow::savePreferences()
     settings.setValue( "AddFilename", gb_al_AddFilename );
     settings.setValue( "AddFullPath", gb_al_AddFullPath );
     settings.setValue( "AddOrdinalNumber", gb_al_AddOrdinalNumber );
+    settings.setValue( "PrependMetadata", gb_al_PrependMetadataColumn );
+    settings.setValue( "AppendMetadata", gb_al_AppendMetadataColumn );
     settings.setValue( "SkipEmptyLines", gb_al_SkipEmptyLines );
     settings.setValue( "SkipCommentLines", gb_al_SkipCommentLines );
     settings.setValue( "DeleteInputFile", gb_al_DeleteInputFile );
@@ -271,6 +273,8 @@ void MainWindow::savePreferences()
     settings.setValue( "AddFilename", gb_ab_AddFilename );
     settings.setValue( "AddFullPath", gb_ab_AddFullPath );
     settings.setValue( "AddOrdinalNumber", gb_ab_AddOrdinalNumber );
+    settings.setValue( "PrependMetadata", gb_ab_PrependMetadataColumn );
+    settings.setValue( "AppendMetadata", gb_ab_AppendMetadataColumn );
     settings.setValue( "SkipEmptyLines", gb_ab_SkipEmptyLines );
     settings.setValue( "SkipCommentLines", gb_ab_SkipCommentLines );
     settings.setValue( "DeleteInputFile", gb_ab_DeleteInputFile );
@@ -280,9 +284,13 @@ void MainWindow::savePreferences()
     settings.beginGroup( "AddColumn" );
     settings.setValue( "HeaderText", gs_ac_HeaderText );
     settings.setValue( "ColumnText", gs_ac_ColumnText );
+    settings.setValue( "PrependColumn", gb_ac_PrependColumn );
+    settings.setValue( "AppendColumn", gb_ac_AppendColumn );
     settings.setValue( "AddFilename", gb_ac_AddFilename );
     settings.setValue( "AddFullPath", gb_ac_AddFullPath );
     settings.setValue( "AddOrdinalNumber", gb_ac_AddOrdinalNumber );
+    settings.setValue( "PrependMetadata", gb_ac_PrependMetadataColumn );
+    settings.setValue( "AppendMetadata", gb_ac_AppendMetadataColumn );
     settings.setValue( "SkipEmptyLines", gb_ac_SkipEmptyLines );
     settings.setValue( "SkipCommentLines", gb_ac_SkipCommentLines );
     settings.setValue( "DeleteInputFile", gb_ac_DeleteInputFile );
@@ -694,38 +702,46 @@ void MainWindow::loadPreferences()
 
     // add line
     settings.beginGroup( "AddLine" );
-    gs_al_Text              = settings.value( "Text", "PANGAEA" ).toString();
-    gi_al_LineNo            = settings.value( "LineNo", 1 ).toInt();
-    gb_al_AddFilename       = settings.value( "AddFilename", false ).toBool();
-    gb_al_AddFullPath       = settings.value( "AddFullPath", false ).toBool();
-    gb_al_AddOrdinalNumber  = settings.value( "AddOrdinalNumber", false ).toBool();
-    gb_al_SkipEmptyLines    = settings.value( "SkipEmptyLines", false ).toBool();
-    gb_al_SkipCommentLines  = settings.value( "SkipCommentLines", false ).toBool();
-    gb_al_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
+    gs_al_Text                  = settings.value( "Text", "PANGAEA" ).toString();
+    gi_al_LineNo                = settings.value( "LineNo", 1 ).toInt();
+    gb_al_AddFilename           = settings.value( "AddFilename", false ).toBool();
+    gb_al_AddFullPath           = settings.value( "AddFullPath", false ).toBool();
+    gb_al_AddOrdinalNumber      = settings.value( "AddOrdinalNumber", false ).toBool();
+    gb_al_PrependMetadataColumn = settings.value( "PrependMetadata", false ).toBool();
+    gb_al_AppendMetadataColumn  = settings.value( "AppendMetadata", false ).toBool();
+    gb_al_SkipEmptyLines        = settings.value( "SkipEmptyLines", false ).toBool();
+    gb_al_SkipCommentLines      = settings.value( "SkipCommentLines", false ).toBool();
+    gb_al_DeleteInputFile       = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 
     // add block
     settings.beginGroup( "AddBlock" );
-    gs_ab_Text              = settings.value( "Text", "PANGAEA" ).toString();
-    gi_ab_LineNo            = settings.value( "LineNo", 1 ).toInt();
-    gb_ab_AddFilename       = settings.value( "AddFilename", false ).toBool();
-    gb_ab_AddFullPath       = settings.value( "AddFullPath", false ).toBool();
-    gb_ab_AddOrdinalNumber  = settings.value( "AddOrdinalNumber", false ).toBool();
-    gb_ab_SkipEmptyLines    = settings.value( "SkipEmptyLines", false ).toBool();
-    gb_ab_SkipCommentLines  = settings.value( "SkipCommentLines", false ).toBool();
-    gb_ab_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
+    gs_ab_Text                  = settings.value( "Text", "PANGAEA" ).toString();
+    gi_ab_LineNo                = settings.value( "LineNo", 1 ).toInt();
+    gb_ab_AddFilename           = settings.value( "AddFilename", false ).toBool();
+    gb_ab_AddFullPath           = settings.value( "AddFullPath", false ).toBool();
+    gb_ab_AddOrdinalNumber      = settings.value( "AddOrdinalNumber", false ).toBool();
+    gb_ab_PrependMetadataColumn = settings.value( "PrependMetadata", false ).toBool();
+    gb_ab_AppendMetadataColumn  = settings.value( "AppendMetadata", false ).toBool();
+    gb_ab_SkipEmptyLines        = settings.value( "SkipEmptyLines", false ).toBool();
+    gb_ab_SkipCommentLines      = settings.value( "SkipCommentLines", false ).toBool();
+    gb_ab_DeleteInputFile       = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 
     // add column
     settings.beginGroup( "AddColumn" );
-    gs_ac_HeaderText        = settings.value( "HeaderText", "Event label" ).toString();
-    gs_ac_ColumnText        = settings.value( "ColumnText", "PS77/123-2" ).toString();
-    gb_ac_AddFilename       = settings.value( "AddFilename", false ).toBool();
-    gb_ac_AddFullPath       = settings.value( "AddFullPath", false ).toBool();
-    gb_ac_AddOrdinalNumber  = settings.value( "AddOrdinalNumber", false ).toBool();
-    gb_ac_SkipEmptyLines    = settings.value( "SkipEmptyLines", false ).toBool();
-    gb_ac_SkipCommentLines  = settings.value( "SkipCommentLines", false ).toBool();
-    gb_ac_DeleteInputFile   = settings.value( "DeleteInputFile", false ).toBool();
+    gs_ac_HeaderText            = settings.value( "HeaderText", "Event label" ).toString();
+    gs_ac_ColumnText            = settings.value( "ColumnText", "PS77/123-2" ).toString();
+    gb_ac_PrependColumn         = settings.value( "PrependColumn", true ).toBool();
+    gb_ac_AppendColumn          = settings.value( "AppendColumn", false ).toBool();
+    gb_ac_AddFilename           = settings.value( "AddFilename", false ).toBool();
+    gb_ac_AddFullPath           = settings.value( "AddFullPath", false ).toBool();
+    gb_ac_AddOrdinalNumber      = settings.value( "AddOrdinalNumber", false ).toBool();
+    gb_ac_PrependMetadataColumn = settings.value( "PrependMetadata", false ).toBool();
+    gb_ac_AppendMetadataColumn  = settings.value( "AppendMetadata", false ).toBool();
+    gb_ac_SkipEmptyLines        = settings.value( "SkipEmptyLines", false ).toBool();
+    gb_ac_SkipCommentLines      = settings.value( "SkipCommentLines", false ).toBool();
+    gb_ac_DeleteInputFile       = settings.value( "DeleteInputFile", false ).toBool();
     settings.endGroup();
 
     // recalc columns

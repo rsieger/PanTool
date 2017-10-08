@@ -28,12 +28,17 @@ AddDialog::AddDialog( QWidget *parent ) : QDialog( parent )
     connect( LineNo_lineEdit_2, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
     connect( TextBlock_plainTextEdit_2, SIGNAL( textChanged() ), this, SLOT( enableOKButton() ) );
 
+    connect( PrependColumn_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
+    connect( AppendColumn_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
     connect( HeaderText_lineEdit_3, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
     connect( ColumnText_lineEdit_3, SIGNAL( textChanged( QString ) ), this, SLOT( enableOKButton() ) );
 
     connect( AddFilename_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
     connect( AddFullPath_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
     connect( AddOrdinalNumber_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
+
+    connect( PrependMetadataColumn_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
+    connect( AppendMetadataColumn_checkBox, SIGNAL( toggled(bool) ), this, SLOT( enableOKButton() ) );
 }
 
 // ***********************************************************************************************************************
@@ -64,6 +69,9 @@ void AddDialog::clearAll()
     AddFullPath_checkBox->setChecked( false );
     AddOrdinalNumber_checkBox->setChecked( false );
 
+    PrependMetadataColumn_checkBox->setChecked( false );
+    AppendMetadataColumn_checkBox->setChecked( false );
+
     SkipEmptyLines_checkBox->setChecked( false );
     SkipCommentLines_checkBox->setChecked( false );
     DeleteInputFile_checkBox->setChecked( false );
@@ -81,6 +89,8 @@ void AddDialog::enableOKButton()
 
     bool b_OK = false;
 
+// **********************************************************************************************
+
     testList.append( LineNo_lineEdit_1->text().toInt() );                           // 0
     testList.append( (int) HeaderText_lineEdit_1->text().isEmpty() );               // 1
 
@@ -88,18 +98,81 @@ void AddDialog::enableOKButton()
     testList.append( (int) TextBlock_plainTextEdit_2->toPlainText().isEmpty() );    // 3
 
     testList.append( (int) HeaderText_lineEdit_3->text().isEmpty() );               // 4
+    testList.append( (int) ColumnText_lineEdit_3->text().isEmpty() );               // 5
 
     if ( testList.at( 0 ) < 1 )  LineNo_lineEdit_1->setText( "" );
     if ( testList.at( 2 ) < 1 )  LineNo_lineEdit_2->setText( "" );
 
-    if ( ( groupBox_AddBlock->isHidden() == true ) && ( groupBox_AddColumn->isHidden() == true ) )  // add line
-        if ( ( testList.at( 0 ) > 0 ) && ( testList.at( 1 ) < 1 ) ) b_OK = true;
+// **********************************************************************************************
+// add line
 
-    if ( ( groupBox_AddLine->isHidden() == true ) && ( groupBox_AddColumn->isHidden() == true ) )   // add block
-        if ( ( testList.at( 2 ) > 0 ) && ( testList.at( 3 ) < 1 ) )  b_OK = true;
+    if ( ( groupBox_AddBlock->isHidden() == true ) && ( groupBox_AddColumn->isHidden() == true ) )
+    {
+        if ( ( testList.at( 0 ) > 0 ) && ( testList.at( 1 ) < 1 ) )
+            b_OK = true;
+    }
 
-    if ( ( groupBox_AddLine->isHidden() == true ) && ( groupBox_AddBlock->isHidden() == true ) )    // add column
-        if ( ( testList.at( 4 ) < 1 ) || ( AddFilename_checkBox->isChecked() == true ) || ( AddFullPath_checkBox->isChecked() == true ) || ( AddOrdinalNumber_checkBox->isChecked() == true ) ) b_OK = true;
+// **********************************************************************************************
+// add block
+
+    if ( ( groupBox_AddLine->isHidden() == true ) && ( groupBox_AddColumn->isHidden() == true ) )
+    {
+        if ( ( testList.at( 2 ) > 0 ) && ( testList.at( 3 ) < 1 ) )
+            b_OK = true;
+    }
+
+// **********************************************************************************************
+// add column
+
+    if ( ( groupBox_AddLine->isHidden() == true ) && ( groupBox_AddBlock->isHidden() == true ) )
+    {
+        if ( ( testList.at( 4 ) > 0 ) && ( testList.at( 5 ) > 0 ) )
+        {
+            PrependColumn_checkBox->setEnabled( false );
+            AppendColumn_checkBox->setEnabled( false );
+        }
+        else
+        {
+            PrependColumn_checkBox->setEnabled( true );
+            AppendColumn_checkBox->setEnabled( true );
+        }
+
+        if ( ( ( testList.at( 4 ) < 1 ) || ( testList.at( 5 ) < 1 ) ) && ( ( PrependColumn_checkBox->isChecked() == true ) || ( AppendColumn_checkBox->isChecked() == true ) ) )
+            b_OK = true;
+    }
+
+// **********************************************************************************************
+// add metadata column
+
+    if ( ( AddFilename_checkBox->isChecked() == false ) && ( AddFullPath_checkBox->isChecked() == false ) && ( AddOrdinalNumber_checkBox->isChecked() == false ) )
+    {
+        PrependMetadataColumn_checkBox->setEnabled( false );
+        AppendMetadataColumn_checkBox->setEnabled( false );
+    }
+    else
+    {
+        PrependMetadataColumn_checkBox->setEnabled( true );
+        AppendMetadataColumn_checkBox->setEnabled( true );
+    }
+
+    if ( b_OK == false )
+    {
+        if ( ( AddFilename_checkBox->isChecked() == true ) || ( AddFullPath_checkBox->isChecked() == true ) || ( AddOrdinalNumber_checkBox->isChecked() == true ) )
+        {
+            if ( ( PrependMetadataColumn_checkBox->isChecked() == true ) || ( AppendMetadataColumn_checkBox->isChecked() == true ) )
+                b_OK = true;
+        }
+    }
+    else
+    {
+        if ( ( AddFilename_checkBox->isChecked() == true ) || ( AddFullPath_checkBox->isChecked() == true ) || ( AddOrdinalNumber_checkBox->isChecked() == true ) )
+        {
+            if ( ( PrependMetadataColumn_checkBox->isChecked() == false ) && ( AppendMetadataColumn_checkBox->isChecked() == false ) )
+                b_OK = false;
+        }
+    }
+
+// **********************************************************************************************
 
     if ( b_OK == true )
     {
@@ -117,7 +190,7 @@ void AddDialog::enableOKButton()
 // ***********************************************************************************************************************
 // ***********************************************************************************************************************
 
-int MainWindow::doAddDialog( const int mode, QString &s_HeaderText, QString &s_ColumnText, int &i_LineNo, bool &b_AddFilename, bool &b_AddFullPath, bool &b_AddOrdinalNumber, bool &b_SkipEmptyLines, bool &b_SkipCommentLines, bool &b_DeleteInputFile )
+int MainWindow::doAddDialog( const int mode, QString &s_HeaderText, QString &s_ColumnText, int &i_LineNo, bool &b_PrependColumn, bool &b_AppendColumn, bool &b_AddFilename, bool &b_AddFullPath, bool &b_AddOrdinalNumber, bool &b_PrependMetadataColumn, bool &b_AppendMetadataColumn, bool &b_SkipEmptyLines, bool &b_SkipCommentLines, bool &b_DeleteInputFile )
 {
     int i_DialogResult = QDialog::Rejected;
 
@@ -147,6 +220,8 @@ int MainWindow::doAddDialog( const int mode, QString &s_HeaderText, QString &s_C
     case _ADDCOLUMN:
         dialog.HeaderText_lineEdit_3->setText( s_HeaderText );
         dialog.ColumnText_lineEdit_3->setText( s_ColumnText );
+        dialog.PrependColumn_checkBox->setChecked( b_PrependColumn );
+        dialog.AppendColumn_checkBox->setChecked( b_AppendColumn );
         dialog.groupBox_AddLine->hide();
         dialog.groupBox_AddBlock->hide();
         break;
@@ -158,6 +233,8 @@ int MainWindow::doAddDialog( const int mode, QString &s_HeaderText, QString &s_C
     dialog.AddFilename_checkBox->setChecked( b_AddFilename );
     dialog.AddFullPath_checkBox->setChecked( b_AddFullPath );
     dialog.AddOrdinalNumber_checkBox->setChecked( b_AddOrdinalNumber );
+    dialog.PrependMetadataColumn_checkBox->setChecked( b_PrependMetadataColumn );
+    dialog.AppendMetadataColumn_checkBox->setChecked( b_AppendMetadataColumn );
     dialog.SkipEmptyLines_checkBox->setChecked( b_SkipEmptyLines );
     dialog.SkipCommentLines_checkBox->setChecked( b_SkipCommentLines );
     dialog.DeleteInputFile_checkBox->setChecked( b_DeleteInputFile );
@@ -219,8 +296,10 @@ int MainWindow::doAddDialog( const int mode, QString &s_HeaderText, QString &s_C
             break;
 
         case _ADDCOLUMN:
-            s_HeaderText = dialog.HeaderText_lineEdit_3->text();
-            s_ColumnText = dialog.ColumnText_lineEdit_3->text();
+            s_HeaderText    = dialog.HeaderText_lineEdit_3->text();
+            s_ColumnText    = dialog.ColumnText_lineEdit_3->text();
+            b_PrependColumn = dialog.PrependColumn_checkBox->isChecked();
+            b_AppendColumn  = dialog.AppendColumn_checkBox->isChecked();
 
             s_HeaderText.replace( "\t", "^t" );
             s_ColumnText.replace( "\t", "^t" );
@@ -230,14 +309,16 @@ int MainWindow::doAddDialog( const int mode, QString &s_HeaderText, QString &s_C
             break;
         }
 
-        b_AddFilename      = dialog.AddFilename_checkBox->isChecked();
-        b_AddFullPath      = dialog.AddFullPath_checkBox->isChecked();
-        b_AddOrdinalNumber = dialog.AddOrdinalNumber_checkBox->isChecked();
-        b_SkipEmptyLines   = dialog.SkipEmptyLines_checkBox->isChecked();
-        b_SkipCommentLines = dialog.SkipCommentLines_checkBox->isChecked();
-        b_DeleteInputFile  = dialog.DeleteInputFile_checkBox->isChecked();
+        b_AddFilename           = dialog.AddFilename_checkBox->isChecked();
+        b_AddFullPath           = dialog.AddFullPath_checkBox->isChecked();
+        b_AddOrdinalNumber      = dialog.AddOrdinalNumber_checkBox->isChecked();
+        b_PrependMetadataColumn = dialog.PrependMetadataColumn_checkBox->isChecked();
+        b_AppendMetadataColumn  = dialog.AppendMetadataColumn_checkBox->isChecked();
+        b_SkipEmptyLines        = dialog.SkipEmptyLines_checkBox->isChecked();
+        b_SkipCommentLines      = dialog.SkipCommentLines_checkBox->isChecked();
+        b_DeleteInputFile       = dialog.DeleteInputFile_checkBox->isChecked();
 
-        i_DialogResult     = QDialog::Accepted;
+        i_DialogResult          = QDialog::Accepted;
         break;
 
     case QDialog::Rejected:
