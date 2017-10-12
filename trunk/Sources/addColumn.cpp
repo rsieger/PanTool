@@ -13,12 +13,15 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
                            const bool b_AddFilename, const bool b_AddFullPath, const bool b_AddOrdinalNumber, const bool b_PrependMetadataColumn, const bool b_AppendMetadataColumn,
                            const bool b_SkipEmptyLines, const bool b_SkipCommentLines, const int i_NumOfFiles )
 {
-    int         i               = 0;
-    int         k               = 0;
-    int         n               = 0;
-    int         stopProgress    = 0;
+    int         i                   = 0;
+    int         k                   = 0;
+    int         n                   = 0;
+    int         stopProgress        = 0;
 
-    QString     s_EOL           = setEOLChar( i_EOL );
+    bool        b_AddColumnPrepend  = false;
+    bool        b_AddColumenAppend  = false;
+
+    QString     s_EOL               = setEOLChar( i_EOL );
 
     QStringList sl_Input;
 
@@ -57,6 +60,17 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
 
 // **********************************************************************************************
 
+    if ( ( s_HeaderText.isEmpty() == false ) || ( s_ColumnText.isEmpty() == false ) )
+    {
+        if ( b_PrependColumn == true )
+            b_AddColumnPrepend = true;
+
+        if ( b_AppendColumn == true )
+            b_AddColumenAppend = true;
+    }
+
+// **********************************************************************************************
+
     initProgress( i_NumOfFiles, s_FilenameIn, tr( "Adding column..." ), sl_Input.count() );
 
     if ( b_PrependMetadataColumn == true )
@@ -71,7 +85,7 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
             tout << "No" << "\t";
     }
 
-    if ( b_PrependColumn == true )
+    if ( b_AddColumnPrepend == true )
         tout << s_HeaderText << "\t";
 
     tout << sl_Input.at( 0 );
@@ -88,7 +102,7 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
             tout << "\t" << "No";
     }
 
-    if ( b_AppendColumn == true )
+    if ( b_AddColumenAppend == true )
         tout << "\t" << s_HeaderText;
 
     tout << s_EOL;
@@ -111,7 +125,7 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
                     tout << QString( "%1" ).arg( ++k ) << "\t";
             }
 
-            if ( b_PrependColumn == true )
+            if ( b_AddColumnPrepend == true )
                 tout << s_ColumnText << "\t";
 
             tout << sl_Input.at( i );
@@ -133,7 +147,7 @@ int MainWindow::addColumn( const QString &s_FilenameIn, const QString &s_Filenam
                 }
             }
 
-            if ( b_AppendColumn == true )
+            if ( b_AddColumenAppend == true )
                 tout << "\t" << s_ColumnText;
 
             tout << s_EOL;
